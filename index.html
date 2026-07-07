@@ -1,0 +1,1885 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Interno | Happy Deco</title>
+  <style>
+    :root {
+      --bg: #fff9f1;
+      --panel: #ffffff;
+      --panel-soft: #fff1f7;
+      --ink: #3a2d35;
+      --muted: #82717a;
+      --line: #f2dce7;
+      --rose: #ff96bf;
+      --rose-dark: #cc5f8b;
+      --teal: #7edbdf;
+      --teal-dark: #3da6ad;
+      --gold: #ffd67a;
+      --peach: #ffad7d;
+      --green: #8ce1ce;
+      --red: #d96666;
+      --lavender: #cfabe9;
+      --shadow: 0 20px 50px rgba(148, 96, 126, .13);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(255, 150, 191, .12) 0 14%, transparent 14% 100%),
+        linear-gradient(45deg, transparent 0 78%, rgba(126, 219, 223, .16) 78% 100%),
+        linear-gradient(180deg, #fff 0, var(--bg) 360px),
+        var(--bg);
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      z-index: -1;
+      pointer-events: none;
+      opacity: .72;
+    }
+
+    body::before {
+      width: 180px;
+      height: 180px;
+      top: 84px;
+      right: 38px;
+      background:
+        linear-gradient(45deg, transparent 46%, rgba(126, 219, 223, .55) 46% 54%, transparent 54%),
+        linear-gradient(-45deg, transparent 46%, rgba(126, 219, 223, .55) 46% 54%, transparent 54%);
+      clip-path: polygon(50% 0, 63% 37%, 100% 50%, 63% 63%, 50% 100%, 37% 63%, 0 50%, 37% 37%);
+    }
+
+    body::after {
+      width: 220px;
+      height: 150px;
+      left: 34px;
+      bottom: 24px;
+      border: 6px solid rgba(255, 150, 191, .36);
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+      border-radius: 48% 52% 42% 58%;
+      transform: rotate(10deg);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .shell {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 36px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+      padding: 18px;
+      border-radius: var(--radius);
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .94), rgba(255, 245, 250, .96)),
+        #fff;
+      border: 2px solid rgba(255, 150, 191, .24);
+      box-shadow: 0 24px 60px rgba(126, 219, 223, .18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topbar::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 42px;
+      background:
+        radial-gradient(55px 34px at 6% -8px, transparent 98%, rgba(126, 219, 223, .95) 100%) 0 0 / 170px 42px repeat-x,
+        var(--teal);
+      opacity: .95;
+    }
+
+    .topbar::after {
+      content: "";
+      position: absolute;
+      width: 82px;
+      height: 82px;
+      right: 270px;
+      top: 18px;
+      border: 5px solid rgba(255, 214, 122, .65);
+      border-radius: 18px;
+      transform: rotate(45deg);
+    }
+
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-mark {
+      width: 168px;
+      min-width: 168px;
+      height: 98px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: #86dfe3;
+      border: 4px solid #fff;
+      box-shadow: 0 14px 30px rgba(126, 219, 223, .30);
+      overflow: hidden;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .eyebrow {
+      margin-bottom: 6px;
+      color: var(--rose-dark);
+      font-size: 13px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 3vw, 42px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-content: flex-end;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-weight: 800;
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), #35a19a);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+      box-shadow: 0 10px 25px rgba(41, 139, 133, .18);
+    }
+
+    .btn.secondary {
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .topbar .btn.secondary {
+      color: var(--ink);
+      background: rgba(255, 255, 255, .82);
+      border-color: rgba(255, 150, 191, .34);
+    }
+
+    .btn.rose {
+      background: linear-gradient(135deg, var(--rose), #ffb0cc);
+    }
+
+    .btn.danger {
+      background: #fff0f0;
+      color: var(--red);
+      border: 1px solid #ffd3d3;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 410px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .form-panel {
+      padding: 18px;
+      position: sticky;
+      top: 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 252, 246, .98)),
+        #fff;
+      border-color: rgba(255, 150, 191, .25);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .control {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid #efd3df;
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: #fffdfb;
+      padding: 10px 11px;
+      outline: none;
+    }
+
+    textarea.control {
+      min-height: 82px;
+      resize: vertical;
+    }
+
+    .control:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(41, 139, 133, .14);
+    }
+
+    .table-input,
+    .table-select {
+      min-width: 150px;
+      min-height: 34px;
+      padding: 7px 28px 7px 9px;
+      border: 1px solid #efd3df;
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: #fffdfb;
+      font-size: 12px;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .table-input:focus,
+    .table-select:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(41, 139, 133, .14);
+    }
+
+    .message {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .message.ok {
+      color: #3c9d89;
+    }
+
+    .message.error {
+      color: var(--red);
+    }
+
+    .dashboard {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      min-height: 120px;
+      padding: 16px;
+      display: grid;
+      align-content: space-between;
+      gap: 10px;
+      background: linear-gradient(180deg, #fff, #fff8fb);
+      border: 1px solid rgba(255, 150, 191, .22);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .metric .value {
+      font-size: clamp(25px, 2.7vw, 38px);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .metric .detail {
+      min-height: 34px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .metric.teal {
+      border-top: 6px solid var(--teal);
+    }
+
+    .metric.rose {
+      border-top: 6px solid var(--rose);
+    }
+
+    .metric.gold {
+      border-top: 6px solid var(--gold);
+    }
+
+    .metric.green {
+      border-top: 6px solid var(--green);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      padding: 14px;
+      align-items: end;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+    }
+
+    .chart-panel,
+    .ranking-panel,
+    .table-panel {
+      padding: 16px;
+      border-color: rgba(126, 219, 223, .24);
+    }
+
+    .chart-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .month-row,
+    .rank-item {
+      display: grid;
+      gap: 7px;
+      padding: 11px;
+      border: 1px solid rgba(255, 150, 191, .24);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #fff, #fff6fa);
+    }
+
+    .row-top,
+    .rank-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+    }
+
+    .row-title,
+    .rank-title {
+      font-weight: 850;
+      line-height: 1.2;
+    }
+
+    .row-count,
+    .rank-count {
+      font-weight: 900;
+      color: var(--teal);
+      white-space: nowrap;
+    }
+
+    .bar {
+      height: 9px;
+      border-radius: 999px;
+      background: #f8e6ef;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--green));
+    }
+
+    .bar.rose span {
+      background: linear-gradient(90deg, var(--rose), #e99aa8);
+    }
+
+    .bar.gold span {
+      background: linear-gradient(90deg, var(--gold), #dfb45f);
+    }
+
+    .rankings {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .ranking-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .rank-meta {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .table-wrap {
+      margin-top: 12px;
+      overflow: auto;
+      border: 1px solid rgba(126, 219, 223, .34);
+      border-radius: var(--radius);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
+    }
+
+    table {
+      width: 100%;
+      min-width: 1120px;
+      border-collapse: collapse;
+      background: #fffdfb;
+    }
+
+    th,
+    td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #fff1f7;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    tbody tr:hover {
+      background: #f4fcfc;
+    }
+
+    .tag {
+      display: inline-flex;
+      min-height: 26px;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 850;
+      color: var(--teal-dark);
+      background: #def6f5;
+      white-space: nowrap;
+    }
+
+    .tag.rose {
+      color: var(--rose-dark);
+      background: #ffe1ee;
+    }
+
+    .tag.gold {
+      color: #a17119;
+      background: #fff0c7;
+    }
+
+    .tag.green {
+      color: #3c9d89;
+      background: #e1f8f1;
+    }
+
+    .tag.red {
+      color: var(--red);
+      background: #f5dada;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius);
+      display: inline-grid;
+      place-items: center;
+      background: #f4dddd;
+      color: var(--red);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .empty {
+      padding: 18px;
+      color: var(--muted);
+      text-align: center;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: #fff7fb;
+    }
+
+    @media (max-width: 1240px) {
+      .layout,
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-panel {
+        position: static;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .shell {
+        width: min(100% - 24px, 1440px);
+        padding-top: 12px;
+      }
+
+      .topbar,
+      .brand-block {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .brand-mark {
+        width: 150px;
+        min-width: 150px;
+        height: 88px;
+      }
+
+      .actions {
+        justify-content: stretch;
+      }
+
+      .actions .btn {
+        flex: 1 1 160px;
+      }
+
+      .metrics,
+      .filters,
+      .rankings,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metric {
+        min-height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark">
+          <img src="data:image/png;base64,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" alt="Happy Deco">
+        </div>
+        <div>
+          <div class="eyebrow">Panel interno</div>
+          <h1>Dashboard operativo y comercial</h1>
+          <p class="subtitle">Carga manual de consultas, presupuestos y eventos para ver ventas, producción, pendientes, rankings y señales de cuello de botella.</p>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn secondary" href="proceso/">Ver proceso</a>
+        <button class="btn secondary" id="cloudBtn" type="button">Configurar nube</button>
+        <button class="btn secondary" id="exportBtn" type="button">Exportar CSV</button>
+        <button class="btn danger" id="clearBtn" type="button">Limpiar datos</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel form-panel">
+        <div class="panel-head">
+          <div>
+            <h2>Cargar registro</h2>
+            <div class="small-note">Usalo para consultas, presupuestos enviados, eventos señados o eventos realizados.</div>
+          </div>
+        </div>
+
+        <form id="recordForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="fechaCierre">Fecha cierre</label>
+              <input class="control" id="fechaCierre" name="fechaCierre" type="date" required>
+            </div>
+            <div class="field">
+              <label for="fechaEvento">Fecha evento</label>
+              <input class="control" id="fechaEvento" name="fechaEvento" type="date">
+            </div>
+            <div class="field">
+              <label for="cliente">Cliente</label>
+              <input class="control" id="cliente" name="cliente" placeholder="Nombre / familia" required>
+            </div>
+            <div class="field">
+              <label for="homenajeado">Homenajeado/a</label>
+              <input class="control" id="homenajeado" name="homenajeado" placeholder="Ej: Cata">
+            </div>
+            <div class="field">
+              <label for="edadCumpleanero">Edad cumpleañero/a</label>
+              <input class="control" id="edadCumpleanero" name="edadCumpleanero" type="number" min="0" max="120" step="1" placeholder="Ej: 7">
+            </div>
+            <div class="field">
+              <label for="tipoEvento">Tipo evento</label>
+              <select class="control" id="tipoEvento" name="tipoEvento" required>
+                <option value="">Seleccionar</option>
+                <option>Cumpleaños infantil</option>
+                <option>15 años</option>
+                <option>Bautismo</option>
+                <option>Comunión</option>
+                <option>Baby shower</option>
+                <option>Celebración familiar</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="propuesta">Propuesta</label>
+              <select class="control" id="propuesta" name="propuesta">
+                <option value="">Sin definir</option>
+                <option>Propuesta express</option>
+                <option>Propuesta minimalista</option>
+                <option>Propuesta clásica</option>
+                <option>Propuesta intermedia</option>
+                <option>Propuesta premium</option>
+                <option>Propuesta exclusiva</option>
+                <option>Escenográfica 3x3</option>
+                <option>Escenográfica 6x3</option>
+                <option>Escenográfica 10x3</option>
+                <option>A medida</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="tematica">Temática</label>
+              <input class="control" id="tematica" name="tematica" placeholder="Ej: La Sirenita" required>
+            </div>
+            <div class="field">
+              <label for="canal">Canal</label>
+              <select class="control" id="canal" name="canal" required>
+                <option value="">Seleccionar</option>
+                <option>Instagram</option>
+                <option>WhatsApp</option>
+                <option>Recomendación</option>
+                <option>Cliente anterior</option>
+                <option>Facebook</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="etapa">Etapa comercial</label>
+              <select class="control" id="etapa" name="etapa" required>
+                <option value="">Seleccionar</option>
+                <option>Consulta nueva</option>
+                <option>Datos incompletos</option>
+                <option>Presupuesto enviado</option>
+                <option>Seguimiento</option>
+                <option>Señado</option>
+                <option>Pagado completo</option>
+                <option>Cancelado</option>
+                <option>Realizado</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="estadoOperativo">Estado operativo</label>
+              <select class="control" id="estadoOperativo" name="estadoOperativo" required>
+                <option value="">Seleccionar</option>
+                <option>No iniciado</option>
+                <option>Diseño pendiente</option>
+                <option>Listo para producir</option>
+                <option>Compras pendientes</option>
+                <option>En producción</option>
+                <option>Listo para montar</option>
+                <option>Realizado</option>
+                <option>Trabado</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="responsable">Responsable actual</label>
+              <select class="control" id="responsable" name="responsable" required>
+                <option value="">Seleccionar</option>
+                <option>Cati</option>
+                <option>Xime</option>
+                <option>Juli</option>
+                <option>Cati + Xime</option>
+                <option>Xime + Juli</option>
+                <option>Equipo</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="monto">Monto vendido</label>
+              <input class="control" id="monto" name="monto" type="number" min="0" step="1000" placeholder="0">
+            </div>
+            <div class="field">
+              <label for="costo">Costo estimado</label>
+              <input class="control" id="costo" name="costo" type="number" min="0" step="1000" placeholder="0">
+            </div>
+            <div class="field">
+              <label for="senia">Seña cobrada</label>
+              <input class="control" id="senia" name="senia" type="number" min="0" step="1000" placeholder="0">
+            </div>
+            <div class="field">
+              <label for="saldo">Saldo pendiente</label>
+              <input class="control" id="saldo" name="saldo" type="number" min="0" step="1000" placeholder="0">
+            </div>
+            <div class="field">
+              <label for="facturacion">Facturación</label>
+              <select class="control" id="facturacion" name="facturacion">
+                <option>Pendiente</option>
+                <option>Datos solicitados</option>
+                <option>Factura solicitada</option>
+                <option>Facturado</option>
+                <option>No requiere factura</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="lugar">Lugar</label>
+              <input class="control" id="lugar" name="lugar" placeholder="Salón, domicilio o zona">
+            </div>
+            <div class="field full">
+              <label for="incluye">Qué incluye</label>
+              <textarea class="control" id="incluye" name="incluye" placeholder="Panel, mesa dulce, torta, personajes, globos, etc."></textarea>
+            </div>
+            <div class="field full">
+              <label for="observaciones">Observaciones</label>
+              <textarea class="control" id="observaciones" name="observaciones" placeholder="Faltantes, riesgos, acuerdos, próximos pasos"></textarea>
+            </div>
+          </div>
+
+          <div class="message" id="formMessage"></div>
+          <div class="actions">
+            <button class="btn rose" type="submit">Guardar registro</button>
+            <button class="btn secondary" id="resetFormBtn" type="button">Vaciar formulario</button>
+          </div>
+        </form>
+      </aside>
+
+      <main class="dashboard">
+        <section class="metrics" aria-label="Resumen">
+          <article class="metric teal">
+            <div class="label">Registros</div>
+            <div class="value" id="totalMetric">0</div>
+            <div class="detail">Total cargado</div>
+          </article>
+          <article class="metric green">
+            <div class="label">Confirmados</div>
+            <div class="value" id="confirmedMetric">0</div>
+            <div class="detail" id="conversionMetric">0% conversión</div>
+          </article>
+          <article class="metric rose">
+            <div class="label">Ingresáos vendidos</div>
+            <div class="value" id="revenueMetric">$0</div>
+            <div class="detail">Señados o realizados</div>
+          </article>
+          <article class="metric gold">
+            <div class="label">Saldo pendiente</div>
+            <div class="value" id="balanceMetric">$0</div>
+            <div class="detail">Por cobrar</div>
+          </article>
+          <article class="metric teal">
+            <div class="label">Margen estimado</div>
+            <div class="value" id="marginMetric">$0</div>
+            <div class="detail">Monto - costo</div>
+          </article>
+          <article class="metric rose">
+            <div class="label">Próximos 30 días</div>
+            <div class="value" id="nextMetric">0</div>
+            <div class="detail">Eventos por ejecutar</div>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="filters">
+            <div class="field">
+              <label for="filterEtapa">Etapa</label>
+              <select class="control" id="filterEtapa"></select>
+            </div>
+            <div class="field">
+              <label for="filterOperativo">Operativo</label>
+              <select class="control" id="filterOperativo"></select>
+            </div>
+            <div class="field">
+              <label for="filterCanal">Canal</label>
+              <select class="control" id="filterCanal"></select>
+            </div>
+            <div class="field">
+              <label for="filterResponsable">Responsable</label>
+              <select class="control" id="filterResponsable"></select>
+            </div>
+            <div class="field">
+              <label for="filterPeriodoTipo">Periodo</label>
+              <select class="control" id="filterPeriodoTipo">
+                <option value="todos">Todos</option>
+                <option value="mensual">Mensual</option>
+                <option value="anual">Anual</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filterPeriodoValor">Mes / año cierre</label>
+              <select class="control" id="filterPeriodoValor"></select>
+            </div>
+            <div class="field">
+              <label for="filterSearch">Buscar</label>
+              <input class="control" id="filterSearch" type="search" placeholder="Cliente, propuesta, temática, lugar">
+            </div>
+            <button class="btn secondary" id="resetFiltersBtn" type="button">Quitar filtros</button>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel chart-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Volumen por mes</h2>
+                <div class="small-note">Registros agrupados por fecha de cierre.</div>
+              </div>
+            </div>
+            <div class="chart-grid" id="monthChart"></div>
+          </article>
+
+          <article class="panel ranking-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Alertas rpidas</h2>
+                <div class="small-note">Seales operativas para evitar esperas entre Cati, Xime y Juli.</div>
+              </div>
+            </div>
+            <div class="ranking-list" id="alertsList"></div>
+          </article>
+        </section>
+
+        <section class="rankings">
+          <article class="panel ranking-panel">
+            <h3>Propuestas más elegidas</h3>
+            <div class="ranking-list" id="proposalRanking"></div>
+          </article>
+          <article class="panel ranking-panel">
+            <h3>Temáticas más pedidas</h3>
+            <div class="ranking-list" id="themeRanking"></div>
+          </article>
+          <article class="panel ranking-panel">
+            <h3>Canales que traen consultas</h3>
+            <div class="ranking-list" id="channelRanking"></div>
+          </article>
+          <article class="panel ranking-panel">
+            <h3>Carga por responsable</h3>
+            <div class="ranking-list" id="ownerRanking"></div>
+          </article>
+          <article class="panel ranking-panel">
+            <h3>Estado comercial</h3>
+            <div class="ranking-list" id="stageRanking"></div>
+          </article>
+        </section>
+
+        <section class="panel table-panel" aria-labelledby="tableTitle">
+          <div class="panel-head">
+            <div>
+              <h2 id="tableTitle">Registros cargados</h2>
+              <div class="small-note" id="tableCount">0 registros visibles</div>
+            </div>
+          </div>
+          <div id="tableContainer"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "happyDecoDashboardRecords";
+    const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
+    const DEFAULT_CLOUD_CONFIG = {
+      url: "https://niwkiklxyblrvbeusqbd.supabase.co",
+      anonKey: "sb_publishable_BZOa1hRBnH0KWocgyCZmfw_-lrLIgGd"
+    };
+    const DASHBOARD_TABLE = "happy_deco_dashboard_records";
+    const PROCESS_TABLE = "happy_deco_process_events";
+    const ADMIN_PASSWORD = "happydeco2026";
+    const PROPOSAL_OPTIONS = [
+      "Propuesta express",
+      "Propuesta minimalista",
+      "Propuesta clásica",
+      "Propuesta intermedia",
+      "Propuesta premium",
+      "Propuesta exclusiva",
+      "Escenográfica 3x3",
+      "Escenográfica 6x3",
+      "Escenográfica 10x3",
+      "A medida"
+    ];
+    const COMMERCIAL_STAGES = [
+      "Consulta nueva",
+      "Datos incompletos",
+      "Presupuesto enviado",
+      "Seguimiento",
+      "Señado",
+      "Pagado completo",
+      "Cancelado",
+      "Realizado"
+    ];
+    const RESPONSIBLE_OPTIONS = [
+      "Cati",
+      "Xime",
+      "Juli",
+      "Cati + Xime",
+      "Xime + Juli",
+      "Equipo"
+    ];
+    const BILLING_OPTIONS = [
+      "Pendiente",
+      "Datos solicitados",
+      "Factura solicitada",
+      "Facturado",
+      "No requiere factura"
+    ];
+    const OPERATIONAL_STATES = [
+      "No iniciado",
+      "Diseño pendiente",
+      "Listo para producir",
+      "Compras pendientes",
+      "En producción",
+      "Listo para montar",
+      "Realizado",
+      "Trabado"
+    ];
+
+    const seedRecords = [];
+
+    const els = {
+      form: document.getElementById("recordForm"),
+      formMessage: document.getElementById("formMessage"),
+      resetFormBtn: document.getElementById("resetFormBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      cloudBtn: document.getElementById("cloudBtn"),
+      clearBtn: document.getElementById("clearBtn"),
+      resetFiltersBtn: document.getElementById("resetFiltersBtn"),
+      totalMetric: document.getElementById("totalMetric"),
+      confirmedMetric: document.getElementById("confirmedMetric"),
+      conversionMetric: document.getElementById("conversionMetric"),
+      revenueMetric: document.getElementById("revenueMetric"),
+      balanceMetric: document.getElementById("balanceMetric"),
+      marginMetric: document.getElementById("marginMetric"),
+      nextMetric: document.getElementById("nextMetric"),
+      filterEtapa: document.getElementById("filterEtapa"),
+      filterOperativo: document.getElementById("filterOperativo"),
+      filterCanal: document.getElementById("filterCanal"),
+      filterResponsable: document.getElementById("filterResponsable"),
+      filterPeriodoTipo: document.getElementById("filterPeriodoTipo"),
+      filterPeriodoValor: document.getElementById("filterPeriodoValor"),
+      filterSearch: document.getElementById("filterSearch"),
+      monthChart: document.getElementById("monthChart"),
+      alertsList: document.getElementById("alertsList"),
+      proposalRanking: document.getElementById("proposalRanking"),
+      themeRanking: document.getElementById("themeRanking"),
+      channelRanking: document.getElementById("channelRanking"),
+      ownerRanking: document.getElementById("ownerRanking"),
+      stageRanking: document.getElementById("stageRanking"),
+      tableContainer: document.getElementById("tableContainer"),
+      tableCount: document.getElementById("tableCount")
+    };
+
+    let records = loadRecords();
+
+    initDefaults();
+    render();
+    initCloudSync();
+
+    els.form.addEventListener("submit", handleSubmit);
+    els.resetFormBtn.addEventListener("click", () => {
+      els.form.reset();
+      initDefaults();
+      showMessage("", "");
+    });
+    els.exportBtn.addEventListener("click", exportCsv);
+    els.cloudBtn.addEventListener("click", configureCloud);
+    els.clearBtn.addEventListener("click", clearAll);
+    els.resetFiltersBtn.addEventListener("click", resetFilters);
+    [els.filterEtapa, els.filterOperativo, els.filterCanal, els.filterResponsable, els.filterPeriodoTipo, els.filterPeriodoValor].forEach(select => {
+      select.addEventListener("change", render);
+    });
+    els.filterSearch.addEventListener("input", render);
+    els.tableContainer.addEventListener("click", event => {
+      const button = event.target.closest("[data-delete]");
+      if (button) deleteRecord(button.dataset.delete);
+    });
+    els.tableContainer.addEventListener("change", event => {
+      const select = event.target.closest("[data-update-field]");
+      if (!select) return;
+      updateRecordField(select.dataset.recordId, select.dataset.updateField, select.value);
+    });
+
+    function initDefaults() {
+      document.getElementById("fechaCierre").value = new Date().toISOString().slice(0, 10);
+    }
+
+    function loadRecords() {
+      try {
+        return sanitizeRecords(JSON.parse(localStorage.getItem(STORAGE_KEY)) || []);
+      } catch {
+        return [];
+      }
+    }
+
+    function isSeedRecord(record) {
+      return record?.cliente === "Familia Ruiz" || record?.cliente === "Consulta ejemplo";
+    }
+
+    function sanitizeRecords(items) {
+      return Array.isArray(items) ? items.filter(record => record && record.id && !isSeedRecord(record)) : [];
+    }
+
+    function saveRecords() {
+      records = sanitizeRecords(records);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      syncLocalProcessEvents(records);
+      cloudUpsertRecords(records);
+      syncCloudProcessEvents(records);
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      const formData = new FormData(els.form);
+      const data = Object.fromEntries(formData.entries());
+      const error = validateForm(data);
+      if (error) {
+        showMessage(error, "error");
+        return;
+      }
+
+      records.unshift({
+        id: makeId(),
+        fechaCarga: new Date().toISOString(),
+        ...data,
+        fechaCierre: data.fechaCierre,
+        edadCumpleanero: toNumber(data.edadCumpleanero),
+        monto: toNumber(data.monto),
+        costo: toNumber(data.costo),
+        senia: toNumber(data.senia),
+        saldo: toNumber(data.saldo),
+        facturacion: data.facturacion || "Pendiente"
+      });
+
+      saveRecords();
+      els.form.reset();
+      initDefaults();
+      showMessage("Registro guardado. El dashboard ya se actualizó.", "ok");
+      render();
+    }
+
+    function validateForm(data) {
+      const required = ["fechaCierre", "cliente", "tipoEvento", "tematica", "canal", "etapa", "estadoOperativo", "responsable"];
+      const missing = required.filter(field => !String(data[field] || "").trim());
+      if (missing.length) return "Completá los campos obligatorios.";
+      if (data.fechaEvento && data.fechaEvento < data.fechaCierre) return "La fecha del evento no puede ser anterior al cierre.";
+      return "";
+    }
+
+    function showMessage(text, type) {
+      els.formMessage.textContent = text;
+      els.formMessage.className = `message ${type || ""}`;
+    }
+
+    function getFilteredRecords() {
+      const search = els.filterSearch.value.trim().toLowerCase();
+      return records.filter(record => {
+        const periodKey = getRecordPeriodKey(record, els.filterPeriodoTipo.value);
+        const text = [
+          record.cliente,
+          record.homenajeado,
+          record.propuesta,
+          record.tematica,
+          record.lugar,
+          record.incluye,
+          record.observaciones
+        ].join(" ").toLowerCase();
+        return (!els.filterEtapa.value || record.etapa === els.filterEtapa.value)
+          && (!els.filterOperativo.value || record.estadoOperativo === els.filterOperativo.value)
+          && (!els.filterCanal.value || record.canal === els.filterCanal.value)
+          && (!els.filterResponsable.value || record.responsable === els.filterResponsable.value)
+          && (!els.filterPeriodoValor.value || periodKey === els.filterPeriodoValor.value)
+          && (!search || text.includes(search));
+      });
+    }
+
+    function render() {
+      renderFilters();
+      const filtered = getFilteredRecords();
+      renderMetrics(filtered);
+      renderMonthChart(filtered);
+      renderAlerts(filtered);
+      renderRankings(filtered);
+      renderTable(filtered);
+    }
+
+    function renderMetrics(filtered) {
+      const visible = filtered;
+      const confirmed = visible.filter(isConfirmed);
+      const conversion = visible.length ? Math.round((confirmed.length / visible.length) * 100) : 0;
+      const revenue = sum(confirmed, "monto");
+      const balance = sum(visible.filter(record => isConfirmed(record) || ["Realizado", "Pagado completo"].includes(record.etapa)), "saldo");
+      const margin = revenue - sum(confirmed, "costo");
+      const next30 = visible.filter(isNext30Days).length;
+
+      els.totalMetric.textContent = visible.length;
+      els.confirmedMetric.textContent = confirmed.length;
+      els.conversionMetric.textContent = `${conversion}% conversión sobre registros`;
+      els.revenueMetric.textContent = money(revenue);
+      els.balanceMetric.textContent = money(balance);
+      els.marginMetric.textContent = money(margin);
+      els.nextMetric.textContent = next30;
+      els.tableCount.textContent = `${filtered.length} registros visibles`;
+    }
+
+    function renderFilters() {
+      const current = {
+        etapa: els.filterEtapa.value,
+        operativo: els.filterOperativo.value,
+        canal: els.filterCanal.value,
+        responsable: els.filterResponsable.value,
+        periodoTipo: els.filterPeriodoTipo.value,
+        periodoValor: els.filterPeriodoValor.value
+      };
+      setOptions(els.filterEtapa, unique(records.map(record => record.etapa)), "Todas");
+      setOptions(els.filterOperativo, unique(records.map(record => record.estadoOperativo)), "Todos");
+      setOptions(els.filterCanal, unique(records.map(record => record.canal)), "Todos");
+      setOptions(els.filterResponsable, unique([...RESPONSIBLE_OPTIONS, ...records.map(record => record.responsable)]), "Todos");
+      const periodType = current.periodoTipo || "todos";
+      els.filterPeriodoTipo.value = periodType;
+      const periodValues = periodType === "anual"
+        ? unique(records.map(record => getRecordPeriodKey(record, "anual")).filter(Boolean))
+        : unique(records.map(record => getRecordPeriodKey(record, "mensual")).filter(Boolean));
+      setOptions(els.filterPeriodoValor, periodValues, periodType === "anual" ? "Todos los años" : "Todos los meses");
+      els.filterEtapa.value = current.etapa;
+      els.filterOperativo.value = current.operativo;
+      els.filterCanal.value = current.canal;
+      els.filterResponsable.value = current.responsable;
+      els.filterPeriodoTipo.value = current.periodoTipo || "todos";
+      els.filterPeriodoValor.value = periodValues.includes(current.periodoValor) ? current.periodoValor : "";
+    }
+
+    function renderMonthChart(filtered) {
+      const grouped = groupBy(filtered, getRecordMonth, () => "");
+      if (!grouped.length) {
+        els.monthChart.innerHTML = `<div class="empty">Sin datos para mostrar.</div>`;
+        return;
+      }
+
+      const max = Math.max(...grouped.map(item => item.count));
+      els.monthChart.innerHTML = grouped
+        .sort((a, b) => a.key.localeCompare(b.key, "es"))
+        .slice(-8)
+        .map(item => {
+          const percentage = Math.max(8, Math.round((item.count / max) * 100));
+          const monthRecords = filtered.filter(record => getRecordMonth(record) === item.key);
+          const revenue = sum(monthRecords.filter(isConfirmed), "monto");
+          return `
+            <div class="month-row">
+              <div class="row-top">
+                <div class="row-title">${escapeHtml(formatMonth(item.key))}</div>
+                <div class="row-count">${item.count}  ${money(revenue)}</div>
+              </div>
+              <div class="bar"><span style="width:${percentage}%"></span></div>
+            </div>
+          `;
+        }).join("");
+    }
+
+    function renderAlerts(filtered) {
+      const alerts = [];
+      const noDeposit = filtered.filter(record => ["Presupuesto enviado", "Seguimiento"].includes(record.etapa) && !record.senia);
+      const noDate = filtered.filter(record => isConfirmed(record) && !record.fechaEvento);
+      const blocked = filtered.filter(record => record.estadoOperativo === "Trabado");
+      const catiLoad = filtered.filter(record => record.responsable === "Cati" && ["Consulta nueva", "Datos incompletos", "Presupuesto enviado", "Seguimiento"].includes(record.etapa));
+      const ximeLoad = filtered.filter(record => record.responsable.includes("Xime") && ["Compras pendientes", "En producción", "Listo para montar"].includes(record.estadoOperativo));
+
+      if (noDeposit.length) alerts.push({ title: "Propuestas sin sea", count: noDeposit.length, meta: "Seguimientos que pueden enfriarse.", tone: "rose" });
+      if (noDate.length) alerts.push({ title: "Eventos confirmados sin fecha", count: noDate.length, meta: "No deberían pasar a producción incompletos.", tone: "gold" });
+      if (blocked.length) alerts.push({ title: "Registros trabados", count: blocked.length, meta: "Requieren decisión o información.", tone: "red" });
+      if (catiLoad.length) alerts.push({ title: "Pendientes comerciales en Cati", count: catiLoad.length, meta: "Diseño, presupuesto o seguimiento.", tone: "teal" });
+      if (ximeLoad.length) alerts.push({ title: "Carga operativa en Xime", count: ximeLoad.length, meta: "Compras, producción o montaje.", tone: "green" });
+
+      if (!alerts.length) {
+        els.alertsList.innerHTML = `<div class="empty">No hay alertas con los filtros actuales.</div>`;
+        return;
+      }
+
+      const max = Math.max(...alerts.map(alert => alert.count));
+      els.alertsList.innerHTML = alerts.map(alert => {
+        const percentage = Math.max(10, Math.round((alert.count / max) * 100));
+        return `
+          <div class="rank-item">
+            <div class="rank-top">
+              <div class="rank-title">${escapeHtml(alert.title)}</div>
+              <div class="rank-count">${alert.count}</div>
+            </div>
+            <div class="rank-meta">${escapeHtml(alert.meta)}</div>
+            <div class="bar ${alert.tone === "rose" || alert.tone === "red" ? "rose" : alert.tone === "gold" ? "gold" : ""}"><span style="width:${percentage}%"></span></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderRankings(filtered) {
+      renderRanking(els.proposalRanking, groupBy(filtered, record => record.propuesta || "Sin definir", () => "Propuesta ofrecida"), "gold");
+      renderRanking(els.themeRanking, groupBy(filtered, record => record.tematica, record => record.tipoEvento), "rose");
+      renderRanking(els.channelRanking, groupBy(filtered, record => record.canal, () => "Origen de consulta"), "teal");
+      renderRanking(els.ownerRanking, groupBy(filtered, record => record.responsable, () => "Responsable actual"), "gold");
+      renderRanking(els.stageRanking, groupBy(filtered, record => record.etapa, () => "Etapa comercial"), "teal");
+    }
+
+    function renderRanking(container, ranking, tone) {
+      if (!ranking.length) {
+        container.innerHTML = `<div class="empty">Sin datos para mostrar.</div>`;
+        return;
+      }
+
+      const max = ranking[0].count;
+      container.innerHTML = ranking.slice(0, 7).map(item => {
+        const percentage = Math.max(8, Math.round((item.count / max) * 100));
+        return `
+          <div class="rank-item">
+            <div class="rank-top">
+              <div class="rank-title">${escapeHtml(item.key)}</div>
+              <div class="rank-count">${item.count}</div>
+            </div>
+            <div class="rank-meta">${escapeHtml(item.meta || "Total")}</div>
+            <div class="bar ${tone === "rose" ? "rose" : tone === "gold" ? "gold" : ""}"><span style="width:${percentage}%"></span></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderTable(filtered) {
+      if (!filtered.length) {
+        els.tableContainer.innerHTML = `<div class="empty">No hay registros con los filtros actuales.</div>`;
+        return;
+      }
+
+      const rows = filtered.map(record => `
+        <tr>
+          <td>${escapeHtml(formatDate(getRecordCloseDate(record)))}</td>
+          <td><input class="table-input" type="date" value="${escapeAttr(record.fechaEvento || "")}" data-record-id="${escapeAttr(record.id)}" data-update-field="fechaEvento" aria-label="Cambiar fecha de evento"></td>
+          <td>
+            <strong>${escapeHtml(record.cliente)}</strong><br>
+            <span class="small-note">${escapeHtml(record.homenajeado || "-")}${record.edadCumpleanero ? ` · ${record.edadCumpleanero} años` : ""}</span>
+          </td>
+          <td>${escapeHtml(record.propuesta || "-")}</td>
+          <td>${escapeHtml(record.tematica)}</td>
+          <td>
+            <select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="etapa" aria-label="Cambiar etapa comercial">
+              ${buildSelectOptions(COMMERCIAL_STAGES, record.etapa)}
+            </select>
+          </td>
+          <td>
+            <select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="estadoOperativo" aria-label="Cambiar estado operativo">
+              ${buildSelectOptions(OPERATIONAL_STATES, record.estadoOperativo)}
+            </select>
+          </td>
+          <td><select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="responsable" aria-label="Cambiar responsable">${buildSelectOptions(RESPONSIBLE_OPTIONS, record.responsable)}</select></td>
+          <td>${escapeHtml(record.canal)}</td>
+          <td><strong>${money(record.monto)}</strong><br><span class="small-note">Costo ${money(record.costo)}</span></td>
+          <td>${money(record.senia)}</td>
+          <td>${money(record.saldo)}</td>
+          <td><select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="facturacion" aria-label="Cambiar facturación">${buildSelectOptions(BILLING_OPTIONS, record.facturacion || "Pendiente")}</select></td>
+          <td>${escapeHtml(record.observaciones || "-")}</td>
+          <td><button class="icon-btn" type="button" title="Eliminar registro admin" data-delete="${record.id}">&times;</button></td>
+        </tr>
+      `).join("");
+
+      els.tableContainer.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cierre</th>
+                <th>Evento</th>
+                <th>Cliente</th>
+                <th>Propuesta</th>
+                <th>Temática</th>
+                <th>Etapa</th>
+                <th>Operativo</th>
+                <th>Responsable</th>
+                <th>Canal</th>
+                <th>Monto</th>
+                <th>Seña</th>
+                <th>Saldo</th>
+                <th>Facturación</th>
+                <th>Observaciones</th>
+                <th>Admin</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function updateRecordField(id, field, value) {
+      if (!["etapa", "estadoOperativo", "responsable", "fechaEvento", "facturacion"].includes(field)) return;
+      const record = records.find(item => item.id === id);
+      if (!record) return;
+      record[field] = value;
+      record.updatedAt = new Date().toISOString();
+      saveRecords();
+      render();
+    }
+
+    function deleteRecord(id) {
+      if (!confirmAdminAccess("eliminar este registro")) return;
+      if (!confirm("¿Eliminar este registro?")) return;
+      records = records.filter(record => record.id !== id);
+      saveRecords();
+      cloudDeleteRecord(id);
+      cloudDeleteProcessEvent(id);
+      deleteLocalProcessEvent(id);
+      render();
+    }
+
+    function exportCsv() {
+      if (!confirmAdminAccess("exportar los datos")) return;
+      if (!records.length) {
+        alert("No hay datos para exportar.");
+        return;
+      }
+
+      const headers = [
+        "Fecha carga",
+        "Fecha cierre",
+        "Fecha evento",
+        "Cliente",
+        "Homenajeado",
+        "Edad cumpleañero",
+        "Tipo evento",
+        "Propuesta",
+        "Temática",
+        "Canal",
+        "Etapa comercial",
+        "Estado operativo",
+        "Responsable",
+        "Monto vendido",
+        "Costo estimado",
+        "Seña cobrada",
+        "Saldo pendiente",
+        "Facturación",
+        "Lugar",
+        "Incluye",
+        "Observaciones"
+      ];
+      const rows = records.map(record => [
+        formatDateTime(record.fechaCarga),
+        getRecordCloseDate(record),
+        record.fechaEvento,
+        record.cliente,
+        record.homenajeado,
+        record.edadCumpleanero || "",
+        record.tipoEvento,
+        record.propuesta,
+        record.tematica,
+        record.canal,
+        record.etapa,
+        record.estadoOperativo,
+        record.responsable,
+        record.monto,
+        record.costo,
+        record.senia,
+        record.saldo,
+        record.facturacion || "Pendiente",
+        record.lugar,
+        record.incluye,
+        record.observaciones
+      ]);
+      const csv = [headers, ...rows]
+        .map(row => row.map(cell => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(";"))
+        .join("\n");
+      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `happy-deco-dashboard-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function clearAll() {
+      if (!confirmAdminAccess("limpiar todos los datos")) return;
+      if (!records.length) {
+        alert("No hay datos para limpiar.");
+        return;
+      }
+      if (!confirm("Esta acción elimina todos los registros guardados en este navegador. ¿Continuar?")) return;
+      const ids = records.map(record => record.id);
+      records = [];
+      saveRecords();
+      ids.forEach(id => {
+        cloudDeleteRecord(id);
+        cloudDeleteProcessEvent(id);
+        deleteLocalProcessEvent(id);
+      });
+      render();
+    }
+
+    function confirmAdminAccess(actionText) {
+      const password = prompt(`Acceso administrativo requerido para ${actionText}. Ingresá la contraseña:`);
+      if (password === null) return false;
+      if (password === ADMIN_PASSWORD) return true;
+      alert("Contrase?a incorrecta.");
+      return false;
+    }
+
+    function getCloudConfig() {
+      try {
+        const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
+        const activeConfig = config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
+        if (!activeConfig.url || !activeConfig.anonKey) return null;
+        return {
+          url: String(activeConfig.url).replace(/\/$/, ""),
+          anonKey: String(activeConfig.anonKey)
+        };
+      } catch {
+        return DEFAULT_CLOUD_CONFIG;
+      }
+    }
+
+    function configureCloud() {
+      const current = getCloudConfig() || {};
+      const url = prompt("URL del proyecto Supabase:", current.url || "");
+      if (url === null) return;
+      const anonKey = prompt("Anon public key de Supabase:", current.anonKey || "");
+      if (anonKey === null) return;
+      localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify({ url: url.trim(), anonKey: anonKey.trim() }));
+      alert("Nube configurada. Voy a sincronizar los datos compartidos.");
+      initCloudSync(true);
+    }
+
+    async function cloudRequest(path, options = {}) {
+      const config = getCloudConfig();
+      if (!config) return null;
+      const response = await fetch(`${config.url}/rest/v1/${path}`, {
+        ...options,
+        headers: {
+          apikey: config.anonKey,
+          Authorization: `Bearer ${config.anonKey}`,
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      });
+      if (!response.ok) throw new Error(await response.text());
+      if (response.status === 204) return null;
+      return response.json();
+    }
+
+    async function pullCloudRecords() {
+      const config = getCloudConfig();
+      if (!config) return;
+      try {
+        const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`);
+        if (!Array.isArray(rows)) return;
+        records = sanitizeRecords(rows.map(row => row.data));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        render();
+        els.cloudBtn.textContent = "Nube activa";
+      } catch (error) {
+        els.cloudBtn.textContent = "Error nube";
+        console.error("No pude sincronizar dashboard", error);
+      }
+    }
+
+    async function cloudUpsertRecords(items) {
+      const cleanItems = sanitizeRecords(items);
+      if (!getCloudConfig() || !cleanItems.length) return;
+      try {
+        const rows = cleanItems.map(record => ({
+          id: record.id,
+          data: { ...record, updatedAt: record.updatedAt || new Date().toISOString() },
+          updated_at: record.updatedAt || new Date().toISOString()
+        }));
+        await cloudRequest(DASHBOARD_TABLE, {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify(rows)
+        });
+      } catch (error) {
+        console.error("No pude guardar en nube", error);
+      }
+    }
+
+    function syncLocalProcessEvents(items) {
+      const cleanItems = sanitizeRecords(items);
+      try {
+        const currentEvents = JSON.parse(localStorage.getItem("happyDecoEvents") || "[]");
+        const eventMap = new Map(Array.isArray(currentEvents) ? currentEvents.map(event => [event.id, event]) : []);
+        cleanItems.forEach(record => {
+          eventMap.set(record.id, recordToProcessEvent(record, eventMap.get(record.id)));
+        });
+        localStorage.setItem("happyDecoEvents", JSON.stringify([...eventMap.values()]));
+      } catch (error) {
+        console.error("No pude sincronizar proceso local", error);
+      }
+    }
+
+    function deleteLocalProcessEvent(id) {
+      try {
+        const currentEvents = JSON.parse(localStorage.getItem("happyDecoEvents") || "[]");
+        if (!Array.isArray(currentEvents)) return;
+        localStorage.setItem("happyDecoEvents", JSON.stringify(currentEvents.filter(event => event.id !== id)));
+      } catch (error) {
+        console.error("No pude eliminar proceso local", error);
+      }
+    }
+
+    async function syncCloudProcessEvents(items) {
+      const cleanItems = sanitizeRecords(items);
+      if (!getCloudConfig() || !cleanItems.length) return;
+      try {
+        const rows = await cloudRequest(`${PROCESS_TABLE}?select=id,data`);
+        const eventMap = new Map(Array.isArray(rows) ? rows.map(row => [row.id, row.data]) : []);
+        const payload = cleanItems.map(record => {
+          const event = recordToProcessEvent(record, eventMap.get(record.id));
+          return {
+            id: record.id,
+            data: event,
+            updated_at: event.updatedAt || new Date().toISOString()
+          };
+        });
+        await cloudRequest(PROCESS_TABLE, {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify(payload)
+        });
+      } catch (error) {
+        console.error("No pude sincronizar dashboard con proceso", error);
+      }
+    }
+
+    async function cloudDeleteProcessEvent(id) {
+      if (!getCloudConfig() || !id) return;
+      try {
+        await cloudRequest(`${PROCESS_TABLE}?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+      } catch (error) {
+        console.error("No pude eliminar evento del proceso", error);
+      }
+    }
+
+    function recordToProcessEvent(record, existing = {}) {
+      const closeDate = getRecordCloseDate(record);
+      return {
+        ...existing,
+        id: record.id,
+        source: "dashboard",
+        client: record.cliente || existing.client || "Nuevo evento",
+        child: record.homenajeado || existing.child || "",
+        age: record.edadCumpleanero || existing.age || "",
+        date: record.fechaEvento || existing.date || "",
+        closeDate,
+        time: existing.time || "",
+        place: record.lugar || existing.place || "",
+        theme: record.tematica || existing.theme || "",
+        package: record.incluye || record.propuesta || existing.package || "",
+        budget: record.monto ? money(record.monto) : existing.budget || "",
+        deposit: record.senia ? money(record.senia) : existing.deposit || "Pendiente",
+        balance: record.saldo ? money(record.saldo) : existing.balance || "Pendiente",
+        billing: record.facturacion || existing.billing || "Pendiente",
+        status: processStatusFromRecord(record, existing.status),
+        notes: existing.notes || record.observaciones || "",
+        commercialNotes: existing.commercialNotes || buildCommercialNotes(record),
+        productionNotes: existing.productionNotes || "",
+        checks: existing.checks || {},
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function processStatusFromRecord(record, fallback = "consulta") {
+      if (["Cancelado"].includes(record.etapa)) return "trabado";
+      if (["Realizado", "Pagado completo"].includes(record.etapa) || record.estadoOperativo === "Realizado") return "cerrado";
+      if (["Listo para montar"].includes(record.estadoOperativo)) return "montaje";
+      if (["Compras pendientes", "En producción", "Listo para producir"].includes(record.estadoOperativo)) return "produccion";
+      if (["Señado"].includes(record.etapa)) return "traspaso";
+      if (["Presupuesto enviado", "Seguimiento"].includes(record.etapa)) return "diseno";
+      return fallback || "consulta";
+    }
+
+    function buildCommercialNotes(record) {
+      return [
+        record.propuesta ? `Propuesta: ${record.propuesta}` : "",
+        record.canal ? `Canal: ${record.canal}` : "",
+        record.facturacion ? `Facturación: ${record.facturacion}` : ""
+      ].filter(Boolean).join(" - ");
+    }
+
+    async function cloudDeleteRecord(id) {
+      if (!getCloudConfig() || !id) return;
+      try {
+        await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+      } catch (error) {
+        console.error("No pude eliminar en nube", error);
+      }
+    }
+
+    function initCloudSync(force = false) {
+      if (!getCloudConfig()) {
+        els.cloudBtn.textContent = "Configurar nube";
+        return;
+      }
+      els.cloudBtn.textContent = "Nube activa";
+      pullCloudRecords();
+      if (force || !window.happyDecoCloudTimer) {
+        window.happyDecoCloudTimer = setInterval(pullCloudRecords, 3000);
+      }
+      if (!window.happyDecoCloudFocusHandlers) {
+        window.happyDecoCloudFocusHandlers = true;
+        window.addEventListener("focus", pullCloudRecords);
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) pullCloudRecords();
+        });
+      }
+    }
+
+    function resetFilters() {
+      [els.filterEtapa, els.filterOperativo, els.filterCanal, els.filterResponsable, els.filterPeriodoTipo, els.filterPeriodoValor].forEach(select => {
+        select.value = "";
+      });
+      els.filterSearch.value = "";
+      render();
+    }
+
+    function setOptions(select, values, emptyLabel) {
+      const current = select.value;
+      select.innerHTML = `<option value="">${emptyLabel}</option>` + values.map(value => `<option value="${escapeAttr(value)}">${escapeHtml(value)}</option>`).join("");
+      select.value = values.includes(current) ? current : "";
+    }
+
+    function buildSelectOptions(baseOptions, currentValue) {
+      const options = unique([...baseOptions, currentValue]);
+      return options.map(option => {
+        const selected = option === currentValue ? " selected" : "";
+        return `<option value="${escapeAttr(option)}"${selected}>${escapeHtml(option)}</option>`;
+      }).join("");
+    }
+
+    function unique(values) {
+      return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, "es"));
+    }
+
+    function groupBy(items, keyFn, metaFn) {
+      const map = new Map();
+      items.forEach(item => {
+        const key = keyFn(item);
+        if (!key) return;
+        if (!map.has(key)) {
+          map.set(key, { key, count: 0, meta: metaFn(item), sample: item });
+        }
+        map.get(key).count += 1;
+      });
+      return [...map.values()].sort((a, b) => b.count - a.count || a.key.localeCompare(b.key, "es"));
+    }
+
+    function getRecordCloseDate(record) {
+      return record.fechaCierre || record.fechaConsulta || "";
+    }
+
+    function getRecordMonth(record) {
+      const date = getRecordCloseDate(record) || record.fechaEvento;
+      return date ? date.slice(0, 7) : "";
+    }
+
+    function getRecordPeriodKey(record, type) {
+      const date = getRecordCloseDate(record) || record.fechaEvento;
+      if (!date) return "";
+      return type === "anual" ? date.slice(0, 4) : date.slice(0, 7);
+    }
+
+    function isConfirmed(record) {
+      return ["Señado", "Realizado"].includes(record.etapa);
+    }
+
+    function isNext30Days(record) {
+      if (!record.fechaEvento || record.etapa === "Cancelado" || record.estadoOperativo === "Realizado") return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const eventDate = new Date(`${record.fechaEvento}T00:00:00`);
+      const diff = (eventDate - today) / 86400000;
+      return diff >= 0 && diff <= 30;
+    }
+
+    function sum(items, field) {
+      return items.reduce((total, item) => total + toNumber(item[field]), 0);
+    }
+
+    function toNumber(value) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function money(value) {
+      return new Intl.NumberFormat("es-AR", {
+        style: "currency",
+        currency: "ARS",
+        maximumFractionDigits: 0
+      }).format(toNumber(value));
+    }
+
+    function formatDate(value) {
+      if (!value) return "";
+      const date = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function formatDateTime(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value || "";
+      return date.toLocaleString("es-AR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function formatMonth(value) {
+      const date = new Date(`${value}-01T00:00:00`);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString("es-AR", { month: "long", year: "numeric" });
+    }
+
+    function tagTone(value) {
+      if (["Realizado", "Listo para montar"].includes(value)) return "green";
+      if (["Trabado", "Compras pendientes"].includes(value)) return "red";
+      if (["En producción", "Listo para producir"].includes(value)) return "gold";
+      return "";
+    }
+
+    function makeId() {
+      if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+      return `registro-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/\n/g, " ");
+    }
+  </script>
+</body>
+</html>

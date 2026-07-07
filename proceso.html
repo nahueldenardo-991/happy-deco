@@ -1,0 +1,1258 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Happy Deco - Tablero de eventos</title>
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --panel: #fffaf2;
+      --ink: #24201d;
+      --muted: #766d65;
+      --line: #dfd4c7;
+      --rose: #d8657d;
+      --rose-quiet: #f9dce2;
+      --teal: #298b85;
+      --teal-quiet: #d8efec;
+      --gold: #b9822f;
+      --gold-quiet: #f5e5c9;
+      --green: #3f8f56;
+      --green-quiet: #dff1e4;
+      --red: #b84b4b;
+      --red-quiet: #f5dada;
+      --shadow: 0 16px 40px rgba(41, 31, 22, .10);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 280px;
+    }
+
+    .brand-mark {
+      width: 96px;
+      min-width: 96px;
+      height: 56px;
+      border-radius: 14px;
+      background: #86dfe3;
+      border: 3px solid #fff;
+      box-shadow: 0 10px 24px rgba(41, 139, 133, .18);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .primary, .ghost, .danger {
+      min-height: 40px;
+      border-radius: 8px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .primary {
+      color: #fff;
+      background: var(--teal);
+    }
+
+    .ghost {
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+    }
+
+    .danger {
+      background: var(--red-quiet);
+      color: var(--red);
+    }
+
+    main {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 22px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+    }
+
+    .sidebar, .detail {
+      min-width: 0;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar .panel {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .filters {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .search {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 11px;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(41, 139, 133, .15);
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .tab {
+      min-height: 34px;
+      border-radius: 8px;
+      background: #f3ece2;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tab.active {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .event-list {
+      padding: 10px;
+      display: grid;
+      gap: 10px;
+      max-height: calc(100vh - 210px);
+      overflow: auto;
+    }
+
+    .event-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 9px;
+      text-align: left;
+      color: inherit;
+    }
+
+    .event-card.active {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(41, 139, 133, .14);
+    }
+
+    .event-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .event-name {
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .event-meta {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .status {
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .status.consulta { background: var(--gold-quiet); color: var(--gold); }
+    .status.diseno { background: var(--rose-quiet); color: var(--rose); }
+    .status.produccion { background: var(--teal-quiet); color: var(--teal); }
+    .status.montaje { background: #e9e2fa; color: #6650a4; }
+    .status.cerrado { background: var(--green-quiet); color: var(--green); }
+    .status.trabado { background: var(--red-quiet); color: var(--red); }
+
+    .progress {
+      height: 8px;
+      background: #eee5da;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--green));
+    }
+
+    .empty {
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .detail-shell {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.12;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--panel);
+      min-height: 82px;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 18px;
+      margin-top: 5px;
+    }
+
+    .workflow {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      overflow: visible;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      overflow: visible;
+      padding: 2px;
+    }
+
+    .stage {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      min-height: 150px;
+      align-content: start;
+    }
+
+    .stage.complete {
+      border-color: rgba(63, 143, 86, .5);
+      background: var(--green-quiet);
+    }
+
+    .stage.blocked {
+      border-color: rgba(184, 75, 75, .45);
+      background: var(--red-quiet);
+    }
+
+    .stage-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: flex-start;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .stage-title span:first-child {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .owner {
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 11px;
+      font-weight: 900;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 8px;
+      align-items: start;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .check input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--teal);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .handoff {
+      display: grid;
+      gap: 10px;
+    }
+
+    .handoff-row {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      background: var(--panel);
+    }
+
+    .handoff-row strong {
+      display: block;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .alert {
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--red-quiet);
+      color: var(--red);
+      font-weight: 800;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1050px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .event-list {
+        max-height: none;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar, .hero-head, .footer-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .actions {
+        justify-content: stretch;
+      }
+
+      .actions > button {
+        flex: 1 1 150px;
+      }
+
+      main {
+        padding: 14px;
+      }
+
+      .event-list, .hero-grid, .two-col, .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+        overflow-x: visible;
+      }
+
+      .hero h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-mark"><img src="data:image/png;base64,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" alt="Happy Deco"></div>
+          <div>
+            <h1>Happy Deco</h1>
+            <div class="subtitle">Tablero operativo de eventos</div>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="ghost" href="../">Ver dashboard</a>
+          <button class="ghost" id="cloudBtn" type="button">Configurar nube</button>
+          <button class="ghost" id="exportBtn" type="button">Exportar datos</button>
+          <button class="ghost" id="importBtn" type="button">Importar</button>
+          <button class="primary" id="newBtn" type="button">Nuevo evento</button>
+          <input id="importFile" type="file" accept="application/json" hidden>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <aside class="sidebar">
+        <div class="panel">
+          <div class="filters">
+            <div class="search">
+              <label for="search">Buscar evento</label>
+              <input id="search" type="search" placeholder="Cliente, temática, homenajeado">
+            </div>
+            <div class="tabs" aria-label="Filtros">
+              <button class="tab active" data-filter="todos" type="button">Todos</button>
+              <button class="tab" data-filter="activos" type="button">Activos</button>
+              <button class="tab" data-filter="trabados" type="button">Trabados</button>
+              <button class="tab" data-filter="cerrados" type="button">Cerrados</button>
+            </div>
+          </div>
+          <div class="event-list" id="eventList"></div>
+        </div>
+      </aside>
+
+      <section class="detail" id="detail"></section>
+    </main>
+  </div>
+
+  <script>
+    const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
+    const DEFAULT_CLOUD_CONFIG = {
+      url: "https://niwkiklxyblrvbeusqbd.supabase.co",
+      anonKey: "sb_publishable_BZOa1hRBnH0KWocgyCZmfw_-lrLIgGd"
+    };
+    const PROCESS_TABLE = "happy_deco_process_events";
+
+    const stages = [
+      {
+        id: "consulta",
+        title: "Consulta",
+        owner: "Cati",
+        checks: [
+          "Datos básicos",
+          "Fecha y lugar definido",
+          "Temática definida",
+          "Seña registrada"
+        ]
+      },
+      {
+        id: "diseno",
+        title: "Diseño y venta",
+        owner: "Cati",
+        checks: [
+          "Moodboard del evento",
+          "Posible evento",
+          "Boceto en producción"
+        ]
+      },
+      {
+        id: "traspaso",
+        title: "Traspaso a producción",
+        owner: "Cati + Xime",
+        checks: [
+          "Imprenta pedida",
+          "Nombre y boceto listo",
+          "Facturación de seña"
+        ]
+      },
+      {
+        id: "produccion",
+        title: "Producción",
+        owner: "Xime + Juli",
+        checks: [
+          "Compras realizadas",
+          "Materiales preparados",
+          "Personajes/listas impresas",
+          "Carga planificada"
+        ]
+      },
+      {
+        id: "montaje",
+        title: "Montaje y cierre",
+        owner: "Xime + Juli",
+        checks: [
+          "Montaje realizado",
+          "Fotos guardadas para redes",
+          "Desmontaje completado",
+          "Saldo/facturación cerrados"
+        ]
+      }
+    ];
+
+    const seedEvents = [];
+
+    const state = {
+      events: loadEvents(),
+      selectedId: null,
+      filter: "todos",
+      query: ""
+    };
+
+    state.selectedId = state.events[0]?.id || null;
+
+    const eventList = document.querySelector("#eventList");
+    const detail = document.querySelector("#detail");
+    const search = document.querySelector("#search");
+
+    document.querySelector("#newBtn").addEventListener("click", createEvent);
+    document.querySelector("#exportBtn").addEventListener("click", exportData);
+    document.querySelector("#cloudBtn").addEventListener("click", configureCloud);
+    document.querySelector("#importBtn").addEventListener("click", () => document.querySelector("#importFile").click());
+    document.querySelector("#importFile").addEventListener("change", importData);
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        state.filter = tab.dataset.filter;
+        document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
+        render();
+      });
+    });
+
+    search.addEventListener("input", () => {
+      state.query = search.value.trim().toLowerCase();
+      render();
+    });
+
+    render();
+    initCloudSync();
+
+    function loadEvents() {
+      try {
+        return sanitizeEvents(JSON.parse(localStorage.getItem("happyDecoEvents") || "[]"));
+      } catch {
+        return [];
+      }
+    }
+
+    function isSeedEvent(event) {
+      return event?.client === "Ejemplo - Familia Ruiz";
+    }
+
+    function sanitizeEvents(items) {
+      return Array.isArray(items) ? items.filter(event => event && event.id && !isSeedEvent(event)) : [];
+    }
+
+    function saveEvents() {
+      state.events = sanitizeEvents(state.events);
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      cloudUpsertEvents(state.events);
+    }
+
+    function createEvent() {
+      const event = {
+        id: makeId(),
+        client: "Nuevo evento",
+        child: "",
+        date: "",
+        time: "",
+        place: "",
+        theme: "",
+        package: "",
+        budget: "",
+        deposit: "",
+        balance: "",
+        status: "consulta",
+        notes: "",
+        commercialNotes: "",
+        productionNotes: "",
+        checks: {},
+        updatedAt: new Date().toISOString()
+      };
+      state.events.unshift(event);
+      state.selectedId = event.id;
+      saveEvents();
+      render();
+    }
+
+    function deleteSelected() {
+      const current = getSelected();
+      if (!current) return;
+      const ok = confirm(`¿Eliminar el evento de ${current.client}?`);
+      if (!ok) return;
+      state.events = state.events.filter((event) => event.id !== current.id);
+      state.selectedId = state.events[0]?.id || null;
+      saveEvents();
+      cloudDeleteEvent(current.id);
+      render();
+    }
+
+    function getSelected() {
+      return state.events.find((event) => event.id === state.selectedId);
+    }
+
+    function filteredEvents() {
+      return state.events.filter((event) => {
+        const text = [event.client, event.child, event.place, event.theme, event.package].join(" ").toLowerCase();
+        const matchesQuery = !state.query || text.includes(state.query);
+        const progress = getProgress(event);
+        const isBlocked = getBlockers(event).length > 0;
+        const matchesFilter =
+          state.filter === "todos" ||
+          (state.filter === "activos" && event.status !== "cerrado") ||
+          (state.filter === "trabados" && isBlocked) ||
+          (state.filter === "cerrados" && event.status === "cerrado");
+        return matchesQuery && matchesFilter;
+      });
+    }
+
+    function getProgress(event) {
+      const total = stages.reduce((sum, stage) => sum + stage.checks.length, 0);
+      const done = stages.reduce((sum, stage) => {
+        return sum + stage.checks.filter((_, index) => event.checks?.[`${stage.id}-${index}`]).length;
+      }, 0);
+      return Math.round((done / total) * 100);
+    }
+
+    function stageProgress(event, stage) {
+      const done = stage.checks.filter((_, index) => event.checks?.[`${stage.id}-${index}`]).length;
+      return { done, total: stage.checks.length };
+    }
+
+    function getBlockers(event) {
+      const blockers = [];
+      const diseno = stageProgress(event, stages[1]);
+      const traspaso = stageProgress(event, stages[2]);
+      const produccion = stageProgress(event, stages[3]);
+      const montaje = stageProgress(event, stages[4]);
+
+      if (event.status === "produccion" && traspaso.done < traspaso.total) {
+        blockers.push("Producción arrancó sin ficha operativa completa.");
+      }
+      if (event.status === "montaje" && produccion.done < produccion.total) {
+        blockers.push("Montaje cercano con producción incompleta.");
+      }
+      if (diseno.done >= 2 && isPendingMoney(event.deposit)) {
+        blockers.push("Hay propuesta avanzada sin seña registrada.");
+      }
+      if (!event.date) {
+        blockers.push("Falta fecha del evento.");
+      }
+      if (!event.place && event.status !== "consulta") {
+        blockers.push("Falta lugar confirmado.");
+      }
+      if (montaje.done === montaje.total && isPendingMoney(event.balance)) {
+        blockers.push("Evento cerrado operativamente con saldo pendiente.");
+      }
+      return blockers;
+    }
+
+    function render() {
+      renderList();
+      renderDetail();
+    }
+
+    function renderList() {
+      const items = filteredEvents();
+      if (!items.length) {
+        eventList.innerHTML = `<div class="empty">No hay eventos para este filtro.</div>`;
+        return;
+      }
+      eventList.innerHTML = items.map((event) => {
+        const progress = getProgress(event);
+        const blockers = getBlockers(event);
+        const status = blockers.length ? "trabado" : event.status;
+        return `
+          <button class="event-card ${event.id === state.selectedId ? "active" : ""}" data-id="${event.id}" type="button">
+            <div class="event-top">
+              <div>
+                <div class="event-name">${escapeHtml(event.client || "Sin cliente")}</div>
+                <div class="event-meta">${escapeHtml(event.theme || "Sin temática")} ${event.date ? "· " + formatDate(event.date) : ""}</div>
+              </div>
+              <span class="status ${status}">${statusLabel(status)}</span>
+            </div>
+            <div class="progress"><span style="width:${progress}%"></span></div>
+            <div class="event-meta">${progress}% completo · ${escapeHtml(event.child || "Sin homenajeado")}</div>
+          </button>
+        `;
+      }).join("");
+
+      eventList.querySelectorAll(".event-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          state.selectedId = card.dataset.id;
+          render();
+        });
+      });
+    }
+
+    function renderDetail() {
+      const event = getSelected();
+      if (!event) {
+        detail.innerHTML = `<div class="empty panel">Creá un evento para empezar.</div>`;
+        return;
+      }
+
+      const progress = getProgress(event);
+      const blockers = getBlockers(event);
+
+      detail.innerHTML = `
+        <div class="detail-shell">
+          <div class="hero">
+            <div class="hero-head">
+              <div>
+                <h2>${escapeHtml(event.client || "Sin cliente")}</h2>
+                <div class="subtitle">${escapeHtml(event.theme || "Sin temática")} ${event.child ? "· " + escapeHtml(event.child) : ""}</div>
+              </div>
+              <div class="actions">
+                <button class="ghost" id="duplicateEvent" type="button">Duplicar</button>
+                <button class="danger" id="deleteEvent" type="button">Eliminar</button>
+              </div>
+            </div>
+            <div class="alert ${blockers.length ? "show" : ""}">
+              ${blockers.map(escapeHtml).join("<br>")}
+            </div>
+            <div class="hero-grid">
+              <div class="metric"><label>Avance</label><b>${progress}%</b></div>
+              <div class="metric"><label>Fecha</label><b>${event.date ? formatDate(event.date) : "Sin fecha"}</b></div>
+              <div class="metric"><label>Estado</label><b>${statusLabel(blockers.length ? "trabado" : event.status)}</b></div>
+              <div class="metric"><label>Seña</label><b>${escapeHtml(event.deposit || "Pendiente")}</b></div>
+            </div>
+          </div>
+
+          <div class="workflow">
+            <div class="section-title">
+              <h3>Flujo del evento</h3>
+              <span class="hint">Cada bloque tiene responsable, entregables y checks visibles.</span>
+            </div>
+            <div class="flow">
+              ${stages.map((stage) => renderStage(event, stage)).join("")}
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="form-panel">
+              <div class="section-title">
+                <h3>Ficha del evento</h3>
+              </div>
+              <div class="form-grid">
+                ${field("client", "Cliente", event.client)}
+                ${field("child", "Homenajeado/a", event.child)}
+                ${field("date", "Fecha", event.date, "date")}
+                ${field("time", "Hora", event.time, "time")}
+                ${field("place", "Lugar", event.place)}
+                ${field("theme", "Temática", event.theme)}
+                ${field("budget", "Monto/presupuesto", event.budget)}
+                ${field("deposit", "Seña", event.deposit)}
+                ${field("balance", "Saldo", event.balance)}
+                <div>
+                  <label for="status">Estado manual</label>
+                  <select id="status" data-field="status">
+                    ${["consulta", "diseno", "produccion", "montaje", "cerrado"].map((status) => `
+                      <option value="${status}" ${event.status === status ? "selected" : ""}>${statusLabel(status)}</option>
+                    `).join("")}
+                  </select>
+                </div>
+                ${area("package", "Elementos vendidos", event.package, "full")}
+                ${area("notes", "Notas generales", event.notes, "full")}
+              </div>
+            </div>
+
+            <div class="form-panel">
+              <div class="section-title">
+                <h3>Traspasos claros</h3>
+              </div>
+              <div class="handoff">
+                <div class="handoff-row">
+                  <strong>Cati entrega a Xime</strong>
+                  <span class="hint">Ficha completa, propuesta vendida, elementos incluidos, seña y referencias visuales.</span>
+                </div>
+                <div class="handoff-row">
+                  <strong>Xime devuelve a Cati</strong>
+                  <span class="hint">Factibilidad, faltantes, cambios necesarios, tiempos de producción y fotos finales.</span>
+                </div>
+                <div class="handoff-row">
+                  <strong>Juli aprende con checklist</strong>
+                  <span class="hint">Preparación, armado, terminaciones, carga, descarga y orden posterior.</span>
+                </div>
+              </div>
+              ${area("commercialNotes", "Notas comerciales / Cati", event.commercialNotes)}
+              ${area("productionNotes", "Notas producción / Xime y Juli", event.productionNotes)}
+            </div>
+          </div>
+
+          <div class="footer-actions">
+            <span class="hint">Los datos quedan guardados en este navegador. Usá Exportar para compartir o hacer backup.</span>
+            <button class="primary" id="saveNow" type="button">Guardar cambios</button>
+          </div>
+        </div>
+      `;
+
+      detail.querySelectorAll("[data-field]").forEach((input) => {
+        input.addEventListener("input", () => updateField(input.dataset.field, input.value));
+      });
+
+      detail.querySelectorAll("[data-check]").forEach((input) => {
+        input.addEventListener("change", () => updateCheck(input.dataset.check, input.checked));
+      });
+
+      detail.querySelector("#deleteEvent").addEventListener("click", deleteSelected);
+      detail.querySelector("#duplicateEvent").addEventListener("click", duplicateSelected);
+      detail.querySelector("#saveNow").addEventListener("click", () => {
+        saveEvents();
+        render();
+      });
+    }
+
+    function renderStage(event, stage) {
+      const progress = stageProgress(event, stage);
+      const complete = progress.done === progress.total;
+      const blocked = getBlockers(event).some((text) => {
+        if (stage.id === "traspaso") return text.includes("ficha operativa");
+        if (stage.id === "produccion") return text.includes("producción incompleta");
+        if (stage.id === "consulta") return text.includes("fecha") || text.includes("lugar");
+        if (stage.id === "diseno") return text.includes("seña");
+        if (stage.id === "montaje") return text.includes("saldo");
+        return false;
+      });
+
+      return `
+        <div class="stage ${complete ? "complete" : ""} ${blocked ? "blocked" : ""}">
+          <div class="stage-title">
+            <span>${stage.title}</span>
+            <span class="owner">${stage.owner}</span>
+          </div>
+          <div class="progress"><span style="width:${Math.round((progress.done / progress.total) * 100)}%"></span></div>
+          <div class="checklist">
+            ${stage.checks.map((text, index) => {
+              const key = `${stage.id}-${index}`;
+              return `
+                <label class="check">
+                  <input type="checkbox" data-check="${key}" ${event.checks?.[key] ? "checked" : ""}>
+                  <span>${escapeHtml(text)}</span>
+                </label>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function field(name, labelText, value, type = "text") {
+      return `
+        <div>
+          <label for="${name}">${labelText}</label>
+          <input id="${name}" data-field="${name}" type="${type}" value="${escapeAttr(value || "")}">
+        </div>
+      `;
+    }
+
+    function area(name, labelText, value, extraClass = "") {
+      return `
+        <div class="${extraClass}">
+          <label for="${name}">${labelText}</label>
+          <textarea id="${name}" data-field="${name}">${escapeHtml(value || "")}</textarea>
+        </div>
+      `;
+    }
+
+    function updateField(fieldName, value) {
+      const event = getSelected();
+      if (!event) return;
+      event[fieldName] = value;
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      renderList();
+    }
+
+    function updateCheck(key, checked) {
+      const event = getSelected();
+      if (!event) return;
+      event.checks = event.checks || {};
+      event.checks[key] = checked;
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      render();
+    }
+
+    function duplicateSelected() {
+      const event = getSelected();
+      if (!event) return;
+      const copy = {
+        ...structuredClone(event),
+        id: makeId(),
+        client: `${event.client} - copia`,
+        status: "consulta",
+        checks: {},
+        updatedAt: new Date().toISOString()
+      };
+      state.events.unshift(copy);
+      state.selectedId = copy.id;
+      saveEvents();
+      render();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(state.events, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `happy-deco-eventos-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function makeId() {
+      if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+      return `evento-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function isPendingMoney(value) {
+      const text = String(value || "").trim().toLowerCase();
+      return !text || ["pendiente", "no", "sin pagar", "falta", "adeuda"].some((word) => text.includes(word));
+    }
+
+    function importData(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!Array.isArray(data)) throw new Error("Formato inválido");
+          state.events = data;
+          state.selectedId = state.events[0]?.id || null;
+          saveEvents();
+          render();
+        } catch {
+          alert("No pude importar el archivo. Revisá que sea un JSON exportado desde este tablero.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function getCloudConfig() {
+      try {
+        const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
+        const activeConfig = config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
+        if (!activeConfig.url || !activeConfig.anonKey) return null;
+        return {
+          url: String(activeConfig.url).replace(/\/$/, ""),
+          anonKey: String(activeConfig.anonKey)
+        };
+      } catch {
+        return DEFAULT_CLOUD_CONFIG;
+      }
+    }
+
+    function configureCloud() {
+      const current = getCloudConfig() || {};
+      const url = prompt("URL del proyecto Supabase:", current.url || "");
+      if (url === null) return;
+      const anonKey = prompt("Anon public key de Supabase:", current.anonKey || "");
+      if (anonKey === null) return;
+      localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify({ url: url.trim(), anonKey: anonKey.trim() }));
+      alert("Nube configurada. Voy a sincronizar los eventos compartidos.");
+      initCloudSync(true);
+    }
+
+    async function cloudRequest(path, options = {}) {
+      const config = getCloudConfig();
+      if (!config) return null;
+      const response = await fetch(`${config.url}/rest/v1/${path}`, {
+        ...options,
+        headers: {
+          apikey: config.anonKey,
+          Authorization: `Bearer ${config.anonKey}`,
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      });
+      if (!response.ok) throw new Error(await response.text());
+      if (response.status === 204) return null;
+      return response.json();
+    }
+
+    async function pullCloudEvents() {
+      const button = document.querySelector("#cloudBtn");
+      if (!getCloudConfig()) return;
+      try {
+        const rows = await cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`);
+        if (!Array.isArray(rows)) return;
+        const selectedId = state.selectedId;
+        state.events = sanitizeEvents(rows.map(row => row.data));
+        state.selectedId = state.events.some(event => event.id === selectedId)
+          ? selectedId
+          : state.events[0]?.id || null;
+        localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+        render();
+        button.textContent = "Nube activa";
+      } catch (error) {
+        button.textContent = "Error nube";
+        console.error("No pude sincronizar proceso", error);
+      }
+    }
+
+    async function cloudUpsertEvents(items) {
+      const cleanItems = sanitizeEvents(items);
+      if (!getCloudConfig() || !cleanItems.length) return;
+      try {
+        const rows = cleanItems.map(event => ({
+          id: event.id,
+          data: { ...event, updatedAt: event.updatedAt || new Date().toISOString() },
+          updated_at: event.updatedAt || new Date().toISOString()
+        }));
+        await cloudRequest(PROCESS_TABLE, {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify(rows)
+        });
+      } catch (error) {
+        console.error("No pude guardar proceso en nube", error);
+      }
+    }
+
+    async function cloudDeleteEvent(id) {
+      if (!getCloudConfig() || !id) return;
+      try {
+        await cloudRequest(`${PROCESS_TABLE}?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+      } catch (error) {
+        console.error("No pude eliminar proceso en nube", error);
+      }
+    }
+
+    function initCloudSync(force = false) {
+      const button = document.querySelector("#cloudBtn");
+      if (!getCloudConfig()) {
+        button.textContent = "Configurar nube";
+        return;
+      }
+      button.textContent = "Nube activa";
+      pullCloudEvents();
+      if (force || !window.happyDecoProcessCloudTimer) {
+        window.happyDecoProcessCloudTimer = setInterval(pullCloudEvents, 3000);
+      }
+      if (!window.happyDecoProcessCloudFocusHandlers) {
+        window.happyDecoProcessCloudFocusHandlers = true;
+        window.addEventListener("focus", pullCloudEvents);
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) pullCloudEvents();
+        });
+      }
+    }
+
+    function statusLabel(status) {
+      return {
+        consulta: "Consulta",
+        diseno: "Diseño",
+        produccion: "Producción",
+        montaje: "Montaje",
+        cerrado: "Cerrado",
+        trabado: "Trabado"
+      }[status] || status;
+    }
+
+    function formatDate(value) {
+      const date = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replaceAll("\n", " ");
+    }
+  </script>
+</body>
+</html>
