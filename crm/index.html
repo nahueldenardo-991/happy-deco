@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRM Comercial | Happy Deco</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mint: #76d7d5;
+      --teal: #229893;
+      --ink: #2f2630;
+      --muted: #756a72;
+      --cream: #fffaf4;
+      --paper: #ffffff;
+      --line: #ead9cb;
+      --rose: #f8d5dc;
+      --rose-strong: #d9556c;
+      --gold: #d69c44;
+      --ok: #2f9b70;
+      --warn: #d08622;
+      --danger: #c94646;
+      --shadow: 0 18px 50px rgba(72, 52, 35, .12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Nunito", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(118, 215, 213, .28), transparent 34rem),
+        radial-gradient(circle at 95% 4%, rgba(248, 213, 220, .38), transparent 32rem),
+        #fbf5ee;
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem clamp(1rem, 4vw, 4rem);
+      background: rgba(255, 250, 244, .92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      min-width: 15rem;
+    }
+
+    .brand img {
+      width: 3.5rem;
+      height: 3.5rem;
+      object-fit: contain;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: "Baloo 2", cursive;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      line-height: .9;
+    }
+
+    .brand p {
+      margin: .2rem 0 0;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .nav {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn, .ghost, .danger-btn {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: .78rem 1rem;
+      background: var(--paper);
+      color: var(--ink);
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      min-height: 2.75rem;
+    }
+
+    .btn:hover, .ghost:hover, .danger-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .btn.gold { background: #fff4dc; border-color: #f1d9a8; color: #764f12; }
+    .danger-btn { background: #f8dde1; color: #ad3344; border-color: #f1c6ce; }
+
+    main {
+      width: min(1520px, calc(100% - 2rem));
+      margin: 1.5rem auto 3rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(18rem, 1.1fr) minmax(18rem, 1fr);
+      gap: 1rem;
+      align-items: stretch;
+      margin-bottom: 1rem;
+    }
+
+    .hero-panel, .card, .form-panel, .pipeline-column, .agenda-panel {
+      background: rgba(255, 255, 255, .86);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel {
+      padding: clamp(1.1rem, 3vw, 2rem);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-panel:before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: .55rem;
+      background: var(--mint);
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: .78rem;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: .25rem 0 .5rem;
+      font-family: "Baloo 2", cursive;
+      font-size: clamp(2rem, 5vw, 3.7rem);
+      line-height: .88;
+    }
+
+    .hero-panel p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 58rem;
+      font-size: 1.05rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .8rem;
+    }
+
+    .metric {
+      padding: 1rem;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: .78rem;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: .35rem;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      line-height: 1;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(18rem, 28rem) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .form-panel {
+      padding: 1rem;
+      position: sticky;
+      top: 6rem;
+    }
+
+    .form-panel h3, .section-title {
+      margin: 0 0 .9rem;
+      font-family: "Baloo 2", cursive;
+      font-size: 1.45rem;
+      line-height: 1;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .7rem;
+    }
+
+    .field { display: grid; gap: .3rem; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .control {
+      width: 100%;
+      min-height: 2.7rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffdf9;
+      color: var(--ink);
+      padding: .7rem .8rem;
+      outline: none;
+    }
+
+    textarea.control { resize: vertical; min-height: 5rem; }
+    .control:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(118, 215, 213, .32); }
+
+    .form-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .6rem;
+      margin-top: .9rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .filters {
+      display: flex;
+      gap: .55rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filters .control { width: auto; min-width: 11rem; }
+    .filters .search { min-width: min(100%, 20rem); }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-bottom: 1rem;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: .65rem .9rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .tab.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(14rem, 1fr));
+      gap: .8rem;
+      overflow-x: auto;
+      padding-bottom: .5rem;
+    }
+
+    .pipeline-column {
+      min-height: 20rem;
+      padding: .8rem;
+    }
+
+    .column-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+      padding-bottom: .7rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: .7rem;
+    }
+
+    .column-head strong { font-family: "Baloo 2", cursive; font-size: 1.15rem; line-height: 1; }
+    .count-pill, .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 1.6rem;
+      padding: .2rem .55rem;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 900;
+      background: #f1e8de;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .lead-card {
+      display: grid;
+      gap: .55rem;
+      padding: .85rem;
+      margin-bottom: .65rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffdf9;
+    }
+
+    .lead-card.overdue { border-color: rgba(201, 70, 70, .45); background: #fff5f5; }
+    .lead-card.today { border-color: rgba(208, 134, 34, .45); background: #fff9ed; }
+    .lead-card.sent { border-color: rgba(47, 155, 112, .45); background: #f1fff8; }
+
+    .lead-title {
+      display: flex;
+      justify-content: space-between;
+      gap: .5rem;
+      align-items: start;
+    }
+
+    .lead-title strong { font-size: 1rem; line-height: 1.05; }
+    .lead-card p { margin: 0; color: var(--muted); font-size: .93rem; }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .45rem;
+    }
+
+    .mini {
+      min-height: 2.35rem;
+      padding: .5rem .65rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #fff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .mini.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+    .agenda-panel {
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .agenda-list {
+      display: grid;
+      gap: .6rem;
+    }
+
+    .agenda-item {
+      display: grid;
+      grid-template-columns: minmax(8rem, 1fr) minmax(11rem, 1.2fr) minmax(9rem, .8fr) auto;
+      gap: .6rem;
+      align-items: center;
+      padding: .75rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffdf9;
+    }
+
+    .agenda-item.overdue { border-color: rgba(201, 70, 70, .45); background: #fff5f5; }
+    .agenda-item.today { border-color: rgba(208, 134, 34, .45); background: #fff9ed; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    th, td {
+      padding: .8rem;
+      border-bottom: 1px solid #f0e3d8;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #fff1f5;
+      color: var(--muted);
+      font-size: .78rem;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    td .control { min-width: 9rem; }
+
+    .empty {
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .status-overdue { background: #ffe1e1; color: var(--danger); }
+    .status-today { background: #fff0cd; color: var(--warn); }
+    .status-ok { background: #dff7ea; color: var(--ok); }
+    .status-muted { background: #f1e8de; color: var(--muted); }
+
+    .toast {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 20;
+      max-width: min(25rem, calc(100vw - 2rem));
+      padding: .9rem 1rem;
+      border-radius: var(--radius);
+      color: #fff;
+      background: var(--ink);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(.5rem);
+      transition: opacity .2s ease, transform .2s ease;
+      font-weight: 800;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1100px) {
+      .hero, .layout { grid-template-columns: 1fr; }
+      .form-panel { position: static; }
+      .pipeline { grid-template-columns: repeat(4, 17rem); }
+    }
+
+    @media (max-width: 720px) {
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .nav { justify-content: flex-start; width: 100%; }
+      .nav .btn, .nav .ghost { flex: 1 1 auto; text-align: center; }
+      .summary-grid, .field-grid, .form-actions { grid-template-columns: 1fr; }
+      .agenda-item { grid-template-columns: 1fr; }
+      .filters .control { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="../assets/happy-deco-logo.png" alt="Happy Deco">
+      <div>
+        <h1>Happy Deco</h1>
+        <p>CRM comercial y agenda</p>
+      </div>
+    </div>
+    <nav class="nav">
+      <a class="ghost" href="../">Dashboard</a>
+      <a class="ghost" href="../proceso/">Proceso</a>
+      <button class="btn gold" id="cloudBtn" type="button">Nube activa</button>
+      <button class="btn primary" id="newBtn" type="button">Nueva consulta</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <article class="hero-panel">
+        <span class="eyebrow">Ventas sin depender de memoria</span>
+        <h2>CRM Happy Deco</h2>
+        <p>Consultas, seguimientos, agenda comercial y pase a producción conectados con el dashboard operativo.</p>
+      </article>
+      <section class="summary-grid" id="summaryGrid"></section>
+    </section>
+
+    <section class="layout">
+      <aside class="form-panel">
+        <h3 id="formTitle">Nueva consulta</h3>
+        <form id="leadForm">
+          <input type="hidden" name="id" id="leadId">
+          <div class="field-grid">
+            <div class="field">
+              <label for="fechaConsulta">Fecha consulta</label>
+              <input class="control" type="date" id="fechaConsulta" name="fechaConsulta" required>
+            </div>
+            <div class="field">
+              <label for="fechaEvento">Fecha evento</label>
+              <input class="control" type="date" id="fechaEvento" name="fechaEvento">
+            </div>
+            <div class="field">
+              <label for="cliente">Cliente</label>
+              <input class="control" id="cliente" name="cliente" placeholder="Familia / contacto" required>
+            </div>
+            <div class="field">
+              <label for="telefono">Teléfono</label>
+              <input class="control" id="telefono" name="telefono" placeholder="WhatsApp">
+            </div>
+            <div class="field">
+              <label for="homenajeado">Cumpleañero/a</label>
+              <input class="control" id="homenajeado" name="homenajeado" placeholder="Nombre">
+            </div>
+            <div class="field">
+              <label for="edadCumpleanero">Edad</label>
+              <input class="control" id="edadCumpleanero" name="edadCumpleanero" type="number" min="0" max="120" step="1" placeholder="Ej: 7">
+            </div>
+            <div class="field">
+              <label for="tipoEvento">Tipo</label>
+              <select class="control" id="tipoEvento" name="tipoEvento">
+                <option>Cumpleaños infantil</option>
+                <option>15 años</option>
+                <option>Bautismo</option>
+                <option>Comunión</option>
+                <option>Baby shower</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="canal">Canal</label>
+              <select class="control" id="canal" name="canal">
+                <option>WhatsApp</option>
+                <option>Instagram</option>
+                <option>Facebook</option>
+                <option>Recomendación</option>
+                <option>Presencial</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="tematica">Temática</label>
+              <input class="control" id="tematica" name="tematica" placeholder="La Sirenita, Barbie, Dinosaurios">
+            </div>
+            <div class="field">
+              <label for="propuesta">Propuesta</label>
+              <select class="control" id="propuesta" name="propuesta">
+                <option>Propuesta express</option>
+                <option>Propuesta intermedia</option>
+                <option>Propuesta premium</option>
+                <option>Personalizada</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="monto">Monto estimado</label>
+              <input class="control" id="monto" name="monto" type="number" min="0" step="1000" placeholder="0">
+            </div>
+            <div class="field">
+              <label for="etapa">Etapa comercial</label>
+              <select class="control" id="etapa" name="etapa">
+                <option>Nueva consulta</option>
+                <option>Contactado</option>
+                <option>Propuesta enviada</option>
+                <option>Seguimiento</option>
+                <option>Seña pendiente</option>
+                <option>Señado</option>
+                <option>Pagado completo</option>
+                <option>Cancelado</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="responsable">Responsable</label>
+              <select class="control" id="responsable" name="responsable">
+                <option>Cati</option>
+                <option>Xime</option>
+                <option>Cati + Xime</option>
+                <option>Juli</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="proximaAccionFecha">Próxima acción</label>
+              <input class="control" type="date" id="proximaAccionFecha" name="proximaAccionFecha">
+            </div>
+            <div class="field">
+              <label for="proximaAccion">Tarea</label>
+              <select class="control" id="proximaAccion" name="proximaAccion">
+                <option>Responder consulta</option>
+                <option>Enviar propuesta</option>
+                <option>Hacer seguimiento</option>
+                <option>Pedir seña</option>
+                <option>Confirmar datos</option>
+                <option>Coordinar llamada</option>
+                <option>Enviar a producción</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="lugar">Lugar</label>
+              <input class="control" id="lugar" name="lugar" placeholder="Salón, domicilio o pendiente">
+            </div>
+            <div class="field full">
+              <label for="observaciones">Notas comerciales</label>
+              <textarea class="control" id="observaciones" name="observaciones" placeholder="Datos faltantes, preferencia, objeciones, acuerdos"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit">Guardar</button>
+            <button class="ghost" id="resetBtn" type="button">Limpiar</button>
+          </div>
+        </form>
+      </aside>
+
+      <section>
+        <div class="toolbar">
+          <div class="filters">
+            <input class="control search" id="searchInput" placeholder="Buscar cliente, temática, homenajeado">
+            <select class="control" id="filterResponsable">
+              <option value="">Todos los responsables</option>
+            </select>
+            <select class="control" id="filterAlerta">
+              <option value="">Todas las alertas</option>
+              <option value="vencidas">Vencidas</option>
+              <option value="hoy">Hoy</option>
+              <option value="semana">Esta semana</option>
+            </select>
+          </div>
+          <div class="filters">
+            <button class="ghost" id="exportBtn" type="button">Exportar CSV</button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-view="pipeline" type="button">Pipeline</button>
+          <button class="tab" data-view="agenda" type="button">Agenda</button>
+          <button class="tab" data-view="tabla" type="button">Tabla</button>
+        </div>
+
+        <section class="view active" id="view-pipeline">
+          <div class="pipeline" id="pipeline"></div>
+        </section>
+
+        <section class="view" id="view-agenda">
+          <div class="agenda-panel">
+            <h3 class="section-title">Seguimientos y alertas</h3>
+            <div class="agenda-list" id="agendaList"></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-tabla">
+          <div class="table-wrap" id="tableWrap"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "happyDecoCrmLeads";
+    const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
+    const DEFAULT_CLOUD_CONFIG = {
+      url: "https://niwkiklxyblrvbeusqbd.supabase.co",
+      anonKey: "sb_publishable_BZOa1hRBnH0KWocgyCZmfw_-lrLIgGd"
+    };
+    const DATA_TABLE = "happy_deco_dashboard_records";
+    const PROCESS_TABLE = "happy_deco_process_events";
+    const STAGES = ["Nueva consulta", "Contactado", "Propuesta enviada", "Seguimiento", "Seña pendiente", "Señado", "Pagado completo", "Cancelado"];
+    const PIPELINE_STAGES = ["Nueva consulta", "Propuesta enviada", "Seguimiento", "Seña pendiente"];
+    const RESPONSABLES = ["Cati", "Xime", "Cati + Xime", "Juli"];
+
+    const els = {
+      form: document.querySelector("#leadForm"),
+      formTitle: document.querySelector("#formTitle"),
+      leadId: document.querySelector("#leadId"),
+      fechaConsulta: document.querySelector("#fechaConsulta"),
+      fechaEvento: document.querySelector("#fechaEvento"),
+      cliente: document.querySelector("#cliente"),
+      telefono: document.querySelector("#telefono"),
+      homenajeado: document.querySelector("#homenajeado"),
+      edadCumpleanero: document.querySelector("#edadCumpleanero"),
+      tipoEvento: document.querySelector("#tipoEvento"),
+      canal: document.querySelector("#canal"),
+      tematica: document.querySelector("#tematica"),
+      propuesta: document.querySelector("#propuesta"),
+      monto: document.querySelector("#monto"),
+      etapa: document.querySelector("#etapa"),
+      responsable: document.querySelector("#responsable"),
+      proximaAccionFecha: document.querySelector("#proximaAccionFecha"),
+      proximaAccion: document.querySelector("#proximaAccion"),
+      lugar: document.querySelector("#lugar"),
+      observaciones: document.querySelector("#observaciones"),
+      resetBtn: document.querySelector("#resetBtn"),
+      newBtn: document.querySelector("#newBtn"),
+      exportBtn: document.querySelector("#exportBtn"),
+      cloudBtn: document.querySelector("#cloudBtn"),
+      searchInput: document.querySelector("#searchInput"),
+      filterResponsable: document.querySelector("#filterResponsable"),
+      filterAlerta: document.querySelector("#filterAlerta"),
+      summaryGrid: document.querySelector("#summaryGrid"),
+      pipeline: document.querySelector("#pipeline"),
+      agendaList: document.querySelector("#agendaList"),
+      tableWrap: document.querySelector("#tableWrap"),
+      toast: document.querySelector("#toast")
+    };
+
+    let leads = loadLeads();
+    let activeView = "pipeline";
+
+    init();
+
+    function init() {
+      fillDefaults();
+      bindEvents();
+      render();
+      initCloudSync();
+    }
+
+    function bindEvents() {
+      els.form.addEventListener("submit", handleSubmit);
+      els.resetBtn.addEventListener("click", resetForm);
+      els.newBtn.addEventListener("click", resetForm);
+      els.exportBtn.addEventListener("click", exportCsv);
+      els.searchInput.addEventListener("input", render);
+      els.filterResponsable.addEventListener("change", render);
+      els.filterAlerta.addEventListener("change", render);
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          activeView = tab.dataset.view;
+          document.querySelectorAll(".tab").forEach(item => item.classList.toggle("active", item === tab));
+          document.querySelectorAll(".view").forEach(view => view.classList.toggle("active", view.id === `view-${activeView}`));
+        });
+      });
+      document.body.addEventListener("click", event => {
+        const action = event.target.closest("[data-action]");
+        if (!action) return;
+        const lead = leads.find(item => item.id === action.dataset.id);
+        if (!lead) return;
+        if (action.dataset.action === "edit") editLead(lead);
+        if (action.dataset.action === "delete") deleteLead(lead.id);
+        if (action.dataset.action === "advance") advanceLead(lead.id);
+        if (action.dataset.action === "send") sendLeadToDashboard(lead.id);
+      });
+      document.body.addEventListener("change", event => {
+        const field = event.target.closest("[data-field]");
+        if (!field) return;
+        updateLeadField(field.dataset.id, field.dataset.field, field.value);
+      });
+    }
+
+    function fillDefaults() {
+      const today = isoDate(new Date());
+      els.fechaConsulta.value = today;
+      els.proximaAccionFecha.value = today;
+      setOptions(els.filterResponsable, RESPONSABLES, "Todos los responsables");
+    }
+
+    function loadLeads() {
+      try {
+        return sanitizeLeads(JSON.parse(localStorage.getItem(STORAGE_KEY)) || []);
+      } catch {
+        return [];
+      }
+    }
+
+    function saveLeads() {
+      leads = sanitizeLeads(leads);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+      cloudUpsertLeads(leads);
+      render();
+    }
+
+    function sanitizeLeads(items) {
+      return (Array.isArray(items) ? items : []).filter(Boolean).map(lead => ({
+        id: lead.id || crypto.randomUUID(),
+        module: "crm",
+        fechaConsulta: lead.fechaConsulta || isoDate(new Date()),
+        fechaEvento: lead.fechaEvento || "",
+        cliente: lead.cliente || "",
+        telefono: lead.telefono || "",
+        homenajeado: lead.homenajeado || "",
+        edadCumpleanero: toNumber(lead.edadCumpleanero),
+        tipoEvento: lead.tipoEvento || "Cumpleaños infantil",
+        canal: lead.canal || "WhatsApp",
+        tematica: lead.tematica || "",
+        propuesta: lead.propuesta || "Propuesta intermedia",
+        monto: toNumber(lead.monto),
+        etapa: lead.etapa || "Nueva consulta",
+        responsable: lead.responsable || "Cati",
+        proximaAccionFecha: lead.proximaAccionFecha || "",
+        proximaAccion: lead.proximaAccion || "Hacer seguimiento",
+        lugar: lead.lugar || "",
+        observaciones: lead.observaciones || "",
+        dashboardRecordId: lead.dashboardRecordId || "",
+        productionSentAt: lead.productionSentAt || "",
+        updatedAt: lead.updatedAt || new Date().toISOString()
+      })).sort((a, b) => String(a.proximaAccionFecha || "9999").localeCompare(String(b.proximaAccionFecha || "9999")));
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      const formData = new FormData(els.form);
+      const data = Object.fromEntries(formData.entries());
+      const id = data.id || crypto.randomUUID();
+      const existing = leads.find(lead => lead.id === id) || {};
+      const lead = sanitizeLeads([{ ...existing, ...data, id, updatedAt: new Date().toISOString() }])[0];
+      leads = [lead, ...leads.filter(item => item.id !== id)];
+      saveLeads();
+      if (["Señado", "Pagado completo"].includes(lead.etapa)) sendLeadToDashboard(lead.id, { silent: true });
+      resetForm();
+      showToast("Consulta guardada");
+    }
+
+    function resetForm() {
+      els.form.reset();
+      els.leadId.value = "";
+      els.formTitle.textContent = "Nueva consulta";
+      fillDefaults();
+      els.cliente.focus();
+    }
+
+    function editLead(lead) {
+      els.formTitle.textContent = "Editar consulta";
+      Object.keys(lead).forEach(key => {
+        if (els[key]) els[key].value = lead[key] ?? "";
+      });
+      els.leadId.value = lead.id;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteLead(id) {
+      const lead = leads.find(item => item.id === id);
+      if (!lead || !confirm(`¿Eliminar la consulta de ${lead.cliente || "este cliente"}?`)) return;
+      leads = leads.filter(item => item.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+      cloudDeleteLead(id);
+      render();
+      showToast("Consulta eliminada");
+    }
+
+    function advanceLead(id) {
+      const lead = leads.find(item => item.id === id);
+      if (!lead) return;
+      const index = STAGES.indexOf(lead.etapa);
+      lead.etapa = STAGES[Math.min(index + 1, STAGES.length - 1)] || "Seguimiento";
+      lead.proximaAccionFecha = suggestNextActionDate(lead);
+      lead.proximaAccion = suggestNextAction(lead.etapa);
+      lead.updatedAt = new Date().toISOString();
+      saveLeads();
+      if (["Señado", "Pagado completo"].includes(lead.etapa)) sendLeadToDashboard(id, { silent: true });
+      showToast(`Etapa actualizada: ${lead.etapa}`);
+    }
+
+    function updateLeadField(id, field, value) {
+      const lead = leads.find(item => item.id === id);
+      if (!lead) return;
+      lead[field] = ["monto", "edadCumpleanero"].includes(field) ? toNumber(value) : value;
+      lead.updatedAt = new Date().toISOString();
+      saveLeads();
+      if (field === "etapa" && ["Señado", "Pagado completo"].includes(value)) sendLeadToDashboard(id, { silent: true });
+    }
+
+    function filteredLeads() {
+      const query = els.searchInput.value.trim().toLowerCase();
+      return leads.filter(lead => {
+        const haystack = [lead.cliente, lead.homenajeado, lead.tematica, lead.telefono, lead.lugar].join(" ").toLowerCase();
+        const matchesQuery = !query || haystack.includes(query);
+        const matchesResponsible = !els.filterResponsable.value || lead.responsable === els.filterResponsable.value;
+        const alert = alertState(lead);
+        const matchesAlert = !els.filterAlerta.value
+          || (els.filterAlerta.value === "vencidas" && alert.key === "overdue")
+          || (els.filterAlerta.value === "hoy" && alert.key === "today")
+          || (els.filterAlerta.value === "semana" && daysUntil(lead.proximaAccionFecha) >= 0 && daysUntil(lead.proximaAccionFecha) <= 7);
+        return matchesQuery && matchesResponsible && matchesAlert;
+      });
+    }
+
+    function render() {
+      const filtered = filteredLeads();
+      renderSummary(filtered);
+      renderPipeline(filtered);
+      renderAgenda(filtered);
+      renderTable(filtered);
+      setOptions(els.filterResponsable, unique([...RESPONSABLES, ...leads.map(lead => lead.responsable)]), "Todos los responsables", els.filterResponsable.value);
+    }
+
+    function renderSummary(items) {
+      const open = items.filter(lead => !["Señado", "Pagado completo", "Cancelado"].includes(lead.etapa));
+      const overdue = items.filter(lead => alertState(lead).key === "overdue");
+      const week = items.filter(lead => daysUntil(lead.proximaAccionFecha) >= 0 && daysUntil(lead.proximaAccionFecha) <= 7);
+      const sent = items.filter(lead => lead.dashboardRecordId);
+      const metrics = [
+        ["Consultas abiertas", open.length],
+        ["Alertas vencidas", overdue.length],
+        ["Seguimientos 7 días", week.length],
+        ["En producción", sent.length]
+      ];
+      els.summaryGrid.innerHTML = metrics.map(([label, value]) => `
+        <article class="metric">
+          <span>${label}</span>
+          <strong>${value}</strong>
+        </article>
+      `).join("");
+    }
+
+    function renderPipeline(items) {
+      const columns = [...PIPELINE_STAGES, "Señado"];
+      els.pipeline.innerHTML = columns.map(stage => {
+        const stageItems = items.filter(lead => stage === "Señado" ? ["Señado", "Pagado completo"].includes(lead.etapa) : lead.etapa === stage);
+        return `
+          <section class="pipeline-column">
+            <div class="column-head">
+              <strong>${stage}</strong>
+              <span class="count-pill">${stageItems.length}</span>
+            </div>
+            ${stageItems.length ? stageItems.map(renderLeadCard).join("") : `<div class="empty">Sin consultas</div>`}
+          </section>
+        `;
+      }).join("");
+    }
+
+    function renderLeadCard(lead) {
+      const alert = alertState(lead);
+      const sentClass = lead.dashboardRecordId ? "sent" : "";
+      return `
+        <article class="lead-card ${alert.key} ${sentClass}">
+          <div class="lead-title">
+            <strong>${escapeHtml(lead.cliente || "Sin cliente")}</strong>
+            <span class="badge ${alert.className}">${alert.label}</span>
+          </div>
+          <p>${escapeHtml(lead.tematica || "Temática pendiente")} · ${escapeHtml(lead.homenajeado || "Sin homenajeado")}</p>
+          <p>${formatDate(lead.fechaEvento) || "Sin fecha de evento"} · ${escapeHtml(lead.responsable)}</p>
+          <p><strong>${escapeHtml(lead.proximaAccion)}</strong> ${formatDate(lead.proximaAccionFecha) ? `· ${formatDate(lead.proximaAccionFecha)}` : ""}</p>
+          <div class="card-actions">
+            <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
+            <button class="mini" type="button" data-action="advance" data-id="${lead.id}">Avanzar</button>
+            <button class="mini primary" type="button" data-action="send" data-id="${lead.id}">A producción</button>
+            <button class="mini" type="button" data-action="delete" data-id="${lead.id}">Eliminar</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderAgenda(items) {
+      const agenda = [...items]
+        .filter(lead => !["Cancelado", "Pagado completo"].includes(lead.etapa))
+        .sort((a, b) => String(a.proximaAccionFecha || "9999").localeCompare(String(b.proximaAccionFecha || "9999")));
+      els.agendaList.innerHTML = agenda.length ? agenda.map(lead => {
+        const alert = alertState(lead);
+        return `
+          <article class="agenda-item ${alert.key}">
+            <div>
+              <strong>${escapeHtml(lead.cliente || "Sin cliente")}</strong><br>
+              <span>${escapeHtml(lead.tematica || "Temática pendiente")}</span>
+            </div>
+            <div>
+              <strong>${escapeHtml(lead.proximaAccion || "Seguimiento")}</strong><br>
+              <span>${formatDate(lead.proximaAccionFecha) || "Sin fecha"}</span>
+            </div>
+            <div>
+              <span class="badge">${escapeHtml(lead.responsable)}</span>
+              <span class="badge ${alert.className}">${alert.label}</span>
+            </div>
+            <button class="mini primary" type="button" data-action="edit" data-id="${lead.id}">Abrir</button>
+          </article>
+        `;
+      }).join("") : `<div class="empty">No hay seguimientos pendientes con estos filtros</div>`;
+    }
+
+    function renderTable(items) {
+      if (!items.length) {
+        els.tableWrap.innerHTML = `<div class="empty">No hay consultas cargadas</div>`;
+        return;
+      }
+      els.tableWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Evento</th>
+              <th>Etapa</th>
+              <th>Responsable</th>
+              <th>Próxima acción</th>
+              <th>Monto</th>
+              <th>Producción</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(lead => `
+              <tr>
+                <td><strong>${escapeHtml(lead.cliente || "-")}</strong><br>${escapeHtml(lead.telefono || "")}</td>
+                <td>${escapeHtml(lead.tematica || "-")}<br>${formatDate(lead.fechaEvento) || "Sin fecha"}</td>
+                <td>${selectHtml("etapa", lead.id, STAGES, lead.etapa)}</td>
+                <td>${selectHtml("responsable", lead.id, RESPONSABLES, lead.responsable)}</td>
+                <td><input class="control" type="date" data-field="proximaAccionFecha" data-id="${lead.id}" value="${escapeHtml(lead.proximaAccionFecha)}"></td>
+                <td>${money(lead.monto)}</td>
+                <td>${lead.dashboardRecordId ? "Enviado" : "Pendiente"}</td>
+                <td>
+                  <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
+                  <button class="mini primary" type="button" data-action="send" data-id="${lead.id}">Enviar</button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function selectHtml(field, id, options, value) {
+      return `<select class="control" data-field="${field}" data-id="${id}">
+        ${options.map(option => `<option ${option === value ? "selected" : ""}>${escapeHtml(option)}</option>`).join("")}
+      </select>`;
+    }
+
+    async function sendLeadToDashboard(id, options = {}) {
+      const lead = leads.find(item => item.id === id);
+      if (!lead) return;
+      if (!lead.fechaEvento && !options.silent) {
+        alert("Para enviar a producción primero cargá la fecha del evento.");
+        return;
+      }
+      const recordId = lead.dashboardRecordId || `event-${lead.id}`;
+      const dashboardRecord = leadToDashboardRecord(lead, recordId);
+      const processEvent = leadToProcessEvent(lead, recordId);
+      try {
+        await cloudUpsertRows(DATA_TABLE, [{ id: recordId, data: dashboardRecord, updated_at: dashboardRecord.updatedAt }]);
+        await cloudUpsertRows(PROCESS_TABLE, [{ id: recordId, data: processEvent, updated_at: processEvent.updatedAt }]);
+        lead.dashboardRecordId = recordId;
+        lead.productionSentAt = lead.productionSentAt || new Date().toISOString();
+        lead.updatedAt = new Date().toISOString();
+        await cloudUpsertLeads([lead]);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+        render();
+        if (!options.silent) showToast("Evento enviado al dashboard y proceso");
+      } catch (error) {
+        console.error("No pude enviar a producción", error);
+        if (!options.silent) alert("No pude enviar a producción. Revisá la conexión a Supabase.");
+      }
+    }
+
+    function leadToDashboardRecord(lead, recordId) {
+      const now = new Date().toISOString();
+      return {
+        id: recordId,
+        sourceLeadId: lead.id,
+        fechaCierre: lead.fechaConsulta,
+        fechaConsulta: lead.fechaConsulta,
+        fechaEvento: lead.fechaEvento,
+        cliente: lead.cliente,
+        homenajeado: lead.homenajeado,
+        edadCumpleanero: lead.edadCumpleanero,
+        tipoEvento: lead.tipoEvento,
+        propuesta: lead.propuesta,
+        tematica: lead.tematica,
+        canal: lead.canal,
+        etapa: lead.etapa,
+        estadoOperativo: ["Señado", "Pagado completo"].includes(lead.etapa) ? "Listo para producir" : "Diseño pendiente",
+        responsable: lead.responsable,
+        monto: lead.monto,
+        costo: 0,
+        senia: 0,
+        saldo: lead.monto,
+        facturacion: "Pendiente",
+        lugar: lead.lugar,
+        incluye: lead.propuesta,
+        observaciones: lead.observaciones,
+        updatedAt: now
+      };
+    }
+
+    function leadToProcessEvent(lead, recordId) {
+      const now = new Date().toISOString();
+      return {
+        id: recordId,
+        source: "crm",
+        sourceLeadId: lead.id,
+        client: lead.cliente || "Nuevo evento",
+        child: lead.homenajeado || "",
+        age: lead.edadCumpleanero || "",
+        date: lead.fechaEvento || "",
+        closeDate: lead.fechaConsulta || "",
+        time: "",
+        place: lead.lugar || "",
+        theme: lead.tematica || "",
+        package: lead.propuesta || "",
+        budget: lead.monto ? money(lead.monto) : "",
+        deposit: "Pendiente",
+        balance: lead.monto ? money(lead.monto) : "Pendiente",
+        billing: "Pendiente",
+        status: "traspaso",
+        notes: lead.observaciones || "",
+        commercialNotes: [
+          lead.tipoEvento ? `Tipo: ${lead.tipoEvento}` : "",
+          lead.canal ? `Canal: ${lead.canal}` : "",
+          lead.telefono ? `WhatsApp: ${lead.telefono}` : ""
+        ].filter(Boolean).join(" - "),
+        productionNotes: "",
+        checks: {},
+        updatedAt: now
+      };
+    }
+
+    function getCloudConfig() {
+      try {
+        const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
+        return config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
+      } catch {
+        return DEFAULT_CLOUD_CONFIG;
+      }
+    }
+
+    async function cloudRequest(path, options = {}) {
+      const config = getCloudConfig();
+      if (!config) return null;
+      const response = await fetch(`${config.url}/rest/v1/${path}`, {
+        ...options,
+        headers: {
+          apikey: config.anonKey,
+          Authorization: `Bearer ${config.anonKey}`,
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      });
+      if (!response.ok) throw new Error(await response.text());
+      if (response.status === 204) return null;
+      return response.json();
+    }
+
+    async function pullCloudLeads() {
+      if (!getCloudConfig()) return;
+      try {
+        const rows = await cloudRequest(`${DATA_TABLE}?select=id,data&order=updated_at.desc`);
+        const crmRows = Array.isArray(rows) ? rows.map(row => row.data).filter(data => data?.module === "crm") : [];
+        leads = sanitizeLeads(crmRows);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+        render();
+        els.cloudBtn.textContent = "Nube activa";
+      } catch (error) {
+        els.cloudBtn.textContent = "Error nube";
+        console.error("No pude sincronizar CRM", error);
+      }
+    }
+
+    async function cloudUpsertLeads(items) {
+      const clean = sanitizeLeads(items);
+      if (!getCloudConfig() || !clean.length) return;
+      const rows = clean.map(lead => ({ id: lead.id, data: { ...lead, module: "crm" }, updated_at: lead.updatedAt || new Date().toISOString() }));
+      try {
+        await cloudUpsertRows(DATA_TABLE, rows);
+      } catch (error) {
+        console.error("No pude guardar CRM", error);
+      }
+    }
+
+    async function cloudUpsertRows(table, rows) {
+      if (!rows.length) return;
+      await cloudRequest(`${table}?on_conflict=id`, {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify(rows)
+      });
+    }
+
+    async function cloudDeleteLead(id) {
+      if (!getCloudConfig()) return;
+      try {
+        await cloudRequest(`${DATA_TABLE}?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+      } catch (error) {
+        console.error("No pude eliminar CRM", error);
+      }
+    }
+
+    function initCloudSync() {
+      els.cloudBtn.textContent = "Nube activa";
+      pullCloudLeads();
+      if (!window.happyDecoCrmCloudTimer) window.happyDecoCrmCloudTimer = setInterval(pullCloudLeads, 3000);
+      if (!window.happyDecoCrmFocusHandlers) {
+        window.happyDecoCrmFocusHandlers = true;
+        window.addEventListener("focus", pullCloudLeads);
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) pullCloudLeads();
+        });
+      }
+    }
+
+    function exportCsv() {
+      const headers = ["Cliente", "Telefono", "Fecha consulta", "Fecha evento", "Homenajeado", "Edad", "Tipo", "Tematica", "Propuesta", "Monto", "Etapa", "Responsable", "Proxima accion", "Fecha accion", "Lugar", "Notas"];
+      const rows = filteredLeads().map(lead => [
+        lead.cliente, lead.telefono, lead.fechaConsulta, lead.fechaEvento, lead.homenajeado, lead.edadCumpleanero, lead.tipoEvento,
+        lead.tematica, lead.propuesta, lead.monto, lead.etapa, lead.responsable, lead.proximaAccion, lead.proximaAccionFecha, lead.lugar, lead.observaciones
+      ]);
+      const csv = [headers, ...rows].map(row => row.map(cell => `"${String(cell ?? "").replaceAll('"', '""')}"`).join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `happy-deco-crm-${isoDate(new Date())}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function alertState(lead) {
+      if (lead.dashboardRecordId) return { key: "sent", label: "Producción", className: "status-ok" };
+      if (!lead.proximaAccionFecha) return { key: "", label: "Sin fecha", className: "status-muted" };
+      const diff = daysUntil(lead.proximaAccionFecha);
+      if (diff < 0) return { key: "overdue", label: "Vencida", className: "status-overdue" };
+      if (diff === 0) return { key: "today", label: "Hoy", className: "status-today" };
+      if (diff <= 7) return { key: "week", label: `${diff} días`, className: "status-muted" };
+      return { key: "", label: "Programada", className: "status-muted" };
+    }
+
+    function suggestNextActionDate(lead) {
+      const base = new Date();
+      if (lead.etapa === "Propuesta enviada") base.setDate(base.getDate() + 2);
+      else if (lead.etapa === "Seguimiento") base.setDate(base.getDate() + 2);
+      else if (lead.etapa === "Seña pendiente") base.setDate(base.getDate() + 1);
+      else base.setDate(base.getDate() + 1);
+      return isoDate(base);
+    }
+
+    function suggestNextAction(stage) {
+      return {
+        "Nueva consulta": "Responder consulta",
+        "Contactado": "Enviar propuesta",
+        "Propuesta enviada": "Hacer seguimiento",
+        "Seguimiento": "Pedir seña",
+        "Seña pendiente": "Confirmar datos",
+        "Señado": "Enviar a producción",
+        "Pagado completo": "Enviar a producción",
+        "Cancelado": "Cerrar consulta"
+      }[stage] || "Hacer seguimiento";
+    }
+
+    function setOptions(select, values, placeholder, selected = "") {
+      const current = selected || select.value;
+      select.innerHTML = [`<option value="">${placeholder}</option>`, ...values.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)].join("");
+      select.value = current;
+    }
+
+    function unique(values) {
+      return [...new Set(values.filter(Boolean))];
+    }
+
+    function toNumber(value) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function daysUntil(date) {
+      if (!date) return 9999;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const target = new Date(`${date}T00:00:00`);
+      return Math.round((target - today) / 86400000);
+    }
+
+    function isoDate(date) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function formatDate(date) {
+      if (!date) return "";
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    }
+
+    function money(value) {
+      const number = toNumber(value);
+      return number ? `$ ${number.toLocaleString("es-AR")}` : "$ 0";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add("show");
+      clearTimeout(window.happyDecoCrmToast);
+      window.happyDecoCrmToast = setTimeout(() => els.toast.classList.remove("show"), 2800);
+    }
+  </script>
+</body>
+</html>

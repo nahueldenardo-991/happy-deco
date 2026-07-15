@@ -695,6 +695,7 @@
         </div>
       </div>
       <div class="actions">
+        <a class="btn secondary" href="crm/">Ver CRM</a>
         <a class="btn secondary" href="proceso/">Ver proceso</a>
         <button class="btn secondary" id="cloudBtn" type="button">Configurar nube</button>
         <button class="btn secondary" id="exportBtn" type="button">Exportar CSV</button>
@@ -1587,7 +1588,7 @@
       try {
         const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`);
         if (!Array.isArray(rows)) return;
-        records = sanitizeRecords(rows.map(row => row.data));
+        records = sanitizeRecords(rows.map(row => row.data).filter(data => data?.module !== "crm"));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
         render();
         els.cloudBtn.textContent = "Nube activa";
