@@ -784,6 +784,7 @@
     };
     const CALENDAR_CONFIG_KEY = "happyDecoCalendarConfig";
     const DEFAULT_CALENDAR_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqqcdstHb6fWfZ9TTCosxjSm3fiWgh7YsqX8zkxey_Kek3TwwkCwUv6egzrJjIC0_2TQ/exec";
+    const DEFAULT_CALENDAR_WEB_APP_PATH = "/macros/s/AKfycbwqqcdstHb6fWfZ9TTCosxjSm3fiWgh7YsqX8zkxey_Kek3TwwkCwUv6egzrJjIC0_2TQ/exec";
     const DEFAULT_CALENDAR_SECRET = "happy-deco-calendar-2026";
     const MEETING_CALENDAR_NAME = "Happy Deco - Reuniones";
     const MEETING_SHARE_WITH = [
@@ -989,7 +990,10 @@
       showMeetingMessage("Agendando reunión en Google Calendar...");
 
       try {
-        const result = await callCalendarBridge(config.webAppUrl, payload);
+        const result = await callCalendarBridge(config.webAppUrl, payload).catch(error => {
+          if (config.webAppUrl === DEFAULT_CALENDAR_WEB_APP_URL) throw error;
+          return callCalendarBridge(DEFAULT_CALENDAR_WEB_APP_URL, payload);
+        });
         if (!result.ok) throw new Error(result.error || "Google Calendar no confirmó la reunión.");
         closeCalendarFallbackWindow(fallbackWindow);
         showToast("Reunión agendada en Google Calendar");
@@ -997,7 +1001,7 @@
         showMeetingMessage(`Reunión agendada: ${payload.title}`);
       } catch (error) {
         console.error("No pude agendar la reunión", error);
-        const opened = openCalendarFallbackUrl(fallbackWindow, config.webAppUrl, payload);
+        const opened = openCalendarFallbackUrl(fallbackWindow, DEFAULT_CALENDAR_WEB_APP_URL, payload);
         const message = opened
           ? "Abrí la ventana de respaldo de Google Calendar. Confirmá ahí que quedó agendada."
           : "No se pudo conectar con el puente de Google Calendar. Probá nuevamente desde el link actualizado.";
@@ -1041,11 +1045,19 @@
     function getCalendarConfig() {
       try {
         const saved = JSON.parse(localStorage.getItem(CALENDAR_CONFIG_KEY) || "{}");
+        const savedUrl = String(saved.webAppUrl || "").trim();
+        const officialUrl = savedUrl.includes(DEFAULT_CALENDAR_WEB_APP_PATH)
+          ? savedUrl
+          : DEFAULT_CALENDAR_WEB_APP_URL;
+        if (savedUrl && savedUrl !== officialUrl) {
+          localStorage.removeItem(CALENDAR_CONFIG_KEY);
+        }
         return {
-          webAppUrl: saved.webAppUrl || DEFAULT_CALENDAR_WEB_APP_URL,
+          webAppUrl: officialUrl,
           secret: saved.secret || DEFAULT_CALENDAR_SECRET
         };
       } catch {
+        localStorage.removeItem(CALENDAR_CONFIG_KEY);
         return { webAppUrl: DEFAULT_CALENDAR_WEB_APP_URL, secret: DEFAULT_CALENDAR_SECRET };
       }
     }
