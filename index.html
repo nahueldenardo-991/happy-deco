@@ -254,6 +254,7 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      min-width: 0;
     }
 
     .form-panel {
@@ -354,6 +355,21 @@
       font-size: 12px;
       font-weight: 800;
       outline: none;
+    }
+
+    .table-input[type="date"] {
+      width: 138px;
+      min-width: 138px;
+      max-width: 138px;
+      padding: 7px 8px;
+      line-height: 1.2;
+      color-scheme: light;
+    }
+
+    .table-input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      margin-left: 4px;
+      padding: 2px;
     }
 
     .table-input:focus,
@@ -573,6 +589,8 @@
     }
 
     .table-wrap {
+      width: 100%;
+      max-width: 100%;
       margin-top: 12px;
       overflow: auto;
       border: 1px solid rgba(126, 219, 223, .34);
@@ -582,9 +600,20 @@
 
     table {
       width: 100%;
-      min-width: 1120px;
+      min-width: 1360px;
       border-collapse: collapse;
       background: #fffdfb;
+    }
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 104px;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 158px;
+      overflow: visible;
     }
 
     th,
