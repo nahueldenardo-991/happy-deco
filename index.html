@@ -499,6 +499,173 @@
       min-width: 0;
     }
 
+    .view-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 0 0 18px;
+    }
+
+    .view-tab {
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: rgba(255, 255, 255, .82);
+      border: 1px solid var(--line);
+      font-weight: 900;
+    }
+
+    .view-tab.active {
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), #35a19a);
+      border-color: transparent;
+      box-shadow: 0 12px 28px rgba(41, 139, 133, .18);
+    }
+
+    .dashboard-view {
+      display: grid;
+      gap: 18px;
+    }
+
+    .control-panel {
+      display: grid;
+      gap: 18px;
+    }
+
+    .control-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(260px, .9fr);
+      gap: 18px;
+      padding: 18px;
+      border-color: rgba(126, 219, 223, .28);
+      background:
+        linear-gradient(135deg, rgba(126, 219, 223, .18), transparent 42%),
+        linear-gradient(180deg, #fff, #fff8fb);
+    }
+
+    .control-title {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .control-title h2 {
+      font-size: clamp(26px, 3vw, 40px);
+    }
+
+    .control-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .summary-chip {
+      min-height: 82px;
+      display: grid;
+      align-content: center;
+      gap: 5px;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: #fffdfb;
+      border: 1px solid rgba(255, 150, 191, .24);
+    }
+
+    .summary-chip strong {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .summary-chip span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+    }
+
+    .control-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .event-card {
+      display: grid;
+      grid-template-columns: 86px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: stretch;
+      padding: 12px;
+      border: 1px solid rgba(255, 150, 191, .24);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #fff, #fffdfb);
+    }
+
+    .days-box {
+      min-height: 76px;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 3px;
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: #e4f8f7;
+      border: 1px solid rgba(126, 219, 223, .5);
+      text-align: center;
+    }
+
+    .days-box strong {
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .days-box span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .days-box.today {
+      background: #fff0c7;
+      border-color: rgba(255, 214, 122, .9);
+    }
+
+    .event-main {
+      min-width: 0;
+      display: grid;
+      gap: 5px;
+      align-content: center;
+    }
+
+    .event-main strong {
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .event-meta {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .event-status {
+      display: grid;
+      gap: 7px;
+      justify-items: end;
+      align-content: center;
+    }
+
+    .quick-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
     .metrics {
       display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -769,6 +936,15 @@
       .metrics {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
+
+      .control-hero,
+      .control-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 860px) {
@@ -798,10 +974,20 @@
       }
 
       .metrics,
+      .quick-kpis,
+      .control-summary,
       .filters,
       .rankings,
       .form-grid {
         grid-template-columns: 1fr;
+      }
+
+      .event-card {
+        grid-template-columns: 1fr;
+      }
+
+      .event-status {
+        justify-items: start;
       }
 
       .metric {
@@ -824,6 +1010,7 @@
         </div>
       </div>
       <div class="actions">
+        <a class="btn secondary" href="panel-control/">Panel de control</a>
         <a class="btn secondary" href="crm/">Ver CRM</a>
         <a class="btn secondary" href="proceso/">Ver proceso</a>
         <button class="btn secondary" id="cloudBtn" type="button">Configurar nube</button>
