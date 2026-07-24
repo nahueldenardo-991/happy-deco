@@ -402,6 +402,12 @@
       border: 1px solid #efbbbb;
     }
 
+    .calendar-pill-review {
+      color: #9b6b13;
+      background: #fff2c9;
+      border: 1px solid #efd58a;
+    }
+
     .mini-action {
       margin-top: 6px;
       min-height: 30px;
@@ -1558,8 +1564,8 @@
           <td>${money(record.saldo)}</td>
           <td><select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="facturacion" aria-label="Cambiar facturación">${buildSelectOptions(BILLING_OPTIONS, record.facturacion || "Pendiente")}</select></td>
           <td>
-            <span class="calendar-pill ${record.googleCalendarEventId ? "calendar-pill-ok" : "calendar-pill-missing"}">${record.googleCalendarEventId ? "Agendado" : "Sin agendar"}</span><br>
-            <button class="mini-action" type="button" data-calendar="${escapeAttr(record.id)}">${record.googleCalendarStatus === "Agendando" ? "Agendando..." : record.googleCalendarEventId ? "Actualizar" : "Agendar"}</button>
+            <span class="calendar-pill ${calendarPillClass(record)}">${calendarPillText(record)}</span><br>
+            <button class="mini-action" type="button" data-calendar="${escapeAttr(record.id)}">${calendarButtonText(record)}</button>
           </td>
           <td>${escapeHtml(record.observaciones || "-")}</td>
           <td><button class="icon-btn" type="button" title="Eliminar registro admin" data-delete="${record.id}">&times;</button></td>
@@ -1593,6 +1599,23 @@
           </table>
         </div>
       `;
+    }
+
+    function calendarPillClass(record) {
+      if (record.googleCalendarEventId) return "calendar-pill-ok";
+      if (record.googleCalendarStatus === "Revisar calendario") return "calendar-pill-review";
+      return "calendar-pill-missing";
+    }
+
+    function calendarPillText(record) {
+      if (record.googleCalendarEventId) return "Agendado";
+      return record.googleCalendarStatus === "Revisar calendario" ? "Revisar calendario" : "Sin agendar";
+    }
+
+    function calendarButtonText(record) {
+      if (record.googleCalendarStatus === "Agendando") return "Agendando...";
+      if (record.googleCalendarEventId) return "Actualizar";
+      return record.googleCalendarStatus === "Revisar calendario" ? "Reintentar" : "Agendar";
     }
 
     function updateRecordField(id, field, value) {
@@ -1708,6 +1731,7 @@
         if (!config?.webAppUrl) return;
       }
       const payload = buildCalendarPayload(record, config.secret);
+      const fallbackWindow = openCalendarFallbackWindow();
       record.googleCalendarStatus = "Agendando";
       record.updatedAt = new Date().toISOString();
       saveRecords();
@@ -1726,13 +1750,61 @@
         record.updatedAt = new Date().toISOString();
         saveRecords();
         render();
+        closeCalendarFallbackWindow(fallbackWindow);
         alert("Evento agendado en Google Calendar.");
       } catch (error) {
-        record.googleCalendarStatus = "Sin agendar";
+        const fallbackOpened = openCalendarFallbackUrl(fallbackWindow, DEFAULT_CALENDAR_WEB_APP_URL, payload);
+        record.googleCalendarStatus = fallbackOpened ? "Revisar calendario" : "Sin agendar";
         record.updatedAt = new Date().toISOString();
         saveRecords();
         render();
-        alert(`No se pudo agendar en Google Calendar: ${formatCalendarError(error)}`);
+        if (fallbackOpened) {
+          alert("El agendado silencioso falló en esta computadora, pero abrí una ventana de respaldo para completar el evento en Google Calendar. Cuando esa ventana diga 'Evento agendado', el evento ya quedó creado.");
+        } else {
+          alert(`No se pudo agendar en Google Calendar: ${formatCalendarError(error)}`);
+        }
+      }
+    }
+
+    function openCalendarFallbackWindow() {
+      try {
+        const popup = window.open("", `happyDecoCalendar_${Date.now()}`, "width=560,height=720");
+        if (!popup) return null;
+        popup.document.write(`
+          <!doctype html>
+          <html lang="es">
+            <head><meta charset="utf-8"><title>Happy Deco Calendar</title></head>
+            <body style="font-family:system-ui,sans-serif;padding:24px;color:#3a2d35">
+              <h1 style="font-size:22px">Preparando agendado...</h1>
+              <p>Esta ventana se cerrarÃ¡ sola si el agendado directo funciona.</p>
+            </body>
+          </html>
+        `);
+        popup.document.close();
+        return popup;
+      } catch {
+        return null;
+      }
+    }
+
+    function closeCalendarFallbackWindow(popup) {
+      try {
+        if (popup && !popup.closed) popup.close();
+      } catch {}
+    }
+
+    function openCalendarFallbackUrl(popup, webAppUrl, payload) {
+      const url = buildCalendarBridgeUrl(webAppUrl, payload);
+      try {
+        if (popup && !popup.closed) {
+          popup.location.href = url;
+          popup.focus();
+          return true;
+        }
+        const opened = window.open(url, `happyDecoCalendar_${Date.now()}`, "width=560,height=720");
+        return Boolean(opened);
+      } catch {
+        return false;
       }
     }
 
@@ -1761,14 +1833,19 @@
           cleanup();
           resolve(result);
         };
-        const separator = webAppUrl.includes("?") ? "&" : "?";
-        script.src = `${webAppUrl}${separator}callback=${encodeURIComponent(callbackName)}&payload=${encodeURIComponent(JSON.stringify(payload))}`;
+        script.src = buildCalendarBridgeUrl(webAppUrl, payload, callbackName);
         script.onerror = () => {
           cleanup();
           reject(new Error("No se pudo conectar con el puente de Google Calendar."));
         };
         document.body.appendChild(script);
       });
+    }
+
+    function buildCalendarBridgeUrl(webAppUrl, payload, callbackName = "") {
+      const separator = webAppUrl.includes("?") ? "&" : "?";
+      const callbackPart = callbackName ? `callback=${encodeURIComponent(callbackName)}&` : "";
+      return `${webAppUrl}${separator}${callbackPart}payload=${encodeURIComponent(JSON.stringify(payload))}`;
     }
 
     function buildCalendarPayload(record, secret) {
