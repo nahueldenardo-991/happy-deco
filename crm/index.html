@@ -374,6 +374,53 @@
       margin-bottom: 1rem;
     }
 
+    .meeting-panel {
+      border-color: rgba(126, 218, 218, .65);
+      background:
+        linear-gradient(135deg, rgba(126, 218, 218, .16), rgba(255, 255, 255, .86) 38%),
+        #fffdf9;
+    }
+
+    .meeting-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .meeting-head p {
+      margin: .2rem 0 0;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .meeting-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .85rem;
+    }
+
+    .meeting-grid .span-2 { grid-column: span 2; }
+    .meeting-grid .span-4 { grid-column: 1 / -1; }
+
+    .meeting-message {
+      display: none;
+      margin-top: .85rem;
+      padding: .75rem .85rem;
+      border: 1px solid rgba(47, 155, 112, .28);
+      border-radius: var(--radius);
+      color: #23684d;
+      background: #effcf6;
+      font-weight: 800;
+    }
+
+    .meeting-message.error {
+      color: var(--danger);
+      border-color: rgba(201, 70, 70, .3);
+      background: #fff5f5;
+    }
+
     .agenda-list {
       display: grid;
       gap: .6rem;
@@ -467,7 +514,9 @@
       .topbar { align-items: flex-start; flex-direction: column; }
       .nav { justify-content: flex-start; width: 100%; }
       .nav .btn, .nav .ghost { flex: 1 1 auto; text-align: center; }
-      .summary-grid, .field-grid, .form-actions { grid-template-columns: 1fr; }
+      .summary-grid, .field-grid, .form-actions, .meeting-grid { grid-template-columns: 1fr; }
+      .meeting-grid .span-2, .meeting-grid .span-4 { grid-column: 1; }
+      .meeting-head { flex-direction: column; }
       .agenda-item { grid-template-columns: 1fr; }
       .filters .control { width: 100%; }
     }
@@ -654,6 +703,63 @@
         </section>
 
         <section class="view" id="view-agenda">
+          <div class="agenda-panel meeting-panel">
+            <div class="meeting-head">
+              <div>
+                <h3 class="section-title">Agendar reunión</h3>
+                <p>Reuniones comerciales visibles para las socias, sin compartir este detalle con Juli.</p>
+              </div>
+              <span class="badge status-ok">Google Calendar</span>
+            </div>
+            <form id="meetingForm">
+              <div class="meeting-grid">
+                <label class="field span-2">
+                  <span>Tema de reunión</span>
+                  <input class="control" id="meetingTopic" name="topic" type="text" placeholder="Ej: Revisión de propuesta" required>
+                </label>
+                <label class="field">
+                  <span>Fecha</span>
+                  <input class="control" id="meetingDate" name="date" type="date" required>
+                </label>
+                <label class="field">
+                  <span>Horario</span>
+                  <input class="control" id="meetingTime" name="time" type="time" required>
+                </label>
+                <label class="field span-2">
+                  <span>Nombre de clienta</span>
+                  <input class="control" id="meetingClient" name="client" type="text" placeholder="Nombre y apellido" required>
+                </label>
+                <label class="field">
+                  <span>Modalidad</span>
+                  <select class="control" id="meetingMode" name="mode">
+                    <option>Presencial</option>
+                    <option>Virtual</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Estado de presupuesto</span>
+                  <select class="control" id="meetingBudgetStatus" name="budgetStatus">
+                    <option>Armado</option>
+                    <option>No armado</option>
+                    <option>Enviado</option>
+                  </select>
+                </label>
+                <label class="field span-2">
+                  <span>Temática propuesta</span>
+                  <input class="control" id="meetingTheme" name="theme" type="text" placeholder="Ej: La Sirenita, dinosaurios">
+                </label>
+                <label class="field span-4">
+                  <span>Detalles</span>
+                  <textarea class="control" id="meetingDetails" name="details" rows="3" placeholder="Puntos a conversar, condiciones, links o comentarios relevantes"></textarea>
+                </label>
+              </div>
+              <div class="form-actions">
+                <button class="btn" id="scheduleMeetingBtn" type="submit">Agendar reunión</button>
+                <button class="ghost" id="resetMeetingBtn" type="button">Limpiar</button>
+              </div>
+              <div class="meeting-message" id="meetingMessage"></div>
+            </form>
+          </div>
           <div class="agenda-panel">
             <h3 class="section-title">Seguimientos y alertas</h3>
             <div class="agenda-list" id="agendaList"></div>
@@ -676,6 +782,15 @@
       url: "https://niwkiklxyblrvbeusqbd.supabase.co",
       anonKey: "sb_publishable_BZOa1hRBnH0KWocgyCZmfw_-lrLIgGd"
     };
+    const CALENDAR_CONFIG_KEY = "happyDecoCalendarConfig";
+    const DEFAULT_CALENDAR_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqqcdstHb6fWfZ9TTCosxjSm3fiWgh7YsqX8zkxey_Kek3TwwkCwUv6egzrJjIC0_2TQ/exec";
+    const DEFAULT_CALENDAR_SECRET = "happy-deco-calendar-2026";
+    const MEETING_CALENDAR_NAME = "Happy Deco - Reuniones";
+    const MEETING_SHARE_WITH = [
+      "happydecoar@gmail.com",
+      "cataovejero2025@gmail.com",
+      "oliveravaleriaximena@gmail.com"
+    ];
     const DATA_TABLE = "happy_deco_dashboard_records";
     const PROCESS_TABLE = "happy_deco_process_events";
     const STAGES = ["Nueva consulta", "Contactado", "Propuesta enviada", "Seguimiento", "Seña pendiente", "Señado", "Pagado completo", "Cancelado"];
@@ -714,6 +829,17 @@
       pipeline: document.querySelector("#pipeline"),
       agendaList: document.querySelector("#agendaList"),
       tableWrap: document.querySelector("#tableWrap"),
+      meetingForm: document.querySelector("#meetingForm"),
+      meetingTopic: document.querySelector("#meetingTopic"),
+      meetingDate: document.querySelector("#meetingDate"),
+      meetingTime: document.querySelector("#meetingTime"),
+      meetingClient: document.querySelector("#meetingClient"),
+      meetingMode: document.querySelector("#meetingMode"),
+      meetingBudgetStatus: document.querySelector("#meetingBudgetStatus"),
+      meetingTheme: document.querySelector("#meetingTheme"),
+      meetingDetails: document.querySelector("#meetingDetails"),
+      resetMeetingBtn: document.querySelector("#resetMeetingBtn"),
+      meetingMessage: document.querySelector("#meetingMessage"),
       toast: document.querySelector("#toast")
     };
 
@@ -737,6 +863,8 @@
       els.searchInput.addEventListener("input", render);
       els.filterResponsable.addEventListener("change", render);
       els.filterAlerta.addEventListener("change", render);
+      els.meetingForm.addEventListener("submit", scheduleMeeting);
+      els.resetMeetingBtn.addEventListener("click", resetMeetingForm);
       document.querySelectorAll(".tab").forEach(tab => {
         tab.addEventListener("click", () => {
           activeView = tab.dataset.view;
@@ -765,6 +893,7 @@
       const today = isoDate(new Date());
       els.fechaConsulta.value = today;
       els.proximaAccionFecha.value = today;
+      if (!els.meetingDate.value) els.meetingDate.value = today;
       setOptions(els.filterResponsable, RESPONSABLES, "Todos los responsables");
     }
 
@@ -830,6 +959,164 @@
       els.formTitle.textContent = "Nueva consulta";
       fillDefaults();
       els.cliente.focus();
+    }
+
+    function resetMeetingForm() {
+      els.meetingForm.reset();
+      els.meetingDate.value = isoDate(new Date());
+      els.meetingMessage.style.display = "none";
+      els.meetingMessage.classList.remove("error");
+      els.meetingTopic.focus();
+    }
+
+    async function scheduleMeeting(event) {
+      event.preventDefault();
+      const formData = new FormData(els.meetingForm);
+      const meeting = Object.fromEntries(formData.entries());
+      meeting.topic = String(meeting.topic || "").trim();
+      meeting.client = String(meeting.client || "").trim();
+      meeting.theme = String(meeting.theme || "").trim();
+      meeting.details = String(meeting.details || "").trim();
+
+      if (!meeting.topic || !meeting.date || !meeting.time || !meeting.client) {
+        showMeetingMessage("Completá tema, fecha, horario y nombre de clienta.", true);
+        return;
+      }
+
+      const config = getCalendarConfig();
+      const payload = buildMeetingCalendarPayload(meeting, config.secret);
+      const fallbackWindow = openCalendarFallbackWindow();
+      showMeetingMessage("Agendando reunión en Google Calendar...");
+
+      try {
+        const result = await callCalendarBridge(config.webAppUrl, payload);
+        if (!result.ok) throw new Error(result.error || "Google Calendar no confirmó la reunión.");
+        closeCalendarFallbackWindow(fallbackWindow);
+        showToast("Reunión agendada en Google Calendar");
+        resetMeetingForm();
+        showMeetingMessage(`Reunión agendada: ${payload.title}`);
+      } catch (error) {
+        console.error("No pude agendar la reunión", error);
+        const opened = openCalendarFallbackUrl(fallbackWindow, config.webAppUrl, payload);
+        const message = opened
+          ? "Abrí la ventana de respaldo de Google Calendar. Confirmá ahí que quedó agendada."
+          : "No se pudo conectar con el puente de Google Calendar. Probá nuevamente desde el link actualizado.";
+        showMeetingMessage(message, !opened);
+      }
+    }
+
+    function buildMeetingCalendarPayload(meeting, secret) {
+      const sourceId = `crm-meeting-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const startDateTime = `${meeting.date}T${meeting.time}:00`;
+      const endDateTime = addMinutesToLocalDateTime(meeting.date, meeting.time, 60);
+      const title = `Happy Deco - Reunión - ${meeting.client} - ${meeting.topic}`;
+      const description = [
+        `Tema de reunión: ${meeting.topic}`,
+        `Clienta: ${meeting.client}`,
+        `Fecha: ${formatDate(meeting.date)}`,
+        `Horario: ${meeting.time}`,
+        `Modalidad: ${meeting.mode}`,
+        `Estado de presupuesto: ${meeting.budgetStatus}`,
+        meeting.theme ? `Temática propuesta: ${meeting.theme}` : "",
+        "",
+        meeting.details ? `Detalles: ${meeting.details}` : "Detalles: Sin detalles cargados"
+      ].filter(line => line !== "").join("\n");
+
+      return {
+        secret,
+        sourceId,
+        title,
+        date: meeting.date,
+        startDateTime,
+        endDateTime,
+        calendarName: MEETING_CALENDAR_NAME,
+        ownerEmail: "nahuel.denardo@gmail.com",
+        shareWith: MEETING_SHARE_WITH,
+        remindersMinutes: [1440, 60, 10],
+        location: meeting.mode === "Presencial" ? "A definir" : "Virtual",
+        description
+      };
+    }
+
+    function getCalendarConfig() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(CALENDAR_CONFIG_KEY) || "{}");
+        return {
+          webAppUrl: saved.webAppUrl || DEFAULT_CALENDAR_WEB_APP_URL,
+          secret: saved.secret || DEFAULT_CALENDAR_SECRET
+        };
+      } catch {
+        return { webAppUrl: DEFAULT_CALENDAR_WEB_APP_URL, secret: DEFAULT_CALENDAR_SECRET };
+      }
+    }
+
+    function callCalendarBridge(webAppUrl, payload) {
+      return new Promise((resolve, reject) => {
+        const callbackName = `happyDecoCalendarCallback_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+        const script = document.createElement("script");
+        const timer = window.setTimeout(() => {
+          cleanup();
+          reject(new Error("Tiempo de espera agotado con Google Calendar."));
+        }, 15000);
+
+        function cleanup() {
+          window.clearTimeout(timer);
+          delete window[callbackName];
+          script.remove();
+        }
+
+        window[callbackName] = result => {
+          cleanup();
+          resolve(result || {});
+        };
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("No se pudo conectar con el puente de Google Calendar."));
+        };
+        script.src = buildCalendarBridgeUrl(webAppUrl, payload, callbackName);
+        document.body.appendChild(script);
+      });
+    }
+
+    function buildCalendarBridgeUrl(webAppUrl, payload, callbackName) {
+      const params = new URLSearchParams({
+        callback: callbackName,
+        payload: JSON.stringify(payload)
+      });
+      return `${webAppUrl}?${params.toString()}`;
+    }
+
+    function openCalendarFallbackWindow() {
+      try {
+        return window.open("", "happyDecoCalendarFallback");
+      } catch {
+        return null;
+      }
+    }
+
+    function openCalendarFallbackUrl(fallbackWindow, webAppUrl, payload) {
+      const url = buildCalendarBridgeUrl(webAppUrl, payload, "");
+      try {
+        if (fallbackWindow && !fallbackWindow.closed) {
+          fallbackWindow.location.href = url;
+          return true;
+        }
+        return Boolean(window.open(url, "_blank", "noopener"));
+      } catch {
+        return false;
+      }
+    }
+
+    function closeCalendarFallbackWindow(fallbackWindow) {
+      try {
+        if (fallbackWindow && !fallbackWindow.closed) fallbackWindow.close();
+      } catch {}
+    }
+
+    function showMeetingMessage(message, isError = false) {
+      els.meetingMessage.textContent = message;
+      els.meetingMessage.style.display = "block";
+      els.meetingMessage.classList.toggle("error", isError);
     }
 
     function editLead(lead) {
@@ -1270,6 +1557,17 @@
 
     function isoDate(date) {
       return date.toISOString().slice(0, 10);
+    }
+
+    function addMinutesToLocalDateTime(date, time, minutes) {
+      const value = new Date(`${date}T${time || "00:00"}:00`);
+      value.setMinutes(value.getMinutes() + minutes);
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, "0");
+      const day = String(value.getDate()).padStart(2, "0");
+      const hours = String(value.getHours()).padStart(2, "0");
+      const mins = String(value.getMinutes()).padStart(2, "0");
+      return `${year}-${month}-${day}T${hours}:${mins}:00`;
     }
 
     function formatDate(date) {

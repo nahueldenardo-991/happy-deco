@@ -7,6 +7,20 @@ const DEFAULT_SHARE_WITH = [
   "oliveravaleriaximena@gmail.com"
 ];
 
+function authorizeHappyDecoPermissions() {
+  const calendar = getOrCreateCalendar_(DEFAULT_CALENDAR_NAME);
+  const response = UrlFetchApp.fetch("https://www.googleapis.com/calendar/v3/users/me/calendarList", {
+    muteHttpExceptions: true,
+    headers: {
+      Authorization: `Bearer ${ScriptApp.getOAuthToken()}`
+    }
+  });
+  return {
+    calendarId: calendar.getId(),
+    urlFetchStatus: response.getResponseCode()
+  };
+}
+
 function doGet(e) {
   const callback = e.parameter.callback || "";
   try {
@@ -28,18 +42,20 @@ function upsertHappyDecoEvent_(payload) {
   if (!payload || payload.secret !== HAPPY_DECO_SECRET) {
     throw new Error("Clave interna inválida.");
   }
-  if (!payload.date) {
+  if (!payload.date && !payload.startDateTime) {
     throw new Error("Falta la fecha del evento.");
   }
 
   const calendarName = payload.calendarName || DEFAULT_CALENDAR_NAME;
   const calendar = getOrCreateCalendar_(calendarName);
   const shareWith = payload.shareWith || DEFAULT_SHARE_WITH;
-  shareCalendar_(calendar, shareWith);
+  const shared = shareCalendar_(calendar, shareWith);
 
   const sourceId = payload.sourceId || Utilities.getUuid();
   const title = payload.title || "Happy Deco - Evento";
-  const date = parseDate_(payload.date);
+  const isTimedEvent = Boolean(payload.startDateTime);
+  const date = isTimedEvent ? parseDateTime_(payload.startDateTime) : parseDate_(payload.date);
+  const endDate = isTimedEvent ? parseEndDateTime_(payload.startDateTime, payload.endDateTime) : null;
   const description = [
     payload.description || "",
     "",
@@ -49,10 +65,19 @@ function upsertHappyDecoEvent_(payload) {
   let event = findExistingEvent_(calendar, sourceId, date);
   if (event) {
     event.setTitle(title);
-    event.setAllDayDate(date);
+    if (isTimedEvent) {
+      event.setTime(date, endDate);
+    } else {
+      event.setAllDayDate(date);
+    }
     event.setDescription(description);
     event.setLocation(payload.location || "");
     clearReminders_(event);
+  } else if (isTimedEvent) {
+    event = calendar.createEvent(title, date, endDate, {
+      description,
+      location: payload.location || ""
+    });
   } else {
     event = calendar.createAllDayEvent(title, date, {
       description,
@@ -70,6 +95,7 @@ function upsertHappyDecoEvent_(payload) {
     title,
     calendarName,
     calendarId: calendar.getId(),
+    shared,
     guests
   };
 }
@@ -85,16 +111,43 @@ function getOrCreateCalendar_(name) {
 }
 
 function shareCalendar_(calendar, emails) {
-  emails.forEach(email => {
-    if (!email) return;
+  return Array.from(new Set((emails || []).filter(Boolean))).map(email => {
+    const calendarId = calendar.getId();
     try {
-      calendar.addEditor(email);
+      upsertCalendarAcl_(calendarId, email, "writer");
+      return { email, role: "editor", ok: true };
     } catch (error) {
       try {
-        calendar.addViewer(email);
-      } catch (ignored) {}
+        upsertCalendarAcl_(calendarId, email, "reader");
+        return { email, role: "viewer", ok: true };
+      } catch (viewerError) {
+        return { email, ok: false, error: viewerError.message || error.message || String(viewerError) };
+      }
     }
   });
+}
+
+function upsertCalendarAcl_(calendarId, email, role) {
+  const endpoint = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/acl`;
+  const resource = {
+    role,
+    scope: {
+      type: "user",
+      value: email
+    }
+  };
+  const response = UrlFetchApp.fetch(endpoint, {
+    method: "post",
+    contentType: "application/json",
+    muteHttpExceptions: true,
+    headers: {
+      Authorization: `Bearer ${ScriptApp.getOAuthToken()}`
+    },
+    payload: JSON.stringify(resource)
+  });
+  const code = response.getResponseCode();
+  if (code === 200 || code === 201 || code === 409) return true;
+  throw new Error(`ACL ${code}: ${response.getContentText()}`);
 }
 
 function syncGuests_(event, emails) {
@@ -130,6 +183,20 @@ function parseDate_(isoDate) {
     throw new Error("La fecha no tiene formato válido.");
   }
   return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
+function parseDateTime_(isoDateTime) {
+  const value = new Date(String(isoDateTime));
+  if (isNaN(value.getTime())) {
+    throw new Error("La fecha y hora no tienen formato valido.");
+  }
+  return value;
+}
+
+function parseEndDateTime_(startDateTime, endDateTime) {
+  if (endDateTime) return parseDateTime_(endDateTime);
+  const start = parseDateTime_(startDateTime);
+  return new Date(start.getTime() + 60 * 60 * 1000);
 }
 
 function htmlResponse_(title, message) {
