@@ -1,4 +1,4 @@
-<!doctype html>
+�<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -256,7 +256,7 @@
 
     .metrics {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 12px;
       margin-bottom: 18px;
     }
@@ -289,10 +289,13 @@
     }
 
     .metric .value {
-      font-size: clamp(24px, 2.45vw, 36px);
+      font-size: clamp(24px, 2.05vw, 34px);
       font-weight: 950;
       line-height: 1.08;
-      overflow-wrap: anywhere;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-variant-numeric: tabular-nums;
     }
 
     .metric .detail {
@@ -395,6 +398,7 @@
       color: var(--muted);
       font-size: 13px;
       line-height: 1.35;
+      overflow-wrap: anywhere;
     }
 
     .event-status {
@@ -462,6 +466,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 12px;
+      align-items: center;
       padding: 12px;
       border-radius: var(--radius);
       border: 1px solid rgba(255, 150, 191, .24);
@@ -620,11 +625,11 @@
       </div>
       <div class="summary-grid">
         <button class="summary-chip" type="button" data-detail="upcoming">
-          <span>Eventos pr?ximos</span>
+          <span>Eventos próximos</span>
           <strong id="summaryNext">0</strong>
         </button>
         <button class="summary-chip" type="button" data-detail="urgent">
-          <span>M?s urgente</span>
+          <span>Más urgente</span>
           <strong id="summaryUrgent">-</strong>
         </button>
         <button class="summary-chip" type="button" data-detail="unscheduled">
@@ -647,12 +652,12 @@
       <button class="metric metric-action green" type="button" data-detail="confirmed">
         <div class="label">Confirmados</div>
         <div class="value" id="confirmedMetric">0</div>
-        <div class="detail" id="conversionMetric">0% conversi?n</div>
+        <div class="detail" id="conversionMetric">0% conversión</div>
       </button>
       <article class="metric rose">
         <div class="label">Ingresos vendidos</div>
         <div class="value" id="revenueMetric">$0</div>
-        <div class="detail">Eventos se?ados o realizados</div>
+        <div class="detail">Eventos señados o realizados</div>
       </article>
       <article class="metric gold">
         <div class="label">Saldo pendiente</div>
@@ -665,17 +670,17 @@
         <div class="detail">Monto vendido menos costo</div>
       </article>
       <button class="metric metric-action rose" type="button" data-detail="next7">
-        <div class="label">Pr?ximos 7 d?as</div>
+        <div class="label">Próximos 7 días</div>
         <div class="value" id="next7Metric">0</div>
-        <div class="detail">Eventos con ejecuci?n inmediata</div>
+        <div class="detail">Eventos con ejecución inmediata</div>
       </button>
       <button class="metric metric-action green" type="button" data-detail="next30">
-        <div class="label">Pr?ximos 30 d?as</div>
+        <div class="label">Próximos 30 días</div>
         <div class="value" id="next30Metric">0</div>
         <div class="detail">Eventos por preparar o montar</div>
       </button>
       <button class="metric metric-action gold" type="button" data-detail="billing">
-        <div class="label">Facturaci?n pendiente</div>
+        <div class="label">Facturación pendiente</div>
         <div class="value" id="billingMetric">0</div>
         <div class="detail">Registros a revisar administrativamente</div>
       </button>
@@ -685,7 +690,7 @@
       <div class="panel-head">
         <div>
           <h2 id="detailTitle">Detalle</h2>
-          <div class="small-note" id="detailNote">Registros vinculados a la medici?n seleccionada.</div>
+          <div class="small-note" id="detailNote">Registros vinculados a la medición seleccionada.</div>
         </div>
         <div class="detail-actions">
           <button class="btn secondary" id="clearDetailBtn" type="button">Cerrar detalle</button>
@@ -883,7 +888,7 @@
     function buildHeroTitle(items, upcoming, blocked) {
       if (!items.length) return "Sin registros cargados todavía";
       if (blocked.length) return `${blocked.length} punto${blocked.length === 1 ? "" : "s"} trabado${blocked.length === 1 ? "" : "s"} para resolver`;
-      if (upcoming.length) return `Proximo evento en ${daysLabel(daysUntil(upcoming[0].fechaEvento), false)}`;
+      if (upcoming.length) return `Próximo evento en ${daysLabel(daysUntil(upcoming[0].fechaEvento), false)}`;
       return "No hay eventos futuros cargados";
     }
 
@@ -925,7 +930,7 @@
     function renderQuickList(items, groups) {
       const alerts = [
         {
-          title: "Eventos en los pr?ximos 7 d?as",
+          title: "Eventos en los próximos 7 días",
           count: groups.next7.length,
           meta: "Mirar materiales, montaje, responsables y detalles finales.",
           tone: "gold",
@@ -934,33 +939,33 @@
         {
           title: "Eventos futuros sin agendar",
           count: groups.unscheduled.length,
-          meta: "Tienen fecha futura, pero todav?a no figuran como agendados.",
+          meta: "Tienen fecha futura, pero todavía no figuran como agendados.",
           tone: "rose",
           detail: "unscheduled"
         },
         {
           title: "Registros trabados",
           count: groups.blocked.length,
-          meta: "Requieren una definici?n para que el proceso avance.",
+          meta: "Requieren una definición para que el proceso avance.",
           tone: "rose",
           detail: "blocked"
         },
         {
-          title: "Facturaci?n pendiente",
+          title: "Facturación pendiente",
           count: groups.pendingBilling.length,
-          meta: "Revisi?n administrativa, sin exponer datos en Google Calendar.",
+          meta: "Revisión administrativa, sin exponer datos en Google Calendar.",
           tone: "gold",
           detail: "billing"
         },
         {
-          title: "Responsable con m?s carga",
+          title: "Responsable con más carga",
           count: groups.topOwner.count,
           meta: groups.topOwner.label,
           tone: "teal",
           detail: "topOwner"
         },
         {
-          title: "Propuesta m?s vendida/pedida",
+          title: "Propuesta más vendida/pedida",
           count: groups.topProposal.count,
           meta: groups.topProposal.label,
           tone: "green",
@@ -990,7 +995,7 @@
       els.detailNote.textContent = `${items.length} registro${items.length === 1 ? "" : "s"} encontrado${items.length === 1 ? "" : "s"}. No se muestran importes en este detalle.`;
       els.detailList.innerHTML = items.length
         ? items.map(renderDetailRecord).join("")
-        : `<div class="empty">No hay registros para esta medici?n.</div>`;
+        : `<div class="empty">No hay registros para esta medición.</div>`;
       els.detailPanel.hidden = false;
       els.detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -999,15 +1004,15 @@
       const labels = {
         all: "Todos los registros",
         confirmed: "Registros confirmados",
-        upcoming: "Eventos pr?ximos",
-        urgent: "Evento m?s urgente",
-        next7: "Eventos en los pr?ximos 7 d?as",
-        next30: "Eventos en los pr?ximos 30 d?as",
+        upcoming: "Eventos próximos",
+        urgent: "Evento más urgente",
+        next7: "Eventos en los próximos 7 días",
+        next30: "Eventos en los próximos 30 días",
         unscheduled: "Eventos futuros sin agendar",
         blocked: "Registros trabados",
-        billing: "Facturaci?n pendiente",
-        topOwner: "Responsable con m?s carga",
-        topProposal: "Propuesta m?s vendida/pedida"
+        billing: "Facturación pendiente",
+        topOwner: "Responsable con más carga",
+        topProposal: "Propuesta más vendida/pedida"
       };
       return {
         title: labels[key] || "Detalle",
@@ -1022,13 +1027,13 @@
         cleanText(record.responsable || "Sin responsable"),
         cleanText(record.estadoOperativo || "Sin estado"),
         record.googleCalendarEventId ? "Agendado" : "Sin agendar"
-      ].filter(Boolean).join(" ? ");
+      ].filter(Boolean).join(" · ");
       return `
         <article class="detail-record">
           <div class="event-main">
             <strong>${escapeHtml([cleanText(record.cliente), cleanText(record.tematica)].filter(Boolean).join(" - ") || "Registro sin nombre")}</strong>
             <div class="event-meta">${escapeHtml(meta)}</div>
-            <div class="event-meta">${escapeHtml(cleanText(record.homenajeado || "Sin homenajeado"))} ? ${escapeHtml(cleanText(record.propuesta || "Sin propuesta"))} ? ${escapeHtml(cleanText(record.etapa || "Sin etapa"))}</div>
+            <div class="event-meta">${escapeHtml([cleanText(record.homenajeado || "Sin homenajeado"), cleanText(record.propuesta || "Sin propuesta"), cleanText(record.etapa || "Sin etapa")].join(" · "))}</div>
           </div>
           <div class="record-links">
             <a class="mini-link" href="../?registro=${encodeURIComponent(record.id)}">Dashboard</a>
@@ -1128,13 +1133,29 @@
 
     function cleanText(value) {
       return String(value || "")
-        .replace(/Ã¡/g, "á")
-        .replace(/Ã©/g, "é")
-        .replace(/Ã­/g, "í")
-        .replace(/Ã³/g, "ó")
-        .replace(/Ãº/g, "ú")
-        .replace(/Ã±/g, "ñ")
-        .replace(/Â·/g, "·")
+        .replace(/pr\?xim/g, "pr�xim")
+        .replace(/Pr\?xim/g, "Pr�xim")
+        .replace(/d\?as/g, "d�as")
+        .replace(/M\?s/g, "M�s")
+        .replace(/m\?s/g, "m�s")
+        .replace(/conversi\?n/g, "conversi�n")
+        .replace(/ejecuci\?n/g, "ejecuci�n")
+        .replace(/Facturaci\?n/g, "Facturaci�n")
+        .replace(/facturaci\?n/g, "facturaci�n")
+        .replace(/medici\?n/g, "medici�n")
+        .replace(/todav\?a/g, "todav�a")
+        .replace(/definici\?n/g, "definici�n")
+        .replace(/Revisi\?n/g, "Revisi�n")
+        .replace(/revisi\?n/g, "revisi�n")
+        .replace(/se\?ad/g, "se�ad")
+        .replace(/Nbbbrandan/g, "Brandon")
+        .replace(/Ò¡/g, "á")
+        .replace(/Ò©/g, "é")
+        .replace(/Ò­/g, "í")
+        .replace(/Ò³/g, "ó")
+        .replace(/Òº/g, "ú")
+        .replace(/Ò±/g, "ñ")
+        .replace(/�·/g, "·")
         .trim();
     }
 
@@ -1153,3 +1174,4 @@
   </script>
 </body>
 </html>
+

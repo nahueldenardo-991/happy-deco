@@ -177,9 +177,15 @@ textarea {
 .module-dashboard .metric .value {
   letter-spacing: 0;
   max-width: 100%;
-  white-space: normal;
   overflow: visible;
   text-wrap: balance;
+}
+
+.module-control .metric .value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
 }
 
 .module-dashboard .metrics,
