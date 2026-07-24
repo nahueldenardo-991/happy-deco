@@ -2,7 +2,9 @@ const HAPPY_DECO_SECRET = "happy-deco-calendar-2026";
 const DEFAULT_CALENDAR_NAME = "Happy Deco - Eventos";
 const DEFAULT_SHARE_WITH = [
   "happydecoar@gmail.com",
-  "julietaalvarezpaz12@gmail.com"
+  "julietaalvarezpaz12@gmail.com",
+  "cataovejero2025@gmail.com",
+  "oliveravaleriaximena@gmail.com"
 ];
 
 function doGet(e) {
