@@ -1132,6 +1132,7 @@
     const PROCESS_TABLE = "happy_deco_process_events";
     const CALENDAR_CONFIG_KEY = "happyDecoCalendarConfig";
     const DEFAULT_CALENDAR_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqqcdstHb6fWfZ9TTCosxjSm3fiWgh7YsqX8zkxey_Kek3TwwkCwUv6egzrJjIC0_2TQ/exec";
+    const DEFAULT_CALENDAR_SECRET = "happy-deco-calendar-2026";
     const ADMIN_PASSWORD = "happydeco2026";
     const PROPOSAL_OPTIONS = [
       "Propuesta express",
@@ -1662,12 +1663,20 @@
     function getCalendarConfig() {
       try {
         const saved = JSON.parse(localStorage.getItem(CALENDAR_CONFIG_KEY) || "{}");
+        const savedUrl = String(saved.webAppUrl || "").trim();
+        const officialUrl = savedUrl.includes("/macros/s/AKfycbwqqcdstHb6fWfZ9TTCosxjSm3fiWgh7YsqX8zkxey_Kek3TwwkCwUv6egzrJjIC0_2TQ/exec")
+          ? savedUrl
+          : DEFAULT_CALENDAR_WEB_APP_URL;
+        if (savedUrl && savedUrl !== officialUrl) {
+          localStorage.removeItem(CALENDAR_CONFIG_KEY);
+        }
         return {
-          webAppUrl: saved.webAppUrl || DEFAULT_CALENDAR_WEB_APP_URL,
-          secret: saved.secret || "happy-deco-calendar-2026"
+          webAppUrl: officialUrl,
+          secret: saved.secret || DEFAULT_CALENDAR_SECRET
         };
       } catch {
-        return { webAppUrl: DEFAULT_CALENDAR_WEB_APP_URL, secret: "happy-deco-calendar-2026" };
+        localStorage.removeItem(CALENDAR_CONFIG_KEY);
+        return { webAppUrl: DEFAULT_CALENDAR_WEB_APP_URL, secret: DEFAULT_CALENDAR_SECRET };
       }
     }
 
@@ -1675,11 +1684,11 @@
       const current = getCalendarConfig();
       const webAppUrl = prompt("URL del puente de Google Calendar:", current.webAppUrl || "");
       if (webAppUrl === null) return null;
-      const secret = prompt("Clave interna del puente:", current.secret || "happy-deco-calendar-2026");
+      const secret = prompt("Clave interna del puente:", current.secret || DEFAULT_CALENDAR_SECRET);
       if (secret === null) return null;
       const config = {
         webAppUrl: webAppUrl.trim(),
-        secret: secret.trim() || "happy-deco-calendar-2026"
+        secret: secret.trim() || DEFAULT_CALENDAR_SECRET
       };
       localStorage.setItem(CALENDAR_CONFIG_KEY, JSON.stringify(config));
       return config;
@@ -1704,7 +1713,10 @@
       saveRecords();
       render();
       try {
-        const result = await callCalendarBridge(config.webAppUrl, payload);
+        const result = await callCalendarBridge(config.webAppUrl, payload).catch(error => {
+          if (config.webAppUrl === DEFAULT_CALENDAR_WEB_APP_URL) throw error;
+          return callCalendarBridge(DEFAULT_CALENDAR_WEB_APP_URL, payload);
+        });
         if (!result?.ok || !result.eventId) {
           throw new Error(result?.error || "Google Calendar no confirmó el agendado.");
         }
@@ -1720,8 +1732,16 @@
         record.updatedAt = new Date().toISOString();
         saveRecords();
         render();
-        alert(`No se pudo agendar en Google Calendar: ${error.message || error}`);
+        alert(`No se pudo agendar en Google Calendar: ${formatCalendarError(error)}`);
       }
+    }
+
+    function formatCalendarError(error) {
+      const message = String(error?.message || error || "");
+      if (message.includes("puente de Google Calendar")) {
+        return "la computadora no pudo conectarse con el puente oficial. Cerrá esta pestaña, abrí el link actualizado del dashboard y probá nuevamente. Si sigue pasando, avisame con captura.";
+      }
+      return message || "error desconocido.";
     }
 
     function callCalendarBridge(webAppUrl, payload) {
