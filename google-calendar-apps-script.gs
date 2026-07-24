@@ -6,14 +6,18 @@ const DEFAULT_SHARE_WITH = [
 ];
 
 function doGet(e) {
+  const callback = e.parameter.callback || "";
   try {
     const payload = JSON.parse(e.parameter.payload || "{}");
     const result = upsertHappyDecoEvent_(payload);
+    if (callback) return jsonpResponse_(callback, result);
     return htmlResponse_(
       "Evento agendado",
       `El evento "${escapeHtml_(result.title)}" quedó agendado en ${escapeHtml_(result.calendarName)}. Ya podés cerrar esta pestaña.`
     );
   } catch (error) {
+    const result = { ok: false, error: error.message || String(error) };
+    if (callback) return jsonpResponse_(callback, result);
     return htmlResponse_("No se pudo agendar", escapeHtml_(error.message || String(error)));
   }
 }
@@ -151,6 +155,12 @@ function htmlResponse_(title, message) {
     </html>
   `;
   return HtmlService.createHtmlOutput(html);
+}
+
+function jsonpResponse_(callback, data) {
+  const safeCallback = String(callback || "").replace(/[^a-zA-Z0-9_.$]/g, "");
+  const body = `${safeCallback}(${JSON.stringify(data)});`;
+  return ContentService.createTextOutput(body).setMimeType(ContentService.MimeType.JAVASCRIPT);
 }
 
 function escapeHtml_(value) {

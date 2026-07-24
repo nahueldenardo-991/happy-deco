@@ -1436,7 +1436,7 @@
           <td><select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="facturacion" aria-label="Cambiar facturación">${buildSelectOptions(BILLING_OPTIONS, record.facturacion || "Pendiente")}</select></td>
           <td>
             <span class="calendar-pill ${record.googleCalendarEventId ? "calendar-pill-ok" : "calendar-pill-missing"}">${record.googleCalendarEventId ? "Agendado" : "Sin agendar"}</span><br>
-            <button class="mini-action" type="button" data-calendar="${escapeAttr(record.id)}">${record.googleCalendarEventId ? "Actualizar" : "Agendar"}</button>
+            <button class="mini-action" type="button" data-calendar="${escapeAttr(record.id)}">${record.googleCalendarStatus === "Agendando" ? "Agendando..." : record.googleCalendarEventId ? "Actualizar" : "Agendar"}</button>
           </td>
           <td>${escapeHtml(record.observaciones || "-")}</td>
           <td><button class="icon-btn" type="button" title="Eliminar registro admin" data-delete="${record.id}">&times;</button></td>
@@ -1508,7 +1508,7 @@
       return config;
     }
 
-    function scheduleRecordInGoogleCalendar(id) {
+    async function scheduleRecordInGoogleCalendar(id) {
       const record = records.find(item => item.id === id);
       if (!record) return;
       if (!record.fechaEvento) {
@@ -1522,14 +1522,56 @@
         if (!config?.webAppUrl) return;
       }
       const payload = buildCalendarPayload(record, config.secret);
-      const url = `${config.webAppUrl}${config.webAppUrl.includes("?") ? "&" : "?"}payload=${encodeURIComponent(JSON.stringify(payload))}`;
-      window.open(url, "_blank", "noopener");
-      record.googleCalendarEventId = record.googleCalendarEventId || `happy-deco-${record.id}`;
-      record.googleCalendarStatus = "Agendado";
-      record.googleCalendarUpdatedAt = new Date().toISOString();
+      record.googleCalendarStatus = "Agendando";
       record.updatedAt = new Date().toISOString();
       saveRecords();
       render();
+      try {
+        const result = await callCalendarBridge(config.webAppUrl, payload);
+        if (!result?.ok || !result.eventId) {
+          throw new Error(result?.error || "Google Calendar no confirmó el agendado.");
+        }
+        record.googleCalendarEventId = result.eventId;
+        record.googleCalendarStatus = "Agendado";
+        record.googleCalendarUpdatedAt = new Date().toISOString();
+        record.updatedAt = new Date().toISOString();
+        saveRecords();
+        render();
+        alert("Evento agendado en Google Calendar.");
+      } catch (error) {
+        record.googleCalendarStatus = "Sin agendar";
+        record.updatedAt = new Date().toISOString();
+        saveRecords();
+        render();
+        alert(`No se pudo agendar en Google Calendar: ${error.message || error}`);
+      }
+    }
+
+    function callCalendarBridge(webAppUrl, payload) {
+      return new Promise((resolve, reject) => {
+        const callbackName = `happyDecoCalendarCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const script = document.createElement("script");
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error("Google Calendar no respondió. El evento sigue sin agendar."));
+        }, 30000);
+        function cleanup() {
+          clearTimeout(timeout);
+          delete window[callbackName];
+          script.remove();
+        }
+        window[callbackName] = result => {
+          cleanup();
+          resolve(result);
+        };
+        const separator = webAppUrl.includes("?") ? "&" : "?";
+        script.src = `${webAppUrl}${separator}callback=${encodeURIComponent(callbackName)}&payload=${encodeURIComponent(JSON.stringify(payload))}`;
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("No se pudo conectar con el puente de Google Calendar."));
+        };
+        document.body.appendChild(script);
+      });
     }
 
     function buildCalendarPayload(record, secret) {
