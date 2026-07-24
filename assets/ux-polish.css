@@ -171,6 +171,32 @@ textarea {
 .module-control .metric .value,
 .module-dashboard .metric .value {
   letter-spacing: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow: visible;
+  text-wrap: balance;
+}
+
+.module-dashboard .metrics,
+.module-control .metrics {
+  align-items: stretch;
+}
+
+.module-dashboard .metric,
+.module-control .metric {
+  min-width: 0;
+  overflow: visible;
+}
+
+.module-dashboard .metric .label,
+.module-control .metric .label {
+  min-height: 30px;
+  line-height: 1.25;
+}
+
+.module-dashboard .metric .detail,
+.module-control .metric .detail {
+  min-height: 0;
 }
 
 .module-control .event-card {

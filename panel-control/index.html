@@ -253,7 +253,7 @@
 
     .metrics {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 12px;
       margin-bottom: 18px;
     }
@@ -268,9 +268,10 @@
     }
 
     .metric .value {
-      font-size: clamp(26px, 2.8vw, 40px);
+      font-size: clamp(24px, 2.45vw, 36px);
       font-weight: 950;
-      line-height: 1;
+      line-height: 1.08;
+      overflow-wrap: anywhere;
     }
 
     .metric .detail {

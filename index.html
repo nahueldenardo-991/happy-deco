@@ -669,7 +669,7 @@
 
     .metrics {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 12px;
     }
 
@@ -693,9 +693,10 @@
     }
 
     .metric .value {
-      font-size: clamp(25px, 2.7vw, 38px);
+      font-size: clamp(24px, 2.35vw, 34px);
       font-weight: 900;
-      line-height: 1;
+      line-height: 1.08;
+      overflow-wrap: anywhere;
     }
 
     .metric .detail {
