@@ -415,6 +415,63 @@
       cursor: pointer;
     }
 
+    .date-cell {
+      display: grid;
+      gap: 7px;
+      justify-items: start;
+    }
+
+    .date-value {
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: #fff7fb;
+      border: 1px solid #efd3df;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .date-value.empty-date {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .date-edit-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(58, 45, 53, .36);
+    }
+
+    .date-edit-modal {
+      width: min(360px, 100%);
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border-radius: var(--radius);
+      background: #fffdfb;
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 70px rgba(58, 45, 53, .22);
+    }
+
+    .date-edit-modal h3 {
+      font-size: 18px;
+    }
+
+    .date-edit-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
     .message {
       min-height: 20px;
       color: var(--muted);
@@ -1183,6 +1240,8 @@
       if (deleteButton) deleteRecord(deleteButton.dataset.delete);
       const calendarButton = event.target.closest("[data-calendar]");
       if (calendarButton) scheduleRecordInGoogleCalendar(calendarButton.dataset.calendar);
+      const dateButton = event.target.closest("[data-edit-date]");
+      if (dateButton) openDateEditor(dateButton.dataset.editDate);
     });
     els.tableContainer.addEventListener("change", event => {
       const select = event.target.closest("[data-update-field]");
@@ -1440,7 +1499,12 @@
       const rows = filtered.map(record => `
         <tr>
           <td>${escapeHtml(formatDate(getRecordCloseDate(record)))}</td>
-          <td><input class="table-input" type="date" value="${escapeAttr(record.fechaEvento || "")}" data-record-id="${escapeAttr(record.id)}" data-update-field="fechaEvento" aria-label="Cambiar fecha de evento"></td>
+          <td>
+            <div class="date-cell">
+              <span class="date-value ${record.fechaEvento ? "" : "empty-date"}">${record.fechaEvento ? escapeHtml(formatDate(record.fechaEvento)) : "Sin fecha"}</span>
+              <button class="mini-action" type="button" data-edit-date="${escapeAttr(record.id)}">Cambiar</button>
+            </div>
+          </td>
           <td>
             <strong>${escapeHtml(record.cliente)}</strong><br>
             <span class="small-note">${escapeHtml(record.homenajeado || "-")}${record.edadCumpleanero ? ` · ${record.edadCumpleanero} años` : ""}</span>
@@ -1506,6 +1570,61 @@
       const record = records.find(item => item.id === id);
       if (!record) return;
       record[field] = value;
+      record.updatedAt = new Date().toISOString();
+      saveRecords();
+      render();
+    }
+
+    function openDateEditor(id) {
+      const record = records.find(item => item.id === id);
+      if (!record) return;
+      const existing = document.querySelector(".date-edit-overlay");
+      if (existing) existing.remove();
+
+      const overlay = document.createElement("div");
+      overlay.className = "date-edit-overlay";
+      overlay.innerHTML = `
+        <div class="date-edit-modal" role="dialog" aria-modal="true" aria-labelledby="dateEditTitle">
+          <div>
+            <h3 id="dateEditTitle">Fecha del evento</h3>
+            <div class="small-note">${escapeHtml(record.cliente || "Registro")} ${record.homenajeado ? "· " + escapeHtml(record.homenajeado) : ""}</div>
+          </div>
+          <div class="field">
+            <label for="dateEditInput">Nueva fecha</label>
+            <input class="control" id="dateEditInput" type="date" value="${escapeAttr(record.fechaEvento || "")}">
+          </div>
+          <div class="date-edit-actions">
+            <button class="btn secondary" type="button" data-close-date-editor>Cancelar</button>
+            <button class="btn rose" type="button" data-save-date-editor="${escapeAttr(record.id)}">Guardar fecha</button>
+          </div>
+        </div>
+      `;
+
+      overlay.addEventListener("click", event => {
+        if (event.target === overlay || event.target.closest("[data-close-date-editor]")) {
+          overlay.remove();
+          return;
+        }
+        const saveButton = event.target.closest("[data-save-date-editor]");
+        if (!saveButton) return;
+        const input = overlay.querySelector("#dateEditInput");
+        saveEventDate(saveButton.dataset.saveDateEditor, input.value);
+        overlay.remove();
+      });
+
+      overlay.addEventListener("keydown", event => {
+        if (event.key === "Escape") overlay.remove();
+      });
+
+      document.body.appendChild(overlay);
+      const input = overlay.querySelector("#dateEditInput");
+      input.focus();
+    }
+
+    function saveEventDate(id, value) {
+      const record = records.find(item => item.id === id);
+      if (!record) return;
+      record.fechaEvento = value;
       record.updatedAt = new Date().toISOString();
       saveRecords();
       render();
