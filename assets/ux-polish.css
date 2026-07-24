@@ -284,7 +284,8 @@ textarea {
 @media (max-width: 860px) {
   .module-dashboard .topbar,
   .module-control .topbar {
-    top: 0;
+    position: static;
+    top: auto;
     border-radius: 0 0 8px 8px;
   }
 

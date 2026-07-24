@@ -878,6 +878,63 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
     }
 
+    .mobile-records {
+      display: none;
+    }
+
+    .record-card {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid rgba(255, 150, 191, .24);
+      border-radius: var(--radius);
+      background: #fffdfb;
+      box-shadow: var(--shadow);
+    }
+
+    .record-card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .record-card-title {
+      min-width: 0;
+    }
+
+    .record-card-title strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .record-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .record-card-field {
+      min-height: 64px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff7fb;
+    }
+
+    .record-card-field label {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .record-card-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
     table {
       width: 100%;
       min-width: 1360px;
@@ -998,9 +1055,28 @@
     }
 
     @media (max-width: 860px) {
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
       .shell {
-        width: min(100% - 24px, 1440px);
-        padding-top: 12px;
+        width: min(100% - 18px, 1440px);
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-bottom: max(18px, env(safe-area-inset-bottom));
+      }
+
+      .login-screen {
+        min-height: 100svh;
+        padding: max(18px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+      }
+
+      .login-card {
+        padding: 18px;
+      }
+
+      .login-card img {
+        width: 128px;
+        height: 74px;
       }
 
       .topbar,
@@ -1009,18 +1085,38 @@
         align-items: stretch;
       }
 
+      .topbar {
+        position: static;
+        padding: 14px;
+      }
+
       .brand-mark {
-        width: 150px;
-        min-width: 150px;
-        height: 88px;
+        width: 132px;
+        min-width: 132px;
+        height: 76px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .subtitle {
+        font-size: 14px;
       }
 
       .actions {
         justify-content: stretch;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scroll-snap-type: x proximity;
       }
 
       .actions .btn {
-        flex: 1 1 160px;
+        flex: 0 0 auto;
+        min-width: 142px;
+        min-height: 46px;
+        scroll-snap-align: start;
       }
 
       .metrics,
@@ -1041,7 +1137,76 @@
       }
 
       .metric {
-        min-height: 100px;
+        min-height: 108px;
+      }
+
+      .metric .value {
+        font-size: 30px;
+      }
+
+      .layout {
+        gap: 14px;
+      }
+
+      .form-panel,
+      .chart-panel,
+      .ranking-panel,
+      .table-panel {
+        padding: 12px;
+      }
+
+      .panel-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .control,
+      .table-input,
+      .table-select,
+      input,
+      select,
+      textarea,
+      button {
+        font-size: 16px;
+      }
+
+      .control {
+        min-height: 46px;
+      }
+
+      textarea.control {
+        min-height: 104px;
+      }
+
+      .filters {
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .table-wrap {
+        display: none;
+      }
+
+      .mobile-records {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .record-card-grid,
+      .record-card-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .record-card .table-select,
+      .record-card .mini-action {
+        width: 100%;
+        min-height: 44px;
+      }
+
+      .icon-btn {
+        width: 42px;
+        height: 42px;
       }
     }
   </style>
@@ -1871,6 +2036,7 @@
           <td><button class="icon-btn" type="button" title="Eliminar registro admin" data-delete="${record.id}">&times;</button></td>
         </tr>
       `).join("");
+      const cards = filtered.map(renderMobileRecordCard).join("");
 
       els.tableContainer.innerHTML = `
         <div class="table-wrap">
@@ -1897,6 +2063,76 @@
             </thead>
             <tbody>${rows}</tbody>
           </table>
+        </div>
+        <div class="mobile-records" aria-label="Registros cargados en vista móvil">${cards}</div>
+      `;
+    }
+
+    function renderMobileRecordCard(record) {
+      return `
+        <article class="record-card" data-row-id="${escapeAttr(record.id)}">
+          <div class="record-card-head">
+            <div class="record-card-title">
+              <strong>${escapeHtml(record.cliente)}</strong>
+              <div class="small-note">${escapeHtml(record.homenajeado || "Sin homenajeado")}${record.edadCumpleanero ? ` · ${escapeHtml(record.edadCumpleanero)} años` : ""}</div>
+            </div>
+            <button class="icon-btn" type="button" title="Eliminar registro admin" data-delete="${escapeAttr(record.id)}">&times;</button>
+          </div>
+          <div class="record-card-grid">
+            ${mobileField("Cierre", formatDate(getRecordCloseDate(record)))}
+            ${mobileField("Evento", record.fechaEvento ? formatDate(record.fechaEvento) : "Sin fecha")}
+            ${mobileField("Temática", record.tematica || "-")}
+            ${mobileField("Propuesta", record.propuesta || "-")}
+            ${mobileField("Canal", record.canal || "-")}
+            ${mobileField("Monto", money(record.monto))}
+            ${mobileField("Seña", money(record.senia))}
+            ${mobileField("Saldo", money(record.saldo))}
+          </div>
+          <div class="record-card-actions">
+            <div>
+              <label>Etapa</label>
+              <select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="etapa" aria-label="Cambiar etapa comercial">
+                ${buildSelectOptions(COMMERCIAL_STAGES, record.etapa)}
+              </select>
+            </div>
+            <div>
+              <label>Operativo</label>
+              <select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="estadoOperativo" aria-label="Cambiar estado operativo">
+                ${buildSelectOptions(OPERATIONAL_STATES, record.estadoOperativo)}
+              </select>
+            </div>
+            <div>
+              <label>Responsable</label>
+              <select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="responsable" aria-label="Cambiar responsable">
+                ${buildSelectOptions(RESPONSIBLE_OPTIONS, record.responsable)}
+              </select>
+            </div>
+            <div>
+              <label>Facturación</label>
+              <select class="table-select" data-record-id="${escapeAttr(record.id)}" data-update-field="facturacion" aria-label="Cambiar facturación">
+                ${buildSelectOptions(BILLING_OPTIONS, record.facturacion || "Pendiente")}
+              </select>
+            </div>
+            <button class="mini-action" type="button" data-edit-date="${escapeAttr(record.id)}">Cambiar fecha del evento</button>
+            <button class="mini-action" type="button" data-calendar="${escapeAttr(record.id)}">${calendarButtonText(record)}</button>
+          </div>
+          <div class="record-card-field">
+            <label>Calendario</label>
+            <span class="calendar-pill ${calendarPillClass(record)}">${calendarPillText(record)}</span>
+          </div>
+          <div class="record-card-field">
+            <label>Observaciones</label>
+            <div>${escapeHtml(record.observaciones || "-")}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    function mobileField(label, value) {
+      return `
+        <div class="record-card-field">
+          <label>${escapeHtml(label)}</label>
+          <strong>${escapeHtml(value || "-")}</strong>
         </div>
       `;
     }
