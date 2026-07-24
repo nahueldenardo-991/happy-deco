@@ -821,6 +821,7 @@
         <a class="btn secondary" href="crm/">Ver CRM</a>
         <a class="btn secondary" href="proceso/">Ver proceso</a>
         <button class="btn secondary" id="cloudBtn" type="button">Configurar nube</button>
+        <button class="btn secondary" id="refreshCloudBtn" type="button">Actualizar datos</button>
         <button class="btn secondary" id="exportBtn" type="button">Exportar CSV</button>
         <button class="btn danger" id="clearBtn" type="button">Limpiar datos</button>
       </div>
@@ -1188,6 +1189,7 @@
       resetFormBtn: document.getElementById("resetFormBtn"),
       exportBtn: document.getElementById("exportBtn"),
       cloudBtn: document.getElementById("cloudBtn"),
+      refreshCloudBtn: document.getElementById("refreshCloudBtn"),
       clearBtn: document.getElementById("clearBtn"),
       resetFiltersBtn: document.getElementById("resetFiltersBtn"),
       totalMetric: document.getElementById("totalMetric"),
@@ -1229,6 +1231,7 @@
     });
     els.exportBtn.addEventListener("click", exportCsv);
     els.cloudBtn.addEventListener("click", configureCloud);
+    els.refreshCloudBtn.addEventListener("click", () => pullCloudRecords({ manual: true }));
     els.clearBtn.addEventListener("click", clearAll);
     els.resetFiltersBtn.addEventListener("click", resetFilters);
     [els.filterEtapa, els.filterOperativo, els.filterCanal, els.filterResponsable, els.filterPeriodoTipo, els.filterPeriodoValor].forEach(select => {
@@ -1901,19 +1904,34 @@
       return response.json();
     }
 
-    async function pullCloudRecords() {
+    async function pullCloudRecords(options = {}) {
       const config = getCloudConfig();
       if (!config) return;
+      const { manual = false } = options;
+      const previousRefreshText = els.refreshCloudBtn.textContent;
       try {
+        if (manual) {
+          els.refreshCloudBtn.textContent = "Actualizando...";
+          els.refreshCloudBtn.disabled = true;
+        }
         const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`);
         if (!Array.isArray(rows)) return;
         records = sanitizeRecords(rows.map(row => row.data).filter(data => data?.module !== "crm"));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
         render();
         els.cloudBtn.textContent = "Nube activa";
+        if (manual) els.refreshCloudBtn.textContent = "Datos actualizados";
       } catch (error) {
         els.cloudBtn.textContent = "Error nube";
+        if (manual) els.refreshCloudBtn.textContent = "Error al actualizar";
         console.error("No pude sincronizar dashboard", error);
+      } finally {
+        if (manual) {
+          setTimeout(() => {
+            els.refreshCloudBtn.textContent = previousRefreshText || "Actualizar datos";
+            els.refreshCloudBtn.disabled = false;
+          }, 1400);
+        }
       }
     }
 
@@ -2051,20 +2069,16 @@
     function initCloudSync(force = false) {
       if (!getCloudConfig()) {
         els.cloudBtn.textContent = "Configurar nube";
+        els.refreshCloudBtn.disabled = true;
         return;
       }
       els.cloudBtn.textContent = "Nube activa";
-      pullCloudRecords();
-      if (force || !window.happyDecoCloudTimer) {
-        window.happyDecoCloudTimer = setInterval(pullCloudRecords, 3000);
+      els.refreshCloudBtn.disabled = false;
+      if (window.happyDecoCloudTimer) {
+        clearInterval(window.happyDecoCloudTimer);
+        window.happyDecoCloudTimer = null;
       }
-      if (!window.happyDecoCloudFocusHandlers) {
-        window.happyDecoCloudFocusHandlers = true;
-        window.addEventListener("focus", pullCloudRecords);
-        document.addEventListener("visibilitychange", () => {
-          if (!document.hidden) pullCloudRecords();
-        });
-      }
+      pullCloudRecords({ manual: false });
     }
 
     function resetFilters() {
