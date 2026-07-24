@@ -32,7 +32,8 @@ function upsertHappyDecoEvent_(payload) {
 
   const calendarName = payload.calendarName || DEFAULT_CALENDAR_NAME;
   const calendar = getOrCreateCalendar_(calendarName);
-  shareCalendar_(calendar, payload.shareWith || DEFAULT_SHARE_WITH);
+  const shareWith = payload.shareWith || DEFAULT_SHARE_WITH;
+  shareCalendar_(calendar, shareWith);
 
   const sourceId = payload.sourceId || Utilities.getUuid();
   const title = payload.title || "Happy Deco - Evento";
@@ -59,13 +60,15 @@ function upsertHappyDecoEvent_(payload) {
 
   const reminders = payload.remindersMinutes || [21600, 10080, 4320, 0];
   reminders.forEach(minutes => event.addPopupReminder(Number(minutes)));
+  const guests = syncGuests_(event, shareWith);
 
   return {
     ok: true,
     eventId: event.getId(),
     title,
     calendarName,
-    calendarId: calendar.getId()
+    calendarId: calendar.getId(),
+    guests
   };
 }
 
@@ -90,6 +93,17 @@ function shareCalendar_(calendar, emails) {
       } catch (ignored) {}
     }
   });
+}
+
+function syncGuests_(event, emails) {
+  const targetEmails = Array.from(new Set((emails || []).filter(Boolean)));
+  const existing = event.getGuestList().map(guest => guest.getEmail().toLowerCase());
+  targetEmails.forEach(email => {
+    try {
+      if (!existing.includes(String(email).toLowerCase())) event.addGuest(email);
+    } catch (error) {}
+  });
+  return targetEmails;
 }
 
 function findExistingEvent_(calendar, sourceId, eventDate) {
