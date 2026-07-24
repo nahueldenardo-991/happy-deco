@@ -561,16 +561,27 @@
 
     .materials-editor {
       display: grid;
-      gap: 9px;
+      gap: 10px;
     }
 
-    .material-row input {
+    .material-row {
+      align-items: stretch;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .material-row textarea {
       flex: 1;
+      min-height: 52px;
+      resize: vertical;
     }
 
     .material-row .ghost {
-      min-height: 38px;
+      min-height: 42px;
       padding: 0 10px;
+      align-self: flex-start;
     }
 
     .hint {
@@ -772,6 +783,9 @@
       query: ""
     };
 
+    let editingUntil = 0;
+    let pendingSaveTimer = null;
+
     state.selectedId = getDeepLinkedEventId() || state.events[0]?.id || null;
 
     const eventList = document.querySelector("#eventList");
@@ -828,6 +842,26 @@
       state.events = sanitizeEvents(state.events);
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
       cloudUpsertEvents(state.events);
+    }
+
+    function scheduleSaveEvents(delay = 900) {
+      markEditing();
+      state.events = sanitizeEvents(state.events);
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      clearTimeout(pendingSaveTimer);
+      pendingSaveTimer = setTimeout(() => {
+        cloudUpsertEvents(state.events);
+      }, delay);
+    }
+
+    function markEditing() {
+      editingUntil = Date.now() + 5000;
+    }
+
+    function isEditingNow() {
+      const active = document.activeElement;
+      const isFormField = active && detail.contains(active) && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName);
+      return isFormField || Date.now() < editingUntil;
     }
 
     function createEvent() {
@@ -1096,6 +1130,11 @@
       detail.querySelectorAll("[data-field]").forEach((input) => {
         input.addEventListener("input", () => updateField(input.dataset.field, input.value));
       });
+      detail.querySelectorAll("input, textarea, select").forEach((input) => {
+        input.addEventListener("focusin", markEditing);
+        input.addEventListener("input", markEditing);
+        input.addEventListener("change", markEditing);
+      });
 
       detail.querySelectorAll("[data-check]").forEach((input) => {
         input.addEventListener("change", () => updateCheck(input.dataset.check, input.checked));
@@ -1217,7 +1256,7 @@
           <div class="materials-editor">
             ${materials.map((item, index) => `
               <div class="material-row">
-                <input type="text" data-material-index="${index}" value="${escapeAttr(item)}" placeholder="Ej: 2 paneles, globos rosa, nombre impreso">
+                <textarea data-material-index="${index}" rows="2" placeholder="Ej: 2 paneles, globos rosa, nombre impreso">${escapeHtml(item)}</textarea>
                 <button class="ghost" type="button" data-remove-material="${index}">Quitar</button>
               </div>
             `).join("")}
@@ -1232,7 +1271,7 @@
       if (!event) return;
       event[fieldName] = value;
       event.updatedAt = new Date().toISOString();
-      saveEvents();
+      scheduleSaveEvents();
       renderList();
     }
 
@@ -1296,20 +1335,24 @@
     function addMaterial() {
       const event = getSelected();
       if (!event) return;
-      event.materials = parseMaterials(event.materials);
-      event.materials.push("Nuevo material");
+      event.materials = Array.isArray(event.materials) ? [...event.materials] : parseMaterials(event.materials);
+      event.materials.push("");
       event.updatedAt = new Date().toISOString();
-      saveEvents();
       renderDetail();
+      requestAnimationFrame(() => {
+        const inputs = detail.querySelectorAll("[data-material-index]");
+        const input = inputs[inputs.length - 1];
+        if (input) input.focus();
+      });
     }
 
     function updateMaterial(index, value) {
       const event = getSelected();
       if (!event) return;
-      event.materials = parseMaterials(event.materials);
+      event.materials = Array.isArray(event.materials) ? [...event.materials] : parseMaterials(event.materials);
       event.materials[index] = value;
       event.updatedAt = new Date().toISOString();
-      saveEvents();
+      scheduleSaveEvents();
     }
 
     function removeMaterial(index) {
@@ -1424,6 +1467,7 @@
     async function pullCloudEvents() {
       const button = document.querySelector("#cloudBtn");
       if (!getCloudConfig()) return;
+      if (isEditingNow()) return;
       try {
         const rows = await cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`);
         if (!Array.isArray(rows)) return;
@@ -1484,7 +1528,7 @@
         window.happyDecoProcessCloudFocusHandlers = true;
         window.addEventListener("focus", pullCloudEvents);
         document.addEventListener("visibilitychange", () => {
-          if (!document.hidden) pullCloudEvents();
+          if (!document.hidden && !isEditingNow()) pullCloudEvents();
         });
       }
     }
