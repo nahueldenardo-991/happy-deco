@@ -145,7 +145,7 @@
 
     .sheet-head {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr) minmax(210px, auto);
       gap: 14px;
       align-items: start;
       padding: 18px;
@@ -166,6 +166,35 @@
       color: #1d7d5a;
       background: #dff7ea;
       white-space: nowrap;
+    }
+
+    .tag.done {
+      color: #fff;
+      background: var(--teal-dark);
+    }
+
+    .sheet-status {
+      display: grid;
+      gap: 7px;
+      justify-items: end;
+    }
+
+    .sheet-status label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .status-select {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      color: var(--ink);
+      background: #fff;
+      font-weight: 850;
     }
 
     .sheet-grid {
@@ -246,6 +275,16 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: #fff;
+    }
+
+    .check.done {
+      color: var(--muted);
+      background: #f2fbf8;
+      border-color: rgba(140, 225, 206, .8);
+    }
+
+    .check.done span {
+      text-decoration: line-through;
     }
 
     .check input {
@@ -382,6 +421,13 @@
       els.list.innerHTML = filtered.length
         ? filtered.map(renderSheet).join("")
         : `<div class="empty">No hay eventos con operativo "Listo para producir" para mostrar.</div>`;
+
+      els.list.querySelectorAll("[data-material-check]").forEach(input => {
+        input.addEventListener("change", () => updateMaterialCheck(input.dataset.eventId, input.dataset.materialCheck, input.checked));
+      });
+      els.list.querySelectorAll("[data-production-status]").forEach(select => {
+        select.addEventListener("change", () => updateProductionStatus(select.dataset.eventId, select.value));
+      });
     }
 
     function buildProductionSheets() {
@@ -404,12 +450,15 @@
         theme: event.theme || record.tematica || "",
         package: event.package || record.incluye || record.propuesta || "",
         sketch: event.sketch || null,
-        materials: parseMaterials(event.materials),
+        materials: parseMaterials(event.materials).length ? parseMaterials(event.materials) : parseProposalItems(event.package || record.incluye || record.propuesta || ""),
+        materialChecks: event.materialChecks || {},
+        productionStatus: event.productionStatus || "Listo para producir",
         notes: [event.productionNotes, event.notes, record.observaciones].filter(Boolean).join("\n\n")
       };
     }
 
     function renderSheet(item) {
+      const finalized = item.productionStatus === "Finalizado";
       return `
         <article class="sheet" id="${escapeAttr(item.id)}">
           <div class="sheet-head">
@@ -417,7 +466,15 @@
               <h2>${escapeHtml(item.client)}</h2>
               <p class="subtitle">${escapeHtml([item.theme, item.child].filter(Boolean).join(" · "))}</p>
             </div>
-            <span class="tag">Listo para producir</span>
+            <div class="sheet-status">
+              <span class="tag ${finalized ? "done" : ""}">${escapeHtml(item.productionStatus)}</span>
+              <label for="status-${escapeAttr(item.id)}">Estado de producción</label>
+              <select class="status-select" id="status-${escapeAttr(item.id)}" data-production-status data-event-id="${escapeAttr(item.id)}">
+                ${["Listo para producir", "En preparación", "Materiales listos", "Decorado", "Finalizado"].map(status => `
+                  <option value="${escapeAttr(status)}" ${item.productionStatus === status ? "selected" : ""}>${escapeHtml(status)}</option>
+                `).join("")}
+              </select>
+            </div>
           </div>
           <div class="sheet-grid">
             <div>
@@ -437,12 +494,15 @@
               </div>
               <div class="checklist">
                 <h3>Listado de materiales</h3>
-                ${item.materials.length ? item.materials.map(material => `
-                  <label class="check">
-                    <input type="checkbox">
+                ${item.materials.length ? item.materials.map((material, index) => {
+                  const checked = Boolean(item.materialChecks[index]);
+                  return `
+                  <label class="check ${checked ? "done" : ""}">
+                    <input type="checkbox" data-material-check="${index}" data-event-id="${escapeAttr(item.id)}" ${checked ? "checked" : ""}>
                     <span>${escapeHtml(material)}</span>
                   </label>
-                `).join("") : `<div class="empty">Todavía no hay materiales cargados en proceso.</div>`}
+                `;
+                }).join("") : `<div class="empty">Todavía no hay materiales cargados en proceso.</div>`}
               </div>
               <div class="observations">
                 <strong>Observaciones</strong><br>
@@ -465,6 +525,67 @@
       return `<div class="info ${className}"><label>${escapeHtml(label)}</label><strong>${escapeHtml(value || "-")}</strong></div>`;
     }
 
+    function updateMaterialCheck(eventId, index, checked) {
+      const event = ensureProcessEvent(eventId);
+      event.materialChecks = event.materialChecks || {};
+      event.materialChecks[index] = checked;
+      event.updatedAt = new Date().toISOString();
+      persistProcessEvent(event);
+      render();
+    }
+
+    function updateProductionStatus(eventId, status) {
+      const event = ensureProcessEvent(eventId);
+      event.productionStatus = status;
+      event.updatedAt = new Date().toISOString();
+      persistProcessEvent(event);
+      render();
+    }
+
+    function ensureProcessEvent(eventId) {
+      let event = processEvents.find(item => item.id === eventId);
+      if (event) return event;
+      const record = records.find(item => item.id === eventId) || {};
+      event = {
+        id: eventId,
+        source: "dashboard",
+        client: record.cliente || "Sin cliente",
+        child: record.homenajeado || "",
+        age: record.edadCumpleanero || "",
+        date: record.fechaEvento || "",
+        time: "",
+        place: record.lugar || "",
+        theme: record.tematica || "",
+        package: record.incluye || record.propuesta || "",
+        materials: [],
+        materialChecks: {},
+        productionStatus: "Listo para producir",
+        notes: record.observaciones || "",
+        updatedAt: new Date().toISOString()
+      };
+      processEvents.push(event);
+      return event;
+    }
+
+    async function persistProcessEvent(event) {
+      localStorage.setItem("happyDecoEvents", JSON.stringify(processEvents));
+      try {
+        await cloudRequest(`${PROCESS_TABLE}?on_conflict=id`, {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify([{
+            id: event.id,
+            data: { ...event, updatedAt: event.updatedAt || new Date().toISOString() },
+            updated_at: event.updatedAt || new Date().toISOString()
+          }])
+        });
+        els.lastUpdate.textContent = "Cambios guardados en producción.";
+      } catch (error) {
+        console.error("No se pudo guardar producción", error);
+        els.lastUpdate.textContent = "Cambio guardado en este navegador. Revisá conexión para sincronizar.";
+      }
+    }
+
     function getCloudConfig() {
       try {
         const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
@@ -478,16 +599,19 @@
       }
     }
 
-    async function cloudRequest(path) {
+    async function cloudRequest(path, options = {}) {
       const config = getCloudConfig();
       const response = await fetch(`${config.url}/rest/v1/${path}`, {
+        ...options,
         headers: {
           apikey: config.anonKey,
           Authorization: `Bearer ${config.anonKey}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          ...(options.headers || {})
         }
       });
       if (!response.ok) throw new Error(await response.text());
+      if (response.status === 204) return null;
       return response.json();
     }
 
@@ -503,6 +627,14 @@
     function parseMaterials(value) {
       if (Array.isArray(value)) return value.map(item => String(item || "").trim()).filter(Boolean);
       return String(value || "").split(/\n|,/).map(item => item.trim()).filter(Boolean);
+    }
+
+    function parseProposalItems(value) {
+      return String(value || "")
+        .split(/\s+-\s+|\n/)
+        .map(item => item.trim())
+        .filter(item => item && item.length > 2)
+        .slice(0, 30);
     }
 
     function formatDate(value) {
