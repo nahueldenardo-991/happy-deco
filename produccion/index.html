@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Producción | Happy Deco</title>
+  <style>
+    :root {
+      --bg: #fff9f1;
+      --panel: #ffffff;
+      --ink: #3a2d35;
+      --muted: #82717a;
+      --line: #f2dce7;
+      --rose: #ff96bf;
+      --teal: #7edbdf;
+      --teal-dark: #3da6ad;
+      --gold: #ffd67a;
+      --green: #8ce1ce;
+      --red: #d96666;
+      --shadow: 0 20px 50px rgba(148, 96, 126, .13);
+      --radius: 8px;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(126, 219, 223, .16), transparent 34%),
+        linear-gradient(180deg, #fff, var(--bg));
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; border: 0; }
+
+    .shell {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 36px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .92);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 132px;
+      height: 76px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 26px rgba(126, 219, 223, .25);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(26px, 3vw, 40px); line-height: 1.05; }
+    h2 { font-size: 22px; line-height: 1.15; }
+    h3 { font-size: 15px; text-transform: uppercase; color: var(--muted); }
+
+    .subtitle, .muted {
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 13px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: #fff;
+      font-weight: 850;
+      text-decoration: none;
+    }
+
+    .btn.primary {
+      border-color: var(--teal-dark);
+      color: #fff;
+      background: var(--teal-dark);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .86);
+      box-shadow: var(--shadow);
+    }
+
+    .search {
+      width: min(420px, 100%);
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 9px 11px;
+      outline: none;
+    }
+
+    .production-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .sheet {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .sheet-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(126, 219, 223, .18), transparent 48%),
+        #fffdfb;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #1d7d5a;
+      background: #dff7ea;
+      white-space: nowrap;
+    }
+
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, .9fr) minmax(0, 1.1fr);
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .sketch-box {
+      min-height: 330px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: #fffdfb;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px;
+    }
+
+    .sketch-box img,
+    .sketch-box iframe {
+      width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      border: 0;
+      display: block;
+    }
+
+    .sketch-box iframe {
+      min-height: 420px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .info {
+      min-height: 78px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff9fb;
+    }
+
+    .info label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .info strong {
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .check {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 9px;
+      align-items: start;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .check input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--teal-dark);
+    }
+
+    .observations {
+      margin-top: 14px;
+      padding: 12px;
+      border-left: 5px solid var(--gold);
+      border-radius: var(--radius);
+      background: #fff8e7;
+      color: var(--ink);
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .empty {
+      padding: 34px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .72);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .topbar, .toolbar, .actions { display: none; }
+      .shell { width: 100%; padding: 0; }
+      .sheet { break-inside: avoid; box-shadow: none; margin-bottom: 16px; }
+    }
+
+    @media (max-width: 880px) {
+      .topbar, .toolbar, .sheet-head { grid-template-columns: 1fr; flex-direction: column; align-items: stretch; }
+      .actions { justify-content: stretch; }
+      .actions .btn { flex: 1 1 150px; }
+      .sheet-grid, .info-grid { grid-template-columns: 1fr; }
+      .full { grid-column: 1; }
+    }
+  </style>
+  <link rel="stylesheet" href="../assets/ux-polish.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="../assets/happy-deco-logo.png" alt="Happy Deco">
+        <div>
+          <h1>Producción</h1>
+          <p class="subtitle">Fichas listas para preparar eventos con boceto, datos clave y materiales.</p>
+        </div>
+      </div>
+      <nav class="actions">
+        <a class="btn" href="../panel-control/">Panel de control</a>
+        <a class="btn" href="../">Dashboard</a>
+        <a class="btn" href="../proceso/">Proceso</a>
+        <button class="btn primary" id="printBtn" type="button">Imprimir fichas</button>
+      </nav>
+    </header>
+
+    <section class="toolbar">
+      <div>
+        <strong id="counter">Cargando eventos...</strong>
+        <p class="subtitle" id="lastUpdate">Leyendo información compartida.</p>
+      </div>
+      <input class="search" id="search" type="search" placeholder="Buscar por cliente, temática o homenajeado">
+    </section>
+
+    <section class="production-list" id="productionList"></section>
+  </main>
+
+  <script>
+    const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
+    const DEFAULT_CLOUD_CONFIG = {
+      url: "https://niwkiklxyblrvbeusqbd.supabase.co",
+      anonKey: "sb_publishable_BZOa1hRBnH0KWocgyCZmfw_-lrLIgGd"
+    };
+    const DASHBOARD_TABLE = "happy_deco_dashboard_records";
+    const PROCESS_TABLE = "happy_deco_process_events";
+
+    const els = {
+      counter: document.querySelector("#counter"),
+      lastUpdate: document.querySelector("#lastUpdate"),
+      search: document.querySelector("#search"),
+      list: document.querySelector("#productionList"),
+      printBtn: document.querySelector("#printBtn")
+    };
+
+    let records = [];
+    let processEvents = [];
+
+    init();
+
+    function init() {
+      els.search.addEventListener("input", render);
+      els.printBtn.addEventListener("click", () => window.print());
+      loadProductionData();
+    }
+
+    async function loadProductionData() {
+      try {
+        const config = getCloudConfig();
+        if (!config) throw new Error("Nube no configurada");
+        const [dashboardRows, processRows] = await Promise.all([
+          cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`),
+          cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`)
+        ]);
+        records = Array.isArray(dashboardRows) ? dashboardRows.map(row => row.data).filter(Boolean) : [];
+        processEvents = Array.isArray(processRows) ? processRows.map(row => row.data).filter(Boolean) : [];
+        localStorage.setItem("happyDecoRecords", JSON.stringify(records));
+        localStorage.setItem("happyDecoEvents", JSON.stringify(processEvents));
+        els.lastUpdate.textContent = `Actualizado ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+      } catch (error) {
+        console.error("No se pudo leer producción", error);
+        records = safeJson(localStorage.getItem("happyDecoRecords"));
+        processEvents = safeJson(localStorage.getItem("happyDecoEvents"));
+        els.lastUpdate.textContent = "Mostrando datos guardados en este navegador.";
+      }
+      render();
+    }
+
+    function render() {
+      const ready = buildProductionSheets();
+      const query = els.search.value.trim().toLowerCase();
+      const filtered = ready.filter(item => {
+        const haystack = [item.client, item.child, item.theme, item.package, item.place].join(" ").toLowerCase();
+        return !query || haystack.includes(query);
+      });
+
+      els.counter.textContent = `${filtered.length} ficha${filtered.length === 1 ? "" : "s"} lista${filtered.length === 1 ? "" : "s"} para producir`;
+      els.list.innerHTML = filtered.length
+        ? filtered.map(renderSheet).join("")
+        : `<div class="empty">No hay eventos con operativo "Listo para producir" para mostrar.</div>`;
+    }
+
+    function buildProductionSheets() {
+      const processMap = new Map(processEvents.map(event => [event.id, event]));
+      return records
+        .filter(record => cleanText(record.estadoOperativo) === "Listo para producir")
+        .map(record => normalizeSheet(record, processMap.get(record.id) || {}))
+        .sort((a, b) => String(a.date || "9999").localeCompare(String(b.date || "9999")));
+    }
+
+    function normalizeSheet(record, event) {
+      return {
+        id: record.id || event.id || "",
+        client: event.client || record.cliente || "Sin cliente",
+        child: event.child || record.homenajeado || "Sin homenajeado",
+        age: event.age || record.edadCumpleanero || "",
+        date: event.date || record.fechaEvento || "",
+        time: event.time || "",
+        place: event.place || record.lugar || "",
+        theme: event.theme || record.tematica || "",
+        package: event.package || record.incluye || record.propuesta || "",
+        sketch: event.sketch || null,
+        materials: parseMaterials(event.materials),
+        notes: [event.productionNotes, event.notes, record.observaciones].filter(Boolean).join("\n\n")
+      };
+    }
+
+    function renderSheet(item) {
+      return `
+        <article class="sheet" id="${escapeAttr(item.id)}">
+          <div class="sheet-head">
+            <div>
+              <h2>${escapeHtml(item.client)}</h2>
+              <p class="subtitle">${escapeHtml([item.theme, item.child].filter(Boolean).join(" · "))}</p>
+            </div>
+            <span class="tag">Listo para producir</span>
+          </div>
+          <div class="sheet-grid">
+            <div>
+              <h3>Boceto</h3>
+              <div class="sketch-box">${renderSketch(item.sketch)}</div>
+            </div>
+            <div>
+              <div class="info-grid">
+                ${info("Fecha", item.date ? formatDate(item.date) : "Sin fecha")}
+                ${info("Horario", item.time || "Sin horario")}
+                ${info("Dirección", item.place || "Sin dirección", "full")}
+                ${info("Nombre de clienta", item.client)}
+                ${info("Homenajeado/a", item.child)}
+                ${info("Edad", item.age || "Sin edad")}
+                ${info("Temática", item.theme || "Sin temática")}
+                ${info("Propuesta", item.package || "Sin propuesta", "full")}
+              </div>
+              <div class="checklist">
+                <h3>Listado de materiales</h3>
+                ${item.materials.length ? item.materials.map(material => `
+                  <label class="check">
+                    <input type="checkbox">
+                    <span>${escapeHtml(material)}</span>
+                  </label>
+                `).join("") : `<div class="empty">Todavía no hay materiales cargados en proceso.</div>`}
+              </div>
+              <div class="observations">
+                <strong>Observaciones</strong><br>
+                ${escapeHtml(item.notes || "Sin observaciones cargadas.")}
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderSketch(sketch) {
+      if (!sketch?.dataUrl) return `<div>Sin boceto cargado</div>`;
+      if (sketch.type?.startsWith("image/")) return `<img src="${escapeAttr(sketch.dataUrl)}" alt="Boceto ${escapeAttr(sketch.name || "")}">`;
+      if (sketch.type === "application/pdf") return `<iframe src="${escapeAttr(sketch.dataUrl)}" title="Boceto PDF"></iframe>`;
+      return `<div><strong>${escapeHtml(sketch.name || "Archivo de boceto")}</strong><p class="muted">Archivo Word cargado en proceso.</p><a class="btn" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar boceto</a></div>`;
+    }
+
+    function info(label, value, className = "") {
+      return `<div class="info ${className}"><label>${escapeHtml(label)}</label><strong>${escapeHtml(value || "-")}</strong></div>`;
+    }
+
+    function getCloudConfig() {
+      try {
+        const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
+        const active = config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
+        return {
+          url: String(active.url || "").replace(/\/$/, ""),
+          anonKey: String(active.anonKey || "")
+        };
+      } catch {
+        return DEFAULT_CLOUD_CONFIG;
+      }
+    }
+
+    async function cloudRequest(path) {
+      const config = getCloudConfig();
+      const response = await fetch(`${config.url}/rest/v1/${path}`, {
+        headers: {
+          apikey: config.anonKey,
+          Authorization: `Bearer ${config.anonKey}`,
+          "Content-Type": "application/json"
+        }
+      });
+      if (!response.ok) throw new Error(await response.text());
+      return response.json();
+    }
+
+    function safeJson(value) {
+      try {
+        const parsed = JSON.parse(value || "[]");
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function parseMaterials(value) {
+      if (Array.isArray(value)) return value.map(item => String(item || "").trim()).filter(Boolean);
+      return String(value || "").split(/\n|,/).map(item => item.trim()).filter(Boolean);
+    }
+
+    function formatDate(value) {
+      const date = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function cleanText(value) {
+      return String(value || "").trim();
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/\n/g, " ");
+    }
+  </script>
+</body>
+</html>

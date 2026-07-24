@@ -2354,10 +2354,13 @@
         deposit: record.senia ? money(record.senia) : existing.deposit || "Pendiente",
         balance: record.saldo ? money(record.saldo) : existing.balance || "Pendiente",
         billing: record.facturacion || existing.billing || "Pendiente",
+        operativeStatus: record.estadoOperativo || existing.operativeStatus || "",
         status: processStatusFromRecord(record, existing.status),
         notes: existing.notes || record.observaciones || "",
         commercialNotes: existing.commercialNotes || buildCommercialNotes(record),
         productionNotes: existing.productionNotes || "",
+        materials: existing.materials || [],
+        sketch: existing.sketch || null,
         checks: existing.checks || {},
         updatedAt: new Date().toISOString()
       };

@@ -494,6 +494,85 @@
       display: block;
     }
 
+    .production-tools {
+      display: grid;
+      gap: 16px;
+    }
+
+    .sketch-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--panel);
+      display: grid;
+      gap: 10px;
+    }
+
+    .sketch-preview {
+      min-height: 180px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px;
+    }
+
+    .sketch-preview img,
+    .sketch-preview iframe {
+      width: 100%;
+      max-height: 320px;
+      border: 0;
+      object-fit: contain;
+      display: block;
+    }
+
+    .sketch-preview iframe {
+      min-height: 300px;
+    }
+
+    .sketch-actions,
+    .materials-actions,
+    .material-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .sketch-actions {
+      flex-wrap: wrap;
+    }
+
+    .file-button {
+      min-height: 38px;
+      border-radius: 8px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      background: var(--teal);
+      cursor: pointer;
+    }
+
+    .materials-editor {
+      display: grid;
+      gap: 9px;
+    }
+
+    .material-row input {
+      flex: 1;
+    }
+
+    .material-row .ghost {
+      min-height: 38px;
+      padding: 0 10px;
+    }
+
     .hint {
       color: var(--muted);
       font-size: 13px;
@@ -542,7 +621,8 @@
         justify-content: stretch;
       }
 
-      .actions > button {
+      .actions > button,
+      .actions > a {
         flex: 1 1 150px;
       }
 
@@ -552,6 +632,11 @@
 
       .event-list, .hero-grid, .two-col, .form-grid {
         grid-template-columns: 1fr;
+      }
+
+      .material-row {
+        align-items: stretch;
+        flex-direction: column;
       }
 
       .flow {
@@ -581,6 +666,7 @@
           <a class="ghost" href="../panel-control/">Panel de control</a>
           <a class="ghost" href="../">Dashboard</a>
           <a class="ghost" href="../crm/">CRM</a>
+          <a class="ghost" href="../produccion/">Producción</a>
           <button class="ghost" id="cloudBtn" type="button">Configurar nube</button>
           <button class="ghost" id="exportBtn" type="button">Exportar datos</button>
           <button class="ghost" id="importBtn" type="button">Importar</button>
@@ -727,7 +813,15 @@
     }
 
     function sanitizeEvents(items) {
-      return Array.isArray(items) ? items.filter(event => event && event.id && !isSeedEvent(event)) : [];
+      return Array.isArray(items)
+        ? items
+          .filter(event => event && event.id && !isSeedEvent(event))
+          .map(event => ({
+            ...event,
+            materials: Array.isArray(event.materials) ? event.materials.filter(Boolean) : parseMaterials(event.materials),
+            sketch: event.sketch && event.sketch.dataUrl ? event.sketch : null
+          }))
+        : [];
     }
 
     function saveEvents() {
@@ -753,6 +847,8 @@
         notes: "",
         commercialNotes: "",
         productionNotes: "",
+        materials: [],
+        sketch: null,
         checks: {},
         updatedAt: new Date().toISOString()
       };
@@ -930,6 +1026,15 @@
             </div>
           </div>
 
+          <div class="form-panel production-tools">
+            <div class="section-title">
+              <h3>Producción</h3>
+              <span class="hint">Boceto y materiales que van a aparecer en la ficha independiente.</span>
+            </div>
+            ${renderSketchEditor(event)}
+            ${renderMaterialsEditor(event)}
+          </div>
+
           <div class="two-col">
             <div class="form-panel">
               <div class="section-title">
@@ -996,6 +1101,16 @@
         input.addEventListener("change", () => updateCheck(input.dataset.check, input.checked));
       });
 
+      detail.querySelector("#sketchFile")?.addEventListener("change", handleSketchUpload);
+      detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
+      detail.querySelector("[data-add-material]")?.addEventListener("click", addMaterial);
+      detail.querySelectorAll("[data-material-index]").forEach((input) => {
+        input.addEventListener("input", () => updateMaterial(Number(input.dataset.materialIndex), input.value));
+      });
+      detail.querySelectorAll("[data-remove-material]").forEach((button) => {
+        button.addEventListener("click", () => removeMaterial(Number(button.dataset.removeMaterial)));
+      });
+
       detail.querySelector("#deleteEvent").addEventListener("click", deleteSelected);
       detail.querySelector("#duplicateEvent").addEventListener("click", duplicateSelected);
       detail.querySelector("#saveNow").addEventListener("click", () => {
@@ -1056,6 +1171,62 @@
       `;
     }
 
+    function renderSketchEditor(event) {
+      const sketch = event.sketch || null;
+      const preview = sketch
+        ? renderSketchPreview(sketch)
+        : `<div class="hint">Todavía no hay boceto cargado. Podés subir JPG, PNG, PDF, DOC o DOCX.</div>`;
+      return `
+        <div class="sketch-card">
+          <label>Boceto del evento</label>
+          <div class="sketch-preview">${preview}</div>
+          <div class="sketch-actions">
+            <label class="file-button" for="sketchFile">Cargar archivo</label>
+            <input id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+            ${sketch ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar</a>` : ""}
+            ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar boceto</button>` : ""}
+          </div>
+          <span class="hint">${sketch ? escapeHtml(`${sketch.name || "Archivo cargado"} · ${sketch.type || "archivo"}`) : "Tamaño recomendado: archivos livianos para que sincronicen rápido."}</span>
+        </div>
+      `;
+    }
+
+    function renderSketchPreview(sketch) {
+      if (sketch.type?.startsWith("image/")) {
+        return `<img src="${escapeAttr(sketch.dataUrl)}" alt="Boceto ${escapeAttr(sketch.name || "")}">`;
+      }
+      if (sketch.type === "application/pdf") {
+        return `<iframe src="${escapeAttr(sketch.dataUrl)}" title="Boceto PDF"></iframe>`;
+      }
+      return `
+        <div>
+          <strong>${escapeHtml(sketch.name || "Archivo de boceto")}</strong>
+          <div class="hint">Archivo Word cargado. Usá Descargar para abrirlo.</div>
+        </div>
+      `;
+    }
+
+    function renderMaterialsEditor(event) {
+      const materials = event.materials?.length ? event.materials : [""];
+      return `
+        <div class="sketch-card">
+          <div class="section-title">
+            <label>Listado de materiales</label>
+            <button class="ghost" type="button" data-add-material>Agregar ítem</button>
+          </div>
+          <div class="materials-editor">
+            ${materials.map((item, index) => `
+              <div class="material-row">
+                <input type="text" data-material-index="${index}" value="${escapeAttr(item)}" placeholder="Ej: 2 paneles, globos rosa, nombre impreso">
+                <button class="ghost" type="button" data-remove-material="${index}">Quitar</button>
+              </div>
+            `).join("")}
+          </div>
+          <span class="hint">Cada renglón se convierte en un check de la ficha de producción.</span>
+        </div>
+      `;
+    }
+
     function updateField(fieldName, value) {
       const event = getSelected();
       if (!event) return;
@@ -1073,6 +1244,82 @@
       event.updatedAt = new Date().toISOString();
       saveEvents();
       render();
+    }
+
+    function handleSketchUpload(inputEvent) {
+      const file = inputEvent.target.files?.[0];
+      const event = getSelected();
+      if (!file || !event) return;
+      const allowed = [
+        "image/jpeg",
+        "image/png",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ];
+      if (!allowed.includes(file.type)) {
+        alert("Formato no permitido. Usá JPG, PNG, PDF, DOC o DOCX.");
+        inputEvent.target.value = "";
+        return;
+      }
+      if (file.size > 4 * 1024 * 1024) {
+        alert("El archivo es muy pesado. Para sincronizar bien, usá uno menor a 4 MB.");
+        inputEvent.target.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        event.sketch = {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          dataUrl: reader.result,
+          updatedAt: new Date().toISOString()
+        };
+        event.updatedAt = new Date().toISOString();
+        saveEvents();
+        renderDetail();
+      };
+      reader.readAsDataURL(file);
+      inputEvent.target.value = "";
+    }
+
+    function removeSketch() {
+      const event = getSelected();
+      if (!event) return;
+      event.sketch = null;
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      renderDetail();
+    }
+
+    function addMaterial() {
+      const event = getSelected();
+      if (!event) return;
+      event.materials = parseMaterials(event.materials);
+      event.materials.push("Nuevo material");
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      renderDetail();
+    }
+
+    function updateMaterial(index, value) {
+      const event = getSelected();
+      if (!event) return;
+      event.materials = parseMaterials(event.materials);
+      event.materials[index] = value;
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+    }
+
+    function removeMaterial(index) {
+      const event = getSelected();
+      if (!event) return;
+      event.materials = parseMaterials(event.materials);
+      event.materials.splice(index, 1);
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      renderDetail();
     }
 
     function duplicateSelected() {
@@ -1257,6 +1504,14 @@
       const date = new Date(`${value}T00:00:00`);
       if (Number.isNaN(date.getTime())) return value;
       return date.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function parseMaterials(value) {
+      if (Array.isArray(value)) return value.map(item => String(item || "").trim()).filter(Boolean);
+      return String(value || "")
+        .split(/\n|,/)
+        .map(item => item.trim())
+        .filter(Boolean);
     }
 
     function escapeHtml(value) {
