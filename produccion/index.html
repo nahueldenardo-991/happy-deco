@@ -432,7 +432,7 @@
         input.addEventListener("change", () => updateMaterialCheck(input.dataset.eventId, input.dataset.materialCheck, input.checked));
       });
       els.list.querySelectorAll("[data-production-status]").forEach(select => {
-        select.addEventListener("change", () => updateProductionStatus(select.dataset.eventId, select.value));
+        select.addEventListener("change", () => updateProductionStatus(select.dataset.eventId, select.value, select));
       });
       els.list.querySelectorAll("[data-print-sheet]").forEach(button => {
         button.addEventListener("click", () => printSingleSheet(button.dataset.printSheet));
@@ -569,8 +569,16 @@
       render();
     }
 
-    function updateProductionStatus(eventId, status) {
+    function updateProductionStatus(eventId, status, select = null) {
       const event = ensureProcessEvent(eventId);
+      const previousStatus = event.productionStatus || "Listo para producir";
+      if (status === "Finalizado") {
+        const ok = confirm("¿Seguro que querés marcar este evento como Finalizado? Al confirmar, desaparecerá de esta pantalla de Producción. Si querés que siga visible, elegí Decorado.");
+        if (!ok) {
+          if (select) select.value = previousStatus;
+          return;
+        }
+      }
       event.productionStatus = status;
       event.updatedAt = new Date().toISOString();
       persistProcessEvent(event);
