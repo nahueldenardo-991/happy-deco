@@ -1,0 +1,271 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  text-rendering: geometricPrecision;
+}
+
+body::selection {
+  color: #2f2630;
+  background: rgba(126, 219, 223, .45);
+}
+
+.topbar,
+header .topbar {
+  backdrop-filter: blur(14px);
+}
+
+.brand-mark,
+.brand img {
+  background: #fff;
+  border-color: rgba(255, 255, 255, .96);
+}
+
+.brand-mark img,
+.brand img {
+  padding: 6px;
+}
+
+.actions a,
+.actions button,
+.nav a,
+.nav button,
+.btn,
+.ghost,
+.primary {
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+}
+
+.actions a:hover,
+.actions button:hover,
+.nav a:hover,
+.nav button:hover,
+.btn:hover,
+.ghost:hover,
+.primary:hover {
+  transform: translateY(-1px);
+}
+
+.actions a:focus-visible,
+.actions button:focus-visible,
+.nav a:focus-visible,
+.nav button:focus-visible,
+.btn:focus-visible,
+.ghost:focus-visible,
+.primary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(126, 219, 223, .55);
+  outline-offset: 2px;
+}
+
+.module-dashboard .topbar,
+.module-control .topbar {
+  position: sticky;
+  top: 12px;
+  z-index: 10;
+}
+
+.module-dashboard .topbar::after,
+.module-control .topbar::after {
+  opacity: .45;
+}
+
+.module-dashboard .actions,
+.module-control .actions,
+.module-process .actions,
+.module-crm .nav {
+  align-content: center;
+  align-items: center;
+}
+
+.module-dashboard .actions .btn,
+.module-control .actions .btn,
+.module-process .actions a,
+.module-process .actions button,
+.module-crm .nav a,
+.module-crm .nav button {
+  box-shadow: 0 8px 20px rgba(58, 45, 53, .06);
+}
+
+.module-dashboard .actions .btn:first-child,
+.module-control .actions .btn:first-child,
+.module-process .actions a[href="../panel-control/"],
+.module-crm .nav a[href="../panel-control/"] {
+  border-color: rgba(126, 219, 223, .55);
+  background: linear-gradient(135deg, rgba(126, 219, 223, .22), rgba(255, 255, 255, .92));
+}
+
+.panel,
+.metric,
+.card,
+.form-panel,
+.pipeline-column,
+.agenda-panel,
+.summary-chip,
+.event-card,
+.rank-item {
+  box-shadow: 0 16px 36px rgba(72, 52, 35, .09);
+}
+
+.metric,
+.summary-chip,
+.event-card,
+.rank-item,
+.month-row {
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.metric:hover,
+.summary-chip:hover,
+.event-card:hover,
+.rank-item:hover,
+.month-row:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 42px rgba(72, 52, 35, .12);
+  border-color: rgba(126, 219, 223, .45);
+}
+
+.control,
+.table-input,
+.table-select,
+input,
+select,
+textarea {
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.module-dashboard .layout {
+  grid-template-columns: 390px minmax(0, 1fr);
+}
+
+.module-dashboard .form-panel {
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.module-dashboard .table-wrap {
+  max-height: 68vh;
+}
+
+.module-dashboard th {
+  box-shadow: 0 1px 0 rgba(242, 220, 231, .9);
+}
+
+.module-dashboard tbody tr:nth-child(even) {
+  background: rgba(255, 249, 241, .46);
+}
+
+.module-dashboard tbody tr:hover {
+  background: rgba(228, 248, 247, .56);
+}
+
+.module-control .control-hero {
+  align-items: stretch;
+}
+
+.module-control .summary-chip strong,
+.module-control .metric .value,
+.module-dashboard .metric .value {
+  letter-spacing: 0;
+}
+
+.module-control .event-card {
+  border-left: 6px solid rgba(126, 219, 223, .75);
+}
+
+.module-control .event-card:has(.tag.red) {
+  border-left-color: rgba(217, 102, 102, .75);
+}
+
+.module-control .event-card:has(.tag.gold) {
+  border-left-color: rgba(255, 214, 122, .95);
+}
+
+.module-process main {
+  grid-template-columns: 340px minmax(0, 1fr);
+}
+
+.module-process .sidebar .panel {
+  position: sticky;
+  top: 112px;
+  max-height: calc(100vh - 132px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.module-process .event-list {
+  overflow: auto;
+}
+
+.module-process .detail > .panel,
+.module-process .flow-card,
+.module-process .event-card {
+  border-radius: 8px;
+}
+
+.module-crm .brand img {
+  width: 7.5rem;
+  height: 4.4rem;
+  border-radius: 16px;
+}
+
+.module-crm .topbar {
+  align-items: center;
+}
+
+.module-crm .hero {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, .85fr);
+}
+
+.module-crm .form-panel {
+  position: sticky;
+  top: 98px;
+  max-height: calc(100vh - 118px);
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 1240px) {
+  .module-dashboard .layout,
+  .module-process main,
+  .module-crm .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .module-dashboard .form-panel,
+  .module-process .sidebar .panel,
+  .module-crm .form-panel {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .module-dashboard .topbar,
+  .module-control .topbar {
+    top: 0;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .brand-mark {
+    width: 142px !important;
+    min-width: 142px !important;
+    height: 82px !important;
+  }
+
+  .module-crm .brand img {
+    width: 7rem;
+    height: 4.1rem;
+  }
+
+  .actions a,
+  .actions button,
+  .nav a,
+  .nav button {
+    min-width: 0;
+  }
+}

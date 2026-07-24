@@ -996,8 +996,9 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="assets/ux-polish.css">
 </head>
-<body>
+<body class="module-dashboard">
   <div class="shell">
     <header class="topbar">
       <div class="brand-block">
@@ -1012,8 +1013,8 @@
       </div>
       <div class="actions">
         <a class="btn secondary" href="panel-control/">Panel de control</a>
-        <a class="btn secondary" href="crm/">Ver CRM</a>
-        <a class="btn secondary" href="proceso/">Ver proceso</a>
+        <a class="btn secondary" href="crm/">CRM</a>
+        <a class="btn secondary" href="proceso/">Proceso</a>
         <button class="btn secondary" id="cloudBtn" type="button">Configurar nube</button>
         <button class="btn secondary" id="refreshCloudBtn" type="button">Actualizar datos</button>
         <button class="btn secondary" id="exportBtn" type="button">Exportar CSV</button>
@@ -1271,8 +1272,8 @@
           <article class="panel ranking-panel">
             <div class="panel-head">
               <div>
-                <h2>Alertas rpidas</h2>
-                <div class="small-note">Seales operativas para evitar esperas entre Cati, Xime y Juli.</div>
+                <h2>Alertas rápidas</h2>
+                <div class="small-note">Señales operativas para evitar esperas entre Cati, Xime y Juli.</div>
               </div>
             </div>
             <div class="ranking-list" id="alertsList"></div>
@@ -1657,7 +1658,7 @@
       const catiLoad = filtered.filter(record => record.responsable === "Cati" && ["Consulta nueva", "Datos incompletos", "Presupuesto enviado", "Seguimiento"].includes(record.etapa));
       const ximeLoad = filtered.filter(record => record.responsable.includes("Xime") && ["Compras pendientes", "En producción", "Listo para montar"].includes(record.estadoOperativo));
 
-      if (noDeposit.length) alerts.push({ title: "Propuestas sin sea", count: noDeposit.length, meta: "Seguimientos que pueden enfriarse.", tone: "rose" });
+      if (noDeposit.length) alerts.push({ title: "Propuestas sin seña", count: noDeposit.length, meta: "Seguimientos que pueden enfriarse.", tone: "rose" });
       if (noDate.length) alerts.push({ title: "Eventos confirmados sin fecha", count: noDate.length, meta: "No deberían pasar a producción incompletos.", tone: "gold" });
       if (blocked.length) alerts.push({ title: "Registros trabados", count: blocked.length, meta: "Requieren decisión o información.", tone: "red" });
       if (catiLoad.length) alerts.push({ title: "Pendientes comerciales en Cati", count: catiLoad.length, meta: "Diseño, presupuesto o seguimiento.", tone: "teal" });
@@ -1964,7 +1965,7 @@
             <head><meta charset="utf-8"><title>Happy Deco Calendar</title></head>
             <body style="font-family:system-ui,sans-serif;padding:24px;color:#3a2d35">
               <h1 style="font-size:22px">Preparando agendado...</h1>
-              <p>Esta ventana se cerrarÃ¡ sola si el agendado directo funciona.</p>
+              <p>Esta ventana se cerrará sola si el agendado directo funciona.</p>
             </body>
           </html>
         `);
@@ -2164,7 +2165,7 @@
       const password = prompt(`Acceso administrativo requerido para ${actionText}. Ingresá la contraseña:`);
       if (password === null) return false;
       if (password === ADMIN_PASSWORD) return true;
-      alert("Contrase?a incorrecta.");
+      alert("Contraseña incorrecta.");
       return false;
     }
 

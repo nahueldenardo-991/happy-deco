@@ -507,8 +507,9 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="../assets/ux-polish.css">
 </head>
-<body>
+<body class="module-control">
   <div class="shell">
     <header class="topbar">
       <div class="brand-block">
@@ -518,12 +519,13 @@
         <div>
           <div class="eyebrow">Happy Deco</div>
           <h1>Panel de control</h1>
-          <p class="subtitle">Vista rapida del estado general: ventas, pendientes, calendario y proximos eventos cargados en el dashboard.</p>
+          <p class="subtitle">Vista rápida del estado general: ventas, pendientes, calendario y próximos eventos cargados en el dashboard.</p>
         </div>
       </div>
       <div class="actions">
         <button class="btn" id="refreshBtn" type="button">Actualizar panel</button>
         <a class="btn secondary" href="../">Dashboard</a>
+        <a class="btn secondary" href="../crm/">CRM</a>
         <a class="btn secondary" href="../proceso/">Proceso</a>
       </div>
     </header>
@@ -531,17 +533,17 @@
     <section class="panel control-hero">
       <div class="control-title">
         <div class="eyebrow">Estado general</div>
-        <h2 id="heroTitle">Cargando informacion...</h2>
-        <p class="subtitle" id="heroSubtitle">El panel se actualiza al entrar y tambien manualmente desde el boton superior.</p>
+        <h2 id="heroTitle">Cargando información...</h2>
+        <p class="subtitle" id="heroSubtitle">El panel se actualiza al entrar y también manualmente desde el botón superior.</p>
         <div class="small-note" id="lastUpdate">Sin actualizar</div>
       </div>
       <div class="summary-grid">
         <div class="summary-chip">
-          <span>Eventos proximos</span>
+          <span>Eventos próximos</span>
           <strong id="summaryNext">0</strong>
         </div>
         <div class="summary-chip">
-          <span>Mas urgente</span>
+          <span>Más urgente</span>
           <strong id="summaryUrgent">-</strong>
         </div>
         <div class="summary-chip">
@@ -564,12 +566,12 @@
       <article class="metric green">
         <div class="label">Confirmados</div>
         <div class="value" id="confirmedMetric">0</div>
-        <div class="detail" id="conversionMetric">0% conversion</div>
+        <div class="detail" id="conversionMetric">0% conversión</div>
       </article>
       <article class="metric rose">
         <div class="label">Ingresos vendidos</div>
         <div class="value" id="revenueMetric">$0</div>
-        <div class="detail">Eventos senados o realizados</div>
+        <div class="detail">Eventos señados o realizados</div>
       </article>
       <article class="metric gold">
         <div class="label">Saldo pendiente</div>
@@ -582,17 +584,17 @@
         <div class="detail">Monto vendido menos costo</div>
       </article>
       <article class="metric rose">
-        <div class="label">Proximos 7 dias</div>
+        <div class="label">Próximos 7 días</div>
         <div class="value" id="next7Metric">0</div>
         <div class="detail">Eventos con ejecucion inmediata</div>
       </article>
       <article class="metric green">
-        <div class="label">Proximos 30 dias</div>
+        <div class="label">Próximos 30 días</div>
         <div class="value" id="next30Metric">0</div>
         <div class="detail">Eventos por preparar o montar</div>
       </article>
       <article class="metric gold">
-        <div class="label">Facturacion pendiente</div>
+        <div class="label">Facturación pendiente</div>
         <div class="value" id="billingMetric">0</div>
         <div class="detail">Registros a revisar administrativamente</div>
       </article>
@@ -602,8 +604,8 @@
       <section class="panel panel-section">
         <div class="panel-head">
           <div>
-            <h2>Proximas fiestas</h2>
-            <div class="small-note">Ordenadas por fecha de evento, con contador de dias restantes.</div>
+            <h2>Próximas fiestas</h2>
+            <div class="small-note">Ordenadas por fecha de evento, con contador de días restantes.</div>
           </div>
         </div>
         <div class="list" id="upcomingList"></div>
@@ -612,7 +614,7 @@
       <aside class="panel panel-section">
         <div class="panel-head">
           <div>
-            <h2>Lectura rapida</h2>
+            <h2>Lectura rápida</h2>
             <div class="small-note">Puntos que conviene mirar antes de hablar con el equipo.</div>
           </div>
         </div>
@@ -743,7 +745,7 @@
 
       els.totalMetric.textContent = clean.length;
       els.confirmedMetric.textContent = confirmed.length;
-      els.conversionMetric.textContent = `${conversion}% conversion sobre registros`;
+      els.conversionMetric.textContent = `${conversion}% conversión sobre registros`;
       els.revenueMetric.textContent = money(revenue);
       els.balanceMetric.textContent = money(balance);
       els.marginMetric.textContent = money(margin);
@@ -756,7 +758,7 @@
     }
 
     function buildHeroTitle(items, upcoming, blocked) {
-      if (!items.length) return "Sin registros cargados todavia";
+      if (!items.length) return "Sin registros cargados todavía";
       if (blocked.length) return `${blocked.length} punto${blocked.length === 1 ? "" : "s"} trabado${blocked.length === 1 ? "" : "s"} para resolver`;
       if (upcoming.length) return `Proximo evento en ${daysLabel(daysUntil(upcoming[0].fechaEvento), false)}`;
       return "No hay eventos futuros cargados";
@@ -781,7 +783,7 @@
           <article class="event-card">
             <div class="days-box ${days === 0 ? "today" : ""}">
               <strong>${days}</strong>
-              <span>${days === 1 ? "dia" : "dias"}</span>
+              <span>${days === 1 ? "día" : "días"}</span>
             </div>
             <div class="event-main">
               <strong>${escapeHtml(title || "Evento sin nombre")}</strong>
@@ -800,7 +802,7 @@
     function renderQuickList(items, groups) {
       const alerts = [
         {
-          title: "Eventos en los proximos 7 dias",
+          title: "Eventos en los próximos 7 días",
           count: groups.next7.length,
           meta: "Mirar materiales, montaje, responsables y detalles finales.",
           tone: "gold"
@@ -808,7 +810,7 @@
         {
           title: "Eventos futuros sin agendar",
           count: groups.unscheduled.length,
-          meta: "Tienen fecha futura, pero todavia no figuran como agendados.",
+          meta: "Tienen fecha futura, pero todavía no figuran como agendados.",
           tone: "rose"
         },
         {
@@ -818,7 +820,7 @@
           tone: "rose"
         },
         {
-          title: "Facturacion pendiente",
+          title: "Facturación pendiente",
           count: groups.pendingBilling.length,
           meta: "Revision administrativa, sin exponer datos en Google Calendar.",
           tone: "gold"
@@ -874,8 +876,8 @@
 
     function daysLabel(days, compact) {
       if (days === 0) return compact ? "Hoy" : "hoy";
-      if (days === 1) return compact ? "1 dia" : "1 dia";
-      return compact ? `${days} dias` : `${days} dias`;
+      if (days === 1) return compact ? "1 día" : "1 día";
+      return compact ? `${days} días` : `${days} días`;
     }
 
     function isConfirmed(record) {
