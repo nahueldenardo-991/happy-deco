@@ -95,6 +95,54 @@
       padding: 24px 0 36px;
     }
 
+    body.auth-locked .shell {
+      display: none;
+    }
+
+    .login-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    body:not(.auth-locked) .login-screen {
+      display: none;
+    }
+
+    .login-card {
+      width: min(440px, 100%);
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(126, 219, 223, .18), transparent 48%),
+        #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .login-card img {
+      width: 148px;
+      height: 84px;
+      object-fit: contain;
+      display: block;
+      margin-bottom: 14px;
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .login-card form {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .login-error {
+      min-height: 20px;
+      color: var(--red);
+      font-weight: 850;
+    }
+
     .topbar {
       display: flex;
       align-items: stretch;
@@ -999,8 +1047,25 @@
   </style>
   <link rel="stylesheet" href="assets/ux-polish.css">
 </head>
-<body class="module-dashboard">
-  <div class="shell">
+<body class="module-dashboard auth-locked">
+  <section class="login-screen" aria-label="Acceso de gestión">
+    <div class="login-card">
+      <img src="assets/happy-deco-logo.png" alt="Happy Deco">
+      <div class="eyebrow">Usuario de gestión</div>
+      <h1>Acceso al dashboard</h1>
+      <p class="subtitle">Ingresá la clave administrativa para ver y editar información comercial, operativa y sensible.</p>
+      <form id="loginForm">
+        <div class="field">
+          <label for="loginPassword">Contraseña</label>
+          <input class="control" id="loginPassword" type="password" autocomplete="current-password" required>
+        </div>
+        <button class="btn" type="submit">Ingresar</button>
+        <div class="login-error" id="loginError" role="alert"></div>
+      </form>
+    </div>
+  </section>
+
+  <div class="shell" id="dashboardShell">
     <header class="topbar">
       <div class="brand-block">
         <div class="brand-mark">
@@ -1020,6 +1085,7 @@
         <button class="btn secondary" id="refreshCloudBtn" type="button">Actualizar datos</button>
         <button class="btn secondary" id="exportBtn" type="button">Exportar CSV</button>
         <button class="btn danger" id="clearBtn" type="button">Limpiar datos</button>
+        <button class="btn secondary" id="logoutBtn" type="button">Salir</button>
       </div>
     </header>
 
@@ -1330,6 +1396,7 @@
     const DEFAULT_CALENDAR_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqqcdstHb6fWfZ9TTCosxjSm3fiWgh7YsqX8zkxey_Kek3TwwkCwUv6egzrJjIC0_2TQ/exec";
     const DEFAULT_CALENDAR_SECRET = "happy-deco-calendar-2026";
     const ADMIN_PASSWORD = "happydeco2026";
+    const AUTH_SESSION_KEY = "happyDecoDashboardAuth";
     const PROPOSAL_OPTIONS = [
       "Propuesta express",
       "Propuesta minimalista",
@@ -1411,15 +1478,57 @@
       ownerRanking: document.getElementById("ownerRanking"),
       stageRanking: document.getElementById("stageRanking"),
       tableContainer: document.getElementById("tableContainer"),
-      tableCount: document.getElementById("tableCount")
+      tableCount: document.getElementById("tableCount"),
+      loginForm: document.getElementById("loginForm"),
+      loginPassword: document.getElementById("loginPassword"),
+      loginError: document.getElementById("loginError"),
+      logoutBtn: document.getElementById("logoutBtn")
     };
 
     let records = loadRecords();
 
-    initDefaults();
-    render();
-    initCloudSync();
+    initAuth();
 
+    function initAuth() {
+      if (sessionStorage.getItem(AUTH_SESSION_KEY) === "ok") {
+        unlockDashboard();
+        return;
+      }
+      document.body.classList.add("auth-locked");
+      requestAnimationFrame(() => els.loginPassword.focus());
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const password = els.loginPassword.value.trim();
+      if (password !== ADMIN_PASSWORD) {
+        els.loginError.textContent = "Contraseña incorrecta.";
+        els.loginPassword.select();
+        return;
+      }
+      sessionStorage.setItem(AUTH_SESSION_KEY, "ok");
+      els.loginPassword.value = "";
+      els.loginError.textContent = "";
+      unlockDashboard();
+    }
+
+    function unlockDashboard() {
+      document.body.classList.remove("auth-locked");
+      initDefaults();
+      render();
+      initCloudSync();
+    }
+
+    function logoutDashboard() {
+      sessionStorage.removeItem(AUTH_SESSION_KEY);
+      document.body.classList.add("auth-locked");
+      els.loginPassword.value = "";
+      els.loginError.textContent = "";
+      requestAnimationFrame(() => els.loginPassword.focus());
+    }
+
+    els.loginForm.addEventListener("submit", handleLogin);
+    els.logoutBtn.addEventListener("click", logoutDashboard);
     els.form.addEventListener("submit", handleSubmit);
     els.resetFormBtn.addEventListener("click", () => {
       els.form.reset();
