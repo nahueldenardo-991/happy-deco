@@ -163,6 +163,11 @@ textarea {
   background: rgba(228, 248, 247, .56);
 }
 
+.module-dashboard tr.deep-linked-record {
+  background: rgba(255, 214, 122, .28) !important;
+  box-shadow: inset 4px 0 0 #ffd67a;
+}
+
 .module-control .control-hero {
   align-items: stretch;
 }

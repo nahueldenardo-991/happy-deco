@@ -236,6 +236,9 @@
       align-content: center;
       gap: 5px;
       padding: 12px;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
     }
 
     .summary-chip strong {
@@ -265,6 +268,24 @@
       align-content: space-between;
       gap: 10px;
       box-shadow: var(--shadow);
+      color: inherit;
+      text-align: left;
+    }
+
+    button.metric,
+    button.summary-chip,
+    button.rank-item {
+      cursor: pointer;
+      border: 1px solid rgba(255, 150, 191, .24);
+    }
+
+    .metric-action::after,
+    .summary-chip::after,
+    .rank-item.actionable::after {
+      content: "Ver detalle";
+      color: var(--teal-dark);
+      font-size: 12px;
+      font-weight: 900;
     }
 
     .metric .value {
@@ -415,6 +436,60 @@
       display: grid;
       gap: 7px;
       padding: 11px;
+      width: 100%;
+      color: inherit;
+      text-align: left;
+    }
+
+    .detail-panel {
+      margin-bottom: 18px;
+      padding: 16px;
+      border-color: rgba(126, 219, 223, .34);
+    }
+
+    .detail-panel[hidden] {
+      display: none;
+    }
+
+    .detail-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .detail-record {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 150, 191, .24);
+      background: linear-gradient(180deg, #fff, #fffdfb);
+    }
+
+    .record-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-content: center;
+    }
+
+    .mini-link {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 9px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+      white-space: nowrap;
     }
 
     .rank-top {
@@ -499,12 +574,17 @@
 
       .summary-grid,
       .metrics,
-      .event-card {
+      .event-card,
+      .detail-record {
         grid-template-columns: 1fr;
       }
 
       .event-status {
         justify-items: start;
+      }
+
+      .record-links {
+        justify-content: flex-start;
       }
     }
   </style>
@@ -539,40 +619,40 @@
         <div class="small-note" id="lastUpdate">Sin actualizar</div>
       </div>
       <div class="summary-grid">
-        <div class="summary-chip">
-          <span>Eventos próximos</span>
+        <button class="summary-chip" type="button" data-detail="upcoming">
+          <span>Eventos pr?ximos</span>
           <strong id="summaryNext">0</strong>
-        </div>
-        <div class="summary-chip">
-          <span>Más urgente</span>
+        </button>
+        <button class="summary-chip" type="button" data-detail="urgent">
+          <span>M?s urgente</span>
           <strong id="summaryUrgent">-</strong>
-        </div>
-        <div class="summary-chip">
+        </button>
+        <button class="summary-chip" type="button" data-detail="unscheduled">
           <span>Futuros sin agendar</span>
           <strong id="summaryUnscheduled">0</strong>
-        </div>
-        <div class="summary-chip">
+        </button>
+        <button class="summary-chip" type="button" data-detail="blocked">
           <span>Trabados</span>
           <strong id="summaryBlocked">0</strong>
-        </div>
+        </button>
       </div>
     </section>
 
     <section class="metrics" aria-label="KPIs generales">
-      <article class="metric teal">
+      <button class="metric metric-action teal" type="button" data-detail="all">
         <div class="label">Registros</div>
         <div class="value" id="totalMetric">0</div>
         <div class="detail">Total cargado en el dashboard</div>
-      </article>
-      <article class="metric green">
+      </button>
+      <button class="metric metric-action green" type="button" data-detail="confirmed">
         <div class="label">Confirmados</div>
         <div class="value" id="confirmedMetric">0</div>
-        <div class="detail" id="conversionMetric">0% conversión</div>
-      </article>
+        <div class="detail" id="conversionMetric">0% conversi?n</div>
+      </button>
       <article class="metric rose">
         <div class="label">Ingresos vendidos</div>
         <div class="value" id="revenueMetric">$0</div>
-        <div class="detail">Eventos señados o realizados</div>
+        <div class="detail">Eventos se?ados o realizados</div>
       </article>
       <article class="metric gold">
         <div class="label">Saldo pendiente</div>
@@ -584,21 +664,34 @@
         <div class="value" id="marginMetric">$0</div>
         <div class="detail">Monto vendido menos costo</div>
       </article>
-      <article class="metric rose">
-        <div class="label">Próximos 7 días</div>
+      <button class="metric metric-action rose" type="button" data-detail="next7">
+        <div class="label">Pr?ximos 7 d?as</div>
         <div class="value" id="next7Metric">0</div>
-        <div class="detail">Eventos con ejecucion inmediata</div>
-      </article>
-      <article class="metric green">
-        <div class="label">Próximos 30 días</div>
+        <div class="detail">Eventos con ejecuci?n inmediata</div>
+      </button>
+      <button class="metric metric-action green" type="button" data-detail="next30">
+        <div class="label">Pr?ximos 30 d?as</div>
         <div class="value" id="next30Metric">0</div>
         <div class="detail">Eventos por preparar o montar</div>
-      </article>
-      <article class="metric gold">
-        <div class="label">Facturación pendiente</div>
+      </button>
+      <button class="metric metric-action gold" type="button" data-detail="billing">
+        <div class="label">Facturaci?n pendiente</div>
         <div class="value" id="billingMetric">0</div>
         <div class="detail">Registros a revisar administrativamente</div>
-      </article>
+      </button>
+    </section>
+
+    <section class="panel detail-panel" id="detailPanel" hidden>
+      <div class="panel-head">
+        <div>
+          <h2 id="detailTitle">Detalle</h2>
+          <div class="small-note" id="detailNote">Registros vinculados a la medici?n seleccionada.</div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn secondary" id="clearDetailBtn" type="button">Cerrar detalle</button>
+        </div>
+      </div>
+      <div class="list" id="detailList"></div>
     </section>
 
     <main class="main-grid">
@@ -651,14 +744,28 @@
       next7Metric: document.getElementById("next7Metric"),
       next30Metric: document.getElementById("next30Metric"),
       billingMetric: document.getElementById("billingMetric"),
+      detailPanel: document.getElementById("detailPanel"),
+      detailTitle: document.getElementById("detailTitle"),
+      detailNote: document.getElementById("detailNote"),
+      detailList: document.getElementById("detailList"),
+      clearDetailBtn: document.getElementById("clearDetailBtn"),
       upcomingList: document.getElementById("upcomingList"),
       quickList: document.getElementById("quickList")
     };
 
     let records = loadLocalRecords();
+    let detailGroups = {};
     render(records);
     refreshRecords();
     els.refreshBtn.addEventListener("click", refreshRecords);
+    document.addEventListener("click", event => {
+      const trigger = event.target.closest("[data-detail]");
+      if (!trigger) return;
+      showDetail(trigger.dataset.detail);
+    });
+    els.clearDetailBtn.addEventListener("click", () => {
+      els.detailPanel.hidden = true;
+    });
 
     function loadLocalRecords() {
       try {
@@ -734,6 +841,21 @@
       const unscheduled = getUnscheduledUpcoming(clean);
       const blocked = clean.filter(record => isBlocked(record));
       const pendingBilling = clean.filter(record => !["Facturado", "No requiere factura"].includes(cleanText(record.facturacion || "Pendiente")));
+      const topOwner = topResponsible(clean);
+      const topProposal = topBy(clean, record => cleanText(record.propuesta || "Sin definir"));
+      detailGroups = {
+        all: clean,
+        confirmed,
+        upcoming,
+        urgent: upcoming.slice(0, 1),
+        next7,
+        next30,
+        unscheduled,
+        blocked,
+        billing: pendingBilling,
+        topOwner: clean.filter(record => cleanText(record.responsable || "Sin responsable") === topOwner.label),
+        topProposal: clean.filter(record => cleanText(record.propuesta || "Sin definir") === topProposal.label)
+      };
 
       els.heroTitle.textContent = buildHeroTitle(clean, upcoming, blocked);
       els.heroSubtitle.textContent = clean.length
@@ -755,7 +877,7 @@
       els.billingMetric.textContent = pendingBilling.length;
 
       renderUpcoming(upcoming);
-      renderQuickList(clean, { confirmed, upcoming, next7, unscheduled, blocked, pendingBilling });
+      renderQuickList(clean, { confirmed, upcoming, next7, unscheduled, blocked, pendingBilling, topOwner, topProposal });
     }
 
     function buildHeroTitle(items, upcoming, blocked) {
@@ -803,56 +925,117 @@
     function renderQuickList(items, groups) {
       const alerts = [
         {
-          title: "Eventos en los próximos 7 días",
+          title: "Eventos en los pr?ximos 7 d?as",
           count: groups.next7.length,
           meta: "Mirar materiales, montaje, responsables y detalles finales.",
-          tone: "gold"
+          tone: "gold",
+          detail: "next7"
         },
         {
           title: "Eventos futuros sin agendar",
           count: groups.unscheduled.length,
-          meta: "Tienen fecha futura, pero todavía no figuran como agendados.",
-          tone: "rose"
+          meta: "Tienen fecha futura, pero todav?a no figuran como agendados.",
+          tone: "rose",
+          detail: "unscheduled"
         },
         {
           title: "Registros trabados",
           count: groups.blocked.length,
-          meta: "Requieren una definicion para que el proceso avance.",
-          tone: "rose"
+          meta: "Requieren una definici?n para que el proceso avance.",
+          tone: "rose",
+          detail: "blocked"
         },
         {
-          title: "Facturación pendiente",
+          title: "Facturaci?n pendiente",
           count: groups.pendingBilling.length,
-          meta: "Revision administrativa, sin exponer datos en Google Calendar.",
-          tone: "gold"
+          meta: "Revisi?n administrativa, sin exponer datos en Google Calendar.",
+          tone: "gold",
+          detail: "billing"
         },
         {
-          title: "Responsable con mas carga",
-          count: topResponsible(items).count,
-          meta: topResponsible(items).label,
-          tone: "teal"
+          title: "Responsable con m?s carga",
+          count: groups.topOwner.count,
+          meta: groups.topOwner.label,
+          tone: "teal",
+          detail: "topOwner"
         },
         {
-          title: "Propuesta mas vendida/pedida",
-          count: topBy(items, record => cleanText(record.propuesta || "Sin definir")).count,
-          meta: topBy(items, record => cleanText(record.propuesta || "Sin definir")).label,
-          tone: "green"
+          title: "Propuesta m?s vendida/pedida",
+          count: groups.topProposal.count,
+          meta: groups.topProposal.label,
+          tone: "green",
+          detail: "topProposal"
         }
       ];
       const max = Math.max(1, ...alerts.map(item => item.count));
       els.quickList.innerHTML = alerts.map(item => {
         const width = Math.max(8, Math.round((item.count / max) * 100));
         return `
-          <div class="rank-item">
+          <button class="rank-item actionable" type="button" data-detail="${escapeAttr(item.detail)}">
             <div class="rank-top">
               <div class="rank-title">${escapeHtml(item.title)}</div>
               <div class="rank-count">${item.count}</div>
             </div>
             <div class="muted">${escapeHtml(item.meta)}</div>
             <div class="bar ${item.tone === "rose" ? "rose" : item.tone === "gold" ? "gold" : ""}"><span style="width:${width}%"></span></div>
-          </div>
+          </button>
         `;
       }).join("");
+    }
+
+    function showDetail(key) {
+      const config = detailConfig(key);
+      const items = config.items || [];
+      els.detailTitle.textContent = config.title;
+      els.detailNote.textContent = `${items.length} registro${items.length === 1 ? "" : "s"} encontrado${items.length === 1 ? "" : "s"}. No se muestran importes en este detalle.`;
+      els.detailList.innerHTML = items.length
+        ? items.map(renderDetailRecord).join("")
+        : `<div class="empty">No hay registros para esta medici?n.</div>`;
+      els.detailPanel.hidden = false;
+      els.detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function detailConfig(key) {
+      const labels = {
+        all: "Todos los registros",
+        confirmed: "Registros confirmados",
+        upcoming: "Eventos pr?ximos",
+        urgent: "Evento m?s urgente",
+        next7: "Eventos en los pr?ximos 7 d?as",
+        next30: "Eventos en los pr?ximos 30 d?as",
+        unscheduled: "Eventos futuros sin agendar",
+        blocked: "Registros trabados",
+        billing: "Facturaci?n pendiente",
+        topOwner: "Responsable con m?s carga",
+        topProposal: "Propuesta m?s vendida/pedida"
+      };
+      return {
+        title: labels[key] || "Detalle",
+        items: detailGroups[key] || []
+      };
+    }
+
+    function renderDetailRecord(record) {
+      const days = record.fechaEvento ? daysUntil(record.fechaEvento) : null;
+      const meta = [
+        record.fechaEvento ? `Evento: ${formatDate(record.fechaEvento)}${days !== null && days >= 0 ? ` (${daysLabel(days, true)})` : ""}` : "Sin fecha de evento",
+        cleanText(record.responsable || "Sin responsable"),
+        cleanText(record.estadoOperativo || "Sin estado"),
+        record.googleCalendarEventId ? "Agendado" : "Sin agendar"
+      ].filter(Boolean).join(" ? ");
+      return `
+        <article class="detail-record">
+          <div class="event-main">
+            <strong>${escapeHtml([cleanText(record.cliente), cleanText(record.tematica)].filter(Boolean).join(" - ") || "Registro sin nombre")}</strong>
+            <div class="event-meta">${escapeHtml(meta)}</div>
+            <div class="event-meta">${escapeHtml(cleanText(record.homenajeado || "Sin homenajeado"))} ? ${escapeHtml(cleanText(record.propuesta || "Sin propuesta"))} ? ${escapeHtml(cleanText(record.etapa || "Sin etapa"))}</div>
+          </div>
+          <div class="record-links">
+            <a class="mini-link" href="../?registro=${encodeURIComponent(record.id)}">Dashboard</a>
+            <a class="mini-link" href="../proceso/?registro=${encodeURIComponent(record.id)}">Proceso</a>
+          </div>
+        </article>
+      `;
     }
 
     function getUpcoming(items) {
@@ -962,6 +1145,10 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/\n/g, " ");
     }
   </script>
 </body>

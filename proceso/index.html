@@ -686,7 +686,7 @@
       query: ""
     };
 
-    state.selectedId = state.events[0]?.id || null;
+    state.selectedId = getDeepLinkedEventId() || state.events[0]?.id || null;
 
     const eventList = document.querySelector("#eventList");
     const detail = document.querySelector("#detail");
@@ -837,6 +837,7 @@
     function render() {
       renderList();
       renderDetail();
+      focusDeepLinkedEvent();
     }
 
     function renderList() {
@@ -869,6 +870,19 @@
           state.selectedId = card.dataset.id;
           render();
         });
+      });
+    }
+
+    function getDeepLinkedEventId() {
+      return new URLSearchParams(window.location.search).get("registro");
+    }
+
+    function focusDeepLinkedEvent() {
+      const id = getDeepLinkedEventId();
+      if (!id) return;
+      requestAnimationFrame(() => {
+        const card = eventList.querySelector(`[data-id="${escapeCssIdent(id)}"]`);
+        if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
       });
     }
 
@@ -1256,6 +1270,10 @@
 
     function escapeAttr(value) {
       return escapeHtml(value).replaceAll("\n", " ");
+    }
+
+    function escapeCssIdent(value) {
+      return globalThis.CSS?.escape ? CSS.escape(value) : String(value).replace(/"/g, '\\"');
     }
   </script>
 </body>

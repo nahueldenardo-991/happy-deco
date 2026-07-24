@@ -1552,6 +1552,7 @@
       renderRankings(filtered);
       renderTable(filtered);
       restoreScrollState(scrollState);
+      focusDeepLinkedRecord();
     }
 
     function captureScrollState() {
@@ -1723,7 +1724,7 @@
       }
 
       const rows = filtered.map(record => `
-        <tr>
+        <tr data-row-id="${escapeAttr(record.id)}">
           <td>${escapeHtml(formatDate(getRecordCloseDate(record)))}</td>
           <td>
             <div class="date-cell">
@@ -1789,6 +1790,21 @@
           </table>
         </div>
       `;
+    }
+
+    function getDeepLinkedRecordId() {
+      return new URLSearchParams(window.location.search).get("registro");
+    }
+
+    function focusDeepLinkedRecord() {
+      const id = getDeepLinkedRecordId();
+      if (!id) return;
+      requestAnimationFrame(() => {
+        const row = els.tableContainer.querySelector(`[data-row-id="${escapeCssIdent(id)}"]`);
+        if (!row) return;
+        row.classList.add("deep-linked-record");
+        row.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+      });
     }
 
     function calendarPillClass(record) {
@@ -2521,6 +2537,10 @@
 
     function escapeAttr(value) {
       return escapeHtml(value).replace(/\n/g, " ");
+    }
+
+    function escapeCssIdent(value) {
+      return globalThis.CSS?.escape ? CSS.escape(value) : String(value).replace(/"/g, '\\"');
     }
   </script>
 </body>
