@@ -179,6 +179,13 @@
       justify-items: end;
     }
 
+    .sheet-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
     .sheet-status label {
       color: var(--muted);
       font-size: 12px;
@@ -315,9 +322,10 @@
 
     @media print {
       body { background: #fff; }
-      .topbar, .toolbar, .actions { display: none; }
+      .topbar, .toolbar, .actions, .sheet-actions, .status-select, .sheet-status label { display: none; }
       .shell { width: 100%; padding: 0; }
       .sheet { break-inside: avoid; box-shadow: none; margin-bottom: 16px; }
+      body.printing-one .sheet:not(.print-target) { display: none; }
     }
 
     @media (max-width: 880px) {
@@ -341,10 +349,7 @@
         </div>
       </div>
       <nav class="actions">
-        <a class="btn" href="../panel-control/">Panel de control</a>
-        <a class="btn" href="../">Dashboard</a>
-        <a class="btn" href="../proceso/">Proceso</a>
-        <button class="btn primary" id="printBtn" type="button">Imprimir fichas</button>
+        <button class="btn" id="dashboardBtn" type="button">Dashboard</button>
       </nav>
     </header>
 
@@ -373,9 +378,10 @@
       lastUpdate: document.querySelector("#lastUpdate"),
       search: document.querySelector("#search"),
       list: document.querySelector("#productionList"),
-      printBtn: document.querySelector("#printBtn")
+      dashboardBtn: document.querySelector("#dashboardBtn")
     };
 
+    const ADMIN_PASSWORD = "happydeco2026";
     let records = [];
     let processEvents = [];
 
@@ -383,7 +389,7 @@
 
     function init() {
       els.search.addEventListener("input", render);
-      els.printBtn.addEventListener("click", () => window.print());
+      els.dashboardBtn.addEventListener("click", openDashboardWithPassword);
       loadProductionData();
     }
 
@@ -427,6 +433,9 @@
       });
       els.list.querySelectorAll("[data-production-status]").forEach(select => {
         select.addEventListener("change", () => updateProductionStatus(select.dataset.eventId, select.value));
+      });
+      els.list.querySelectorAll("[data-print-sheet]").forEach(button => {
+        button.addEventListener("click", () => printSingleSheet(button.dataset.printSheet));
       });
     }
 
@@ -474,12 +483,19 @@
                   <option value="${escapeAttr(status)}" ${item.productionStatus === status ? "selected" : ""}>${escapeHtml(status)}</option>
                 `).join("")}
               </select>
+              <div class="sheet-actions">
+                <button class="btn" type="button" data-print-sheet="${escapeAttr(item.id)}">Imprimir esta ficha</button>
+              </div>
             </div>
           </div>
           <div class="sheet-grid">
             <div>
               <h3>Boceto</h3>
               <div class="sketch-box">${renderSketch(item.sketch)}</div>
+              <div class="observations">
+                <strong>Observaciones</strong><br>
+                ${escapeHtml(item.notes || "Sin observaciones cargadas.")}
+              </div>
             </div>
             <div>
               <div class="info-grid">
@@ -504,10 +520,6 @@
                 `;
                 }).join("") : `<div class="empty">Todavía no hay materiales cargados en proceso.</div>`}
               </div>
-              <div class="observations">
-                <strong>Observaciones</strong><br>
-                ${escapeHtml(item.notes || "Sin observaciones cargadas.")}
-              </div>
             </div>
           </div>
         </article>
@@ -523,6 +535,28 @@
 
     function info(label, value, className = "") {
       return `<div class="info ${className}"><label>${escapeHtml(label)}</label><strong>${escapeHtml(value || "-")}</strong></div>`;
+    }
+
+    function openDashboardWithPassword() {
+      const password = prompt("Acceso administrativo requerido. Ingresá la contraseña:");
+      if (password === null) return;
+      if (password !== ADMIN_PASSWORD) {
+        alert("Contraseña incorrecta.");
+        return;
+      }
+      window.location.href = "../";
+    }
+
+    function printSingleSheet(eventId) {
+      document.querySelectorAll(".sheet").forEach(sheet => {
+        sheet.classList.toggle("print-target", sheet.id === eventId);
+      });
+      document.body.classList.add("printing-one");
+      window.print();
+      setTimeout(() => {
+        document.body.classList.remove("printing-one");
+        document.querySelectorAll(".sheet.print-target").forEach(sheet => sheet.classList.remove("print-target"));
+      }, 500);
     }
 
     function updateMaterialCheck(eventId, index, checked) {
