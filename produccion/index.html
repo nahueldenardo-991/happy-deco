@@ -549,15 +549,49 @@
     }
 
     function printSingleSheet(eventId) {
+      const item = buildProductionSheets().find(sheet => sheet.id === eventId);
+      const originalTitle = document.title;
+      document.title = buildPrintTitle(item);
       document.querySelectorAll(".sheet").forEach(sheet => {
         sheet.classList.toggle("print-target", sheet.id === eventId);
       });
       document.body.classList.add("printing-one");
-      window.print();
-      setTimeout(() => {
+      const restoreAfterPrint = () => {
+        document.title = originalTitle;
         document.body.classList.remove("printing-one");
         document.querySelectorAll(".sheet.print-target").forEach(sheet => sheet.classList.remove("print-target"));
-      }, 500);
+        window.removeEventListener("afterprint", restoreAfterPrint);
+      };
+      window.addEventListener("afterprint", restoreAfterPrint);
+      window.print();
+      setTimeout(() => {
+        if (document.body.classList.contains("printing-one")) restoreAfterPrint();
+      }, 1500);
+    }
+
+    function buildPrintTitle(item) {
+      const proposal = getProposalShortName(item?.package || "Ficha de producción");
+      const date = item?.date ? formatDateForFile(item.date) : "sin-fecha";
+      return sanitizeFileTitle(`${proposal} - ${date}`);
+    }
+
+    function getProposalShortName(value) {
+      const text = cleanText(value || "");
+      if (!text) return "Ficha de producción";
+      return text.split(/\s+-\s+/)[0].slice(0, 70).trim() || "Ficha de producción";
+    }
+
+    function formatDateForFile(value) {
+      const parts = String(value || "").split("-");
+      if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+      return cleanText(value || "sin-fecha");
+    }
+
+    function sanitizeFileTitle(value) {
+      return cleanText(value)
+        .replace(/[\\/:*?"<>|]/g, "-")
+        .replace(/\s+/g, " ")
+        .trim();
     }
 
     function updateMaterialCheck(eventId, index, checked) {
