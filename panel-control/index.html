@@ -540,7 +540,7 @@
           <strong id="summaryUrgent">-</strong>
         </div>
         <div class="summary-chip">
-          <span>Sin agendar</span>
+          <span>Futuros sin agendar</span>
           <strong id="summaryUnscheduled">0</strong>
         </div>
         <div class="summary-chip">
@@ -723,7 +723,7 @@
       const upcoming = getUpcoming(clean);
       const next7 = upcoming.filter(record => daysUntil(record.fechaEvento) <= 7);
       const next30 = upcoming.filter(record => daysUntil(record.fechaEvento) <= 30);
-      const unscheduled = clean.filter(record => record.fechaEvento && !record.googleCalendarEventId);
+      const unscheduled = getUnscheduledUpcoming(clean);
       const blocked = clean.filter(record => isBlocked(record));
       const pendingBilling = clean.filter(record => !["Facturado", "No requiere factura"].includes(cleanText(record.facturacion || "Pendiente")));
 
@@ -801,9 +801,9 @@
           tone: "gold"
         },
         {
-          title: "Eventos sin agendar",
+          title: "Eventos futuros sin agendar",
           count: groups.unscheduled.length,
-          meta: "Tienen fecha de evento, pero todavia no figuran como agendados.",
+          meta: "Tienen fecha futura, pero todavia no figuran como agendados.",
           tone: "rose"
         },
         {
@@ -853,6 +853,10 @@
         .filter(record => cleanText(record.etapa) !== "Cancelado")
         .filter(record => cleanText(record.estadoOperativo) !== "Realizado")
         .sort((a, b) => a.fechaEvento.localeCompare(b.fechaEvento));
+    }
+
+    function getUnscheduledUpcoming(items) {
+      return getUpcoming(items).filter(record => !record.googleCalendarEventId);
     }
 
     function daysUntil(value) {
