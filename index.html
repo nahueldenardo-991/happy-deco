@@ -1346,6 +1346,7 @@
     }
 
     function render() {
+      const scrollState = captureScrollState();
       renderFilters();
       const filtered = getFilteredRecords();
       renderMetrics(filtered);
@@ -1353,6 +1354,31 @@
       renderAlerts(filtered);
       renderRankings(filtered);
       renderTable(filtered);
+      restoreScrollState(scrollState);
+    }
+
+    function captureScrollState() {
+      const scrollingElement = document.scrollingElement || document.documentElement;
+      const tableWrap = els.tableContainer.querySelector(".table-wrap");
+      return {
+        pageX: scrollingElement.scrollLeft,
+        pageY: scrollingElement.scrollTop,
+        tableX: tableWrap?.scrollLeft || 0,
+        tableY: tableWrap?.scrollTop || 0
+      };
+    }
+
+    function restoreScrollState(state) {
+      if (!state) return;
+      requestAnimationFrame(() => {
+        const scrollingElement = document.scrollingElement || document.documentElement;
+        scrollingElement.scrollTo(state.pageX, state.pageY);
+        const tableWrap = els.tableContainer.querySelector(".table-wrap");
+        if (tableWrap) {
+          tableWrap.scrollLeft = state.tableX;
+          tableWrap.scrollTop = state.tableY;
+        }
+      });
     }
 
     function renderMetrics(filtered) {
