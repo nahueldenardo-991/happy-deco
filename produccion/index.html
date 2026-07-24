@@ -570,15 +570,10 @@
     }
 
     function buildPrintTitle(item) {
-      const proposal = getProposalShortName(item?.package || "Ficha de producción");
+      const client = cleanText(item?.client || "Sin cliente");
+      const theme = cleanText(item?.theme || "Sin tematica");
       const date = item?.date ? formatDateForFile(item.date) : "sin-fecha";
-      return sanitizeFileTitle(`${proposal} - ${date}`);
-    }
-
-    function getProposalShortName(value) {
-      const text = cleanText(value || "");
-      if (!text) return "Ficha de producción";
-      return text.split(/\s+-\s+/)[0].slice(0, 70).trim() || "Ficha de producción";
+      return sanitizeFileTitle(`${client} - ${theme} - ${date}`);
     }
 
     function formatDateForFile(value) {
