@@ -983,6 +983,10 @@
         showMeetingMessage("Completá tema, fecha, horario y nombre de clienta.", true);
         return;
       }
+      if (!isFutureMeeting(meeting.date, meeting.time)) {
+        showMeetingMessage("La reunión debe tener una fecha y horario futuros para poder agendar recordatorios.", true);
+        return;
+      }
 
       const config = getCalendarConfig();
       const payload = buildMeetingCalendarPayload(meeting, config.secret);
@@ -1036,7 +1040,7 @@
         calendarName: MEETING_CALENDAR_NAME,
         ownerEmail: "nahuel.denardo@gmail.com",
         shareWith: MEETING_SHARE_WITH,
-        remindersMinutes: [1440, 60, 10],
+        remindersMinutes: buildMeetingReminderMinutes(meeting.date, meeting.time),
         location: meeting.mode === "Presencial" ? "A definir" : "Virtual",
         description
       };
@@ -1580,6 +1584,21 @@
       const hours = String(value.getHours()).padStart(2, "0");
       const mins = String(value.getMinutes()).padStart(2, "0");
       return `${year}-${month}-${day}T${hours}:${mins}:00`;
+    }
+
+    function buildMeetingReminderMinutes(date, time) {
+      const start = new Date(`${date}T${time || "00:00"}:00`);
+      const minutesUntil = Math.floor((start.getTime() - Date.now()) / 60000);
+      const candidates = [21600, 10080, 4320, 1440, 360, 180, 60, 30, 15, 10, 5, 3, 1];
+      const usefulReminders = candidates.filter(minutes => minutes > 0 && minutes <= minutesUntil);
+      if (usefulReminders.length >= 3) return usefulReminders.slice(0, 3);
+      if (usefulReminders.length) return usefulReminders;
+      return [60, 10, 1];
+    }
+
+    function isFutureMeeting(date, time) {
+      const start = new Date(`${date}T${time || "00:00"}:00`);
+      return Number.isFinite(start.getTime()) && start.getTime() > Date.now();
     }
 
     function formatDate(date) {
