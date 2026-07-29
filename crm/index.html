@@ -745,6 +745,18 @@
                   </select>
                 </label>
                 <label class="field span-2">
+                  <span>Recordatorios</span>
+                  <select class="control" id="meetingReminders" name="remindersPreset">
+                    <option value="auto">Automático según cercanía</option>
+                    <option value="15d-7d-3d">15, 7 y 3 días antes</option>
+                    <option value="7d-3d-1d">7, 3 y 1 día antes</option>
+                    <option value="3d-1d-6h">3 días, 1 día y 6 horas antes</option>
+                    <option value="1d-6h-1h">1 día, 6 horas y 1 hora antes</option>
+                    <option value="1h-30m-10m">1 hora, 30 min y 10 min antes</option>
+                    <option value="30m-10m-5m">30 min, 10 min y 5 min antes</option>
+                  </select>
+                </label>
+                <label class="field span-2">
                   <span>Temática propuesta</span>
                   <input class="control" id="meetingTheme" name="theme" type="text" placeholder="Ej: La Sirenita, dinosaurios">
                 </label>
@@ -837,6 +849,7 @@
       meetingClient: document.querySelector("#meetingClient"),
       meetingMode: document.querySelector("#meetingMode"),
       meetingBudgetStatus: document.querySelector("#meetingBudgetStatus"),
+      meetingReminders: document.querySelector("#meetingReminders"),
       meetingTheme: document.querySelector("#meetingTheme"),
       meetingDetails: document.querySelector("#meetingDetails"),
       resetMeetingBtn: document.querySelector("#resetMeetingBtn"),
@@ -978,6 +991,7 @@
       meeting.client = String(meeting.client || "").trim();
       meeting.theme = String(meeting.theme || "").trim();
       meeting.details = String(meeting.details || "").trim();
+      meeting.remindersPreset = meeting.remindersPreset || "auto";
 
       if (!meeting.topic || !meeting.date || !meeting.time || !meeting.client) {
         showMeetingMessage("Completá tema, fecha, horario y nombre de clienta.", true);
@@ -1018,6 +1032,7 @@
       const startDateTime = `${meeting.date}T${meeting.time}:00`;
       const endDateTime = addMinutesToLocalDateTime(meeting.date, meeting.time, 60);
       const title = `Happy Deco - Reunión - ${meeting.client} - ${meeting.topic}`;
+      const remindersMinutes = buildMeetingReminderMinutes(meeting.date, meeting.time, meeting.remindersPreset);
       const description = [
         `Tema de reunión: ${meeting.topic}`,
         `Clienta: ${meeting.client}`,
@@ -1025,6 +1040,7 @@
         `Horario: ${meeting.time}`,
         `Modalidad: ${meeting.mode}`,
         `Estado de presupuesto: ${meeting.budgetStatus}`,
+        `Recordatorios: ${formatReminderPreset(meeting.remindersPreset, remindersMinutes)}`,
         meeting.theme ? `Temática propuesta: ${meeting.theme}` : "",
         "",
         meeting.details ? `Detalles: ${meeting.details}` : "Detalles: Sin detalles cargados"
@@ -1040,7 +1056,7 @@
         calendarName: MEETING_CALENDAR_NAME,
         ownerEmail: "nahuel.denardo@gmail.com",
         shareWith: MEETING_SHARE_WITH,
-        remindersMinutes: buildMeetingReminderMinutes(meeting.date, meeting.time),
+        remindersMinutes,
         location: meeting.mode === "Presencial" ? "A definir" : "Virtual",
         description
       };
@@ -1586,14 +1602,53 @@
       return `${year}-${month}-${day}T${hours}:${mins}:00`;
     }
 
-    function buildMeetingReminderMinutes(date, time) {
+    function buildMeetingReminderMinutes(date, time, preset = "auto") {
       const start = new Date(`${date}T${time || "00:00"}:00`);
       const minutesUntil = Math.floor((start.getTime() - Date.now()) / 60000);
       const candidates = [21600, 10080, 4320, 1440, 360, 180, 60, 30, 15, 10, 5, 3, 1];
-      const usefulReminders = candidates.filter(minutes => minutes > 0 && minutes <= minutesUntil);
-      if (usefulReminders.length >= 3) return usefulReminders.slice(0, 3);
+      const manual = reminderPresetMinutes(preset).filter(minutes => minutes > 0 && minutes <= minutesUntil);
+      const fill = candidates.filter(minutes => minutes > 0 && minutes <= minutesUntil && !manual.includes(minutes));
+      const usefulReminders = unique([...manual, ...fill]);
+      if (usefulReminders.length >= 3) return usefulReminders.slice(0, 3).sort((a, b) => b - a);
       if (usefulReminders.length) return usefulReminders;
-      return [60, 10, 1];
+      return [1];
+    }
+
+    function reminderPresetMinutes(preset) {
+      const presets = {
+        "15d-7d-3d": [21600, 10080, 4320],
+        "7d-3d-1d": [10080, 4320, 1440],
+        "3d-1d-6h": [4320, 1440, 360],
+        "1d-6h-1h": [1440, 360, 60],
+        "1h-30m-10m": [60, 30, 10],
+        "30m-10m-5m": [30, 10, 5]
+      };
+      return presets[preset] || [];
+    }
+
+    function formatReminderPreset(preset, remindersMinutes) {
+      const labels = {
+        auto: "Automático según cercanía",
+        "15d-7d-3d": "15, 7 y 3 días antes",
+        "7d-3d-1d": "7, 3 y 1 día antes",
+        "3d-1d-6h": "3 días, 1 día y 6 horas antes",
+        "1d-6h-1h": "1 día, 6 horas y 1 hora antes",
+        "1h-30m-10m": "1 hora, 30 min y 10 min antes",
+        "30m-10m-5m": "30 min, 10 min y 5 min antes"
+      };
+      return `${labels[preset] || labels.auto} (${remindersMinutes.map(formatReminderMinute).join(", ")})`;
+    }
+
+    function formatReminderMinute(minutes) {
+      if (minutes >= 1440) {
+        const days = minutes / 1440;
+        return `${days} ${days === 1 ? "día" : "días"}`;
+      }
+      if (minutes >= 60) {
+        const hours = minutes / 60;
+        return `${hours} ${hours === 1 ? "hora" : "horas"}`;
+      }
+      return `${minutes} min`;
     }
 
     function isFutureMeeting(date, time) {
