@@ -502,21 +502,21 @@
     .sketch-card {
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 12px;
+      padding: 16px;
       background: var(--panel);
       display: grid;
-      gap: 10px;
+      gap: 14px;
     }
 
     .sketch-upload-area {
       position: relative;
       display: grid;
-      gap: 8px;
+      gap: 12px;
       cursor: pointer;
     }
 
     .sketch-preview {
-      min-height: 180px;
+      min-height: 220px;
       border: 1px dashed var(--line);
       border-radius: 8px;
       background: #fff;
@@ -526,6 +526,25 @@
       color: var(--muted);
       text-align: center;
       padding: 12px;
+    }
+
+    .sketch-empty {
+      display: grid;
+      gap: 8px;
+      justify-items: center;
+      max-width: 520px;
+      margin: auto;
+    }
+
+    .sketch-empty strong {
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    .sketch-empty span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
     }
 
     .sketch-upload-area:hover .sketch-preview,
@@ -570,9 +589,9 @@
 
     .upload-hint-pill {
       justify-self: start;
-      min-height: 34px;
+      min-height: 42px;
       border-radius: 8px;
-      padding: 0 12px;
+      padding: 0 16px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -601,6 +620,10 @@
       color: var(--muted);
       font-size: 13px;
       font-weight: 800;
+    }
+
+    .save-progress span:last-child {
+      line-height: 1.35;
     }
 
     .save-progress.active {
@@ -1297,21 +1320,31 @@
       const sketch = event.sketch || null;
       const preview = sketch
         ? renderSketchPreview(sketch)
-        : `<div class="hint">Todavía no hay boceto cargado. Podés subir JPG, PNG, PDF, DOC o DOCX.</div>`;
+        : `<div class="sketch-empty">
+            <strong>Tocá para cargar el boceto</strong>
+            <span>JPG, PNG, PDF, DOC o DOCX. En celular podés elegir una imagen de la galería.</span>
+          </div>`;
       return `
         <div class="sketch-card">
-          <label>Boceto del evento</label>
+          <div class="section-title">
+            <label>Boceto del evento</label>
+            <span class="hint">${sketch ? escapeHtml(`${sketch.name || "Archivo cargado"} · ${formatBytes(sketch.size || 0)}`) : "Se guarda para la ficha de producción."}</span>
+          </div>
           <div class="sketch-upload-area" data-upload-area>
             <div class="sketch-preview">${preview}</div>
             <span class="upload-hint-pill">${sketch ? "Cambiar archivo" : "Cargar archivo"}</span>
             <input class="hidden-file" id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          </div>
+          <div class="save-progress" data-sketch-progress>
+            <div class="save-progress-bar"><span></span></div>
+            <span data-sketch-progress-text>Preparando archivo...</span>
           </div>
           <div class="sketch-actions">
             ${sketch ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar</a>` : ""}
             ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar boceto</button>` : ""}
           </div>
           <div class="sketch-status" data-sketch-status></div>
-          <span class="hint">${sketch ? escapeHtml(`${sketch.name || "Archivo cargado"} · ${sketch.type || "archivo"}`) : "Tamaño recomendado: archivos livianos para que sincronicen rápido."}</span>
+          <span class="hint">Recomendado: imágenes livianas. El sistema comprime JPG y PNG automáticamente antes de sincronizar.</span>
         </div>
       `;
     }
@@ -1399,7 +1432,7 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
       const event = getSelected();
       if (!file || !event) return;
       const status = detail.querySelector("[data-sketch-status]");
-      setStatus(status, "Cargando archivo...");
+      showSketchProgress("Leyendo archivo...");
       const allowedTypes = [
         "image/jpeg",
         "image/png",
@@ -1412,18 +1445,19 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
       const hasAllowedExtension = allowedExtensions.some(extension => file.name.toLowerCase().endsWith(extension));
       if (!hasAllowedType && !hasAllowedExtension) {
         setStatus(status, "Formato no permitido. Usá JPG, PNG, PDF, DOC o DOCX.", true);
-        alert("Formato no permitido. Usá JPG, PNG, PDF, DOC o DOCX.");
+        hideSketchProgress();
         if (input) input.value = "";
         return;
       }
       const isImage = hasAllowedType && file.type.startsWith("image/") || /\.(jpe?g|png)$/i.test(file.name);
       if (!isImage && file.size > 1500 * 1024) {
         setStatus(status, "Archivo demasiado pesado. Para PDF o Word usá uno menor a 1,5 MB.", true);
-        alert("El archivo es muy pesado. Para PDF o Word usá uno menor a 1,5 MB. Las imágenes se comprimen automáticamente.");
+        hideSketchProgress();
         if (input) input.value = "";
         return;
       }
       try {
+        showSketchProgress(isImage ? "Comprimiendo imagen..." : "Preparando archivo...");
         const prepared = isImage ? await prepareImageSketch(file) : await readFileAsDataUrl(file);
         event.sketch = {
           name: prepared.name,
@@ -1433,7 +1467,7 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
           updatedAt: new Date().toISOString()
         };
         event.updatedAt = new Date().toISOString();
-        setStatus(status, "Guardando boceto...");
+        showSketchProgress("Guardando y sincronizando boceto...");
         state.events = sanitizeEvents(state.events);
         let localSaved = true;
         try {
@@ -1451,9 +1485,14 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
               : "El boceto es pesado y no llegó a sincronizarse. Probá con una imagen más liviana o PDF.";
             setStatus(detail.querySelector("[data-sketch-status]"), message, true);
           });
+        } else {
+          requestAnimationFrame(() => {
+            showSketchDone("Boceto guardado y sincronizado");
+          });
         }
       } catch (error) {
         console.error("No pude guardar el boceto", error);
+        hideSketchProgress();
         setStatus(status, "No pude leer ese archivo. Probá con JPG, PNG, PDF, DOC o DOCX.", true);
       }
       if (input) input.value = "";
@@ -1588,6 +1627,25 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
       element.classList.toggle("error", isError);
     }
 
+    function showSketchProgress(message) {
+      const progress = detail.querySelector("[data-sketch-progress]");
+      const progressText = detail.querySelector("[data-sketch-progress-text]");
+      const status = detail.querySelector("[data-sketch-status]");
+      if (progress) progress.classList.add("active");
+      if (progressText) progressText.textContent = message || "Guardando boceto...";
+      setStatus(status, message || "Guardando boceto...");
+    }
+
+    function hideSketchProgress() {
+      const progress = detail.querySelector("[data-sketch-progress]");
+      if (progress) progress.classList.remove("active");
+    }
+
+    function showSketchDone(message) {
+      hideSketchProgress();
+      setStatus(detail.querySelector("[data-sketch-status]"), message || "Boceto guardado");
+    }
+
     function showMaterialSaveProgress(message) {
       const progress = detail.querySelector("[data-materials-progress]");
       const status = detail.querySelector("[data-materials-status]");
@@ -1599,6 +1657,14 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
       const progress = detail.querySelector("[data-materials-progress]");
       if (progress) progress.classList.remove("active");
       setStatus(detail.querySelector("[data-materials-status]"), message || "Guardado");
+    }
+
+    function formatBytes(bytes) {
+      const size = Number(bytes) || 0;
+      if (!size) return "archivo cargado";
+      if (size < 1024) return `${size} B`;
+      if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
+      return `${(size / 1024 / 1024).toFixed(1)} MB`;
     }
 
     function duplicateSelected() {
