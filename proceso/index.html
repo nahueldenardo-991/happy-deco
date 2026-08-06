@@ -546,8 +546,17 @@
       flex-wrap: wrap;
     }
 
+    .hidden-file {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
     .file-button {
       min-height: 38px;
+      border: 0;
       border-radius: 8px;
       padding: 0 12px;
       display: inline-flex;
@@ -557,6 +566,57 @@
       color: #fff;
       background: var(--teal);
       cursor: pointer;
+    }
+
+    .file-button:disabled {
+      cursor: wait;
+      opacity: .75;
+    }
+
+    .sketch-status,
+    .materials-status {
+      min-height: 18px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--teal);
+    }
+
+    .sketch-status.error,
+    .materials-status.error {
+      color: var(--red);
+    }
+
+    .save-progress {
+      display: none;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .save-progress.active {
+      display: grid;
+    }
+
+    .save-progress-bar {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #efe4d8;
+    }
+
+    .save-progress-bar span {
+      display: block;
+      width: 45%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), #8fe4df, var(--gold));
+      animation: savingSlide 1s ease-in-out infinite;
+    }
+
+    @keyframes savingSlide {
+      0% { transform: translateX(-110%); }
+      100% { transform: translateX(230%); }
     }
 
     .materials-editor {
@@ -576,6 +636,7 @@
       flex: 1;
       min-height: 52px;
       resize: vertical;
+      font-size: 16px;
     }
 
     .material-row .ghost {
@@ -648,6 +709,19 @@
       .material-row {
         align-items: stretch;
         flex-direction: column;
+      }
+
+      .sketch-actions,
+      .materials-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .sketch-actions > *,
+      .materials-actions > *,
+      .material-row .ghost,
+      .file-button {
+        width: 100%;
       }
 
       .flow {
@@ -1140,9 +1214,11 @@
         input.addEventListener("change", () => updateCheck(input.dataset.check, input.checked));
       });
 
+      detail.querySelector("[data-upload-sketch]")?.addEventListener("click", () => detail.querySelector("#sketchFile")?.click());
       detail.querySelector("#sketchFile")?.addEventListener("change", handleSketchUpload);
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
       detail.querySelector("[data-add-material]")?.addEventListener("click", addMaterial);
+      detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
       detail.querySelectorAll("[data-material-index]").forEach((input) => {
         input.addEventListener("input", () => updateMaterial(Number(input.dataset.materialIndex), input.value));
       });
@@ -1153,8 +1229,13 @@
       detail.querySelector("#deleteEvent").addEventListener("click", deleteSelected);
       detail.querySelector("#duplicateEvent").addEventListener("click", duplicateSelected);
       detail.querySelector("#saveNow").addEventListener("click", () => {
+        saveMaterialsFromEditor({ silent: true, keepView: true });
+        showMaterialSaveProgress("Guardando todos los cambios...");
         saveEvents();
-        render();
+        window.setTimeout(() => {
+          showMaterialSaveDone("Cambios guardados y sincronizados");
+          renderList();
+        }, 450);
       });
     }
 
@@ -1220,11 +1301,12 @@
           <label>Boceto del evento</label>
           <div class="sketch-preview">${preview}</div>
           <div class="sketch-actions">
-            <label class="file-button" for="sketchFile">Cargar archivo</label>
-            <input id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+            <button class="file-button" type="button" data-upload-sketch>Cargar archivo</button>
+            <input class="hidden-file" id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
             ${sketch ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar</a>` : ""}
             ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar boceto</button>` : ""}
           </div>
+          <div class="sketch-status" data-sketch-status></div>
           <span class="hint">${sketch ? escapeHtml(`${sketch.name || "Archivo cargado"} · ${sketch.type || "archivo"}`) : "Tamaño recomendado: archivos livianos para que sincronicen rápido."}</span>
         </div>
       `;
@@ -1251,7 +1333,10 @@
         <div class="sketch-card">
           <div class="section-title">
             <label>Listado de materiales</label>
-            <button class="ghost" type="button" data-add-material>Agregar ítem</button>
+            <div class="materials-actions">
+              <button class="ghost" type="button" data-add-material>Agregar ítem</button>
+              <button class="primary" type="button" data-save-materials>Guardar materiales</button>
+            </div>
           </div>
           <div class="materials-editor">
             ${materials.map((item, index) => `
@@ -1261,7 +1346,12 @@
               </div>
             `).join("")}
           </div>
-          <span class="hint">Cada renglón se convierte en un check de la ficha de producción.</span>
+          <div class="save-progress" data-materials-progress>
+            <div class="save-progress-bar"><span></span></div>
+            <span>Guardando y sincronizando...</span>
+          </div>
+          <div class="materials-status" data-materials-status></div>
+          <span class="hint">Escribí todos los ítems y tocá Guardar materiales. Cada ítem guardado se convierte en un check de la ficha de producción.</span>
         </div>
       `;
     }
@@ -1289,19 +1379,26 @@
       const file = inputEvent.target.files?.[0];
       const event = getSelected();
       if (!file || !event) return;
-      const allowed = [
+      const status = detail.querySelector("[data-sketch-status]");
+      setStatus(status, "Cargando archivo...");
+      const allowedTypes = [
         "image/jpeg",
         "image/png",
         "application/pdf",
         "application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       ];
-      if (!allowed.includes(file.type)) {
+      const allowedExtensions = [".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx"];
+      const hasAllowedType = file.type && allowedTypes.includes(file.type);
+      const hasAllowedExtension = allowedExtensions.some(extension => file.name.toLowerCase().endsWith(extension));
+      if (!hasAllowedType && !hasAllowedExtension) {
+        setStatus(status, "Formato no permitido. Usá JPG, PNG, PDF, DOC o DOCX.", true);
         alert("Formato no permitido. Usá JPG, PNG, PDF, DOC o DOCX.");
         inputEvent.target.value = "";
         return;
       }
       if (file.size > 4 * 1024 * 1024) {
+        setStatus(status, "Archivo demasiado pesado. Usá uno menor a 4 MB.", true);
         alert("El archivo es muy pesado. Para sincronizar bien, usá uno menor a 4 MB.");
         inputEvent.target.value = "";
         return;
@@ -1319,6 +1416,10 @@
         saveEvents();
         renderDetail();
       };
+      reader.onerror = () => {
+        setStatus(status, "No pude leer el archivo. Probá renombrarlo o subir una versión más liviana.", true);
+        inputEvent.target.value = "";
+      };
       reader.readAsDataURL(file);
       inputEvent.target.value = "";
     }
@@ -1335,7 +1436,7 @@
     function addMaterial() {
       const event = getSelected();
       if (!event) return;
-      event.materials = Array.isArray(event.materials) ? [...event.materials] : parseMaterials(event.materials);
+      event.materials = readMaterialDrafts();
       event.materials.push("");
       event.updatedAt = new Date().toISOString();
       renderDetail();
@@ -1352,17 +1453,56 @@
       event.materials = Array.isArray(event.materials) ? [...event.materials] : parseMaterials(event.materials);
       event.materials[index] = value;
       event.updatedAt = new Date().toISOString();
-      scheduleSaveEvents();
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      setStatus(detail.querySelector("[data-materials-status]"), "Cambios sin guardar");
     }
 
     function removeMaterial(index) {
       const event = getSelected();
       if (!event) return;
-      event.materials = parseMaterials(event.materials);
+      event.materials = readMaterialDrafts();
       event.materials.splice(index, 1);
       event.updatedAt = new Date().toISOString();
-      saveEvents();
       renderDetail();
+    }
+
+    function saveMaterialsFromEditor(options = {}) {
+      const event = getSelected();
+      if (!event) return;
+      if (!options.silent) showMaterialSaveProgress("Guardando materiales...");
+      event.materials = parseMaterials(readMaterialDrafts());
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      renderList();
+      if (!options.silent) {
+        window.setTimeout(() => showMaterialSaveDone("Materiales guardados y sincronizados"), 450);
+      }
+      if (!options.keepView && !options.silent) {
+        window.setTimeout(() => renderDetail(), 900);
+      }
+    }
+
+    function readMaterialDrafts() {
+      return [...detail.querySelectorAll("[data-material-index]")].map(input => input.value);
+    }
+
+    function setStatus(element, message, isError = false) {
+      if (!element) return;
+      element.textContent = message || "";
+      element.classList.toggle("error", isError);
+    }
+
+    function showMaterialSaveProgress(message) {
+      const progress = detail.querySelector("[data-materials-progress]");
+      const status = detail.querySelector("[data-materials-status]");
+      if (progress) progress.classList.add("active");
+      setStatus(status, message || "Guardando...");
+    }
+
+    function showMaterialSaveDone(message) {
+      const progress = detail.querySelector("[data-materials-progress]");
+      if (progress) progress.classList.remove("active");
+      setStatus(detail.querySelector("[data-materials-status]"), message || "Guardado");
     }
 
     function duplicateSelected() {
