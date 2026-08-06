@@ -512,10 +512,11 @@
               <div class="checklist">
                 <h3>Listado de materiales</h3>
                 ${item.materials.length ? item.materials.map((material, index) => {
-                  const checked = Boolean(item.materialChecks[index]);
+                  const key = materialCheckKey(material);
+                  const checked = Boolean(item.materialChecks[key] ?? item.materialChecks[index]);
                   return `
                   <label class="check ${checked ? "done" : ""}">
-                    <input type="checkbox" data-material-check="${index}" data-event-id="${escapeAttr(item.id)}" ${checked ? "checked" : ""}>
+                    <input type="checkbox" data-material-check="${escapeAttr(key)}" data-event-id="${escapeAttr(item.id)}" ${checked ? "checked" : ""}>
                     <span>${escapeHtml(material)}</span>
                   </label>
                 `;
@@ -596,6 +597,13 @@
       event.updatedAt = new Date().toISOString();
       persistProcessEvent(event);
       render();
+    }
+
+    function materialCheckKey(material) {
+      return cleanText(material || "")
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .slice(0, 120);
     }
 
     function updateProductionStatus(eventId, status, select = null) {

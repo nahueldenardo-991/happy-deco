@@ -508,6 +508,13 @@
       gap: 10px;
     }
 
+    .sketch-upload-area {
+      position: relative;
+      display: grid;
+      gap: 8px;
+      cursor: pointer;
+    }
+
     .sketch-preview {
       min-height: 180px;
       border: 1px dashed var(--line);
@@ -519,6 +526,12 @@
       color: var(--muted);
       text-align: center;
       padding: 12px;
+    }
+
+    .sketch-upload-area:hover .sketch-preview,
+    .sketch-upload-area:focus-within .sketch-preview {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
     }
 
     .sketch-preview img,
@@ -548,15 +561,16 @@
 
     .hidden-file {
       position: absolute;
-      inline-size: 1px;
-      block-size: 1px;
+      inset: 0;
+      inline-size: 100%;
+      block-size: 100%;
       opacity: 0;
-      pointer-events: none;
+      cursor: pointer;
     }
 
-    .file-button {
-      min-height: 38px;
-      border: 0;
+    .upload-hint-pill {
+      justify-self: start;
+      min-height: 34px;
       border-radius: 8px;
       padding: 0 12px;
       display: inline-flex;
@@ -566,11 +580,6 @@
       color: #fff;
       background: var(--teal);
       cursor: pointer;
-    }
-
-    .file-button:disabled {
-      cursor: wait;
-      opacity: .75;
     }
 
     .sketch-status,
@@ -624,25 +633,22 @@
       gap: 10px;
     }
 
-    .material-row {
-      align-items: stretch;
-      padding: 10px;
+    .materials-bulk {
+      width: 100%;
+      min-height: 190px;
+      padding: 14px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff;
-    }
-
-    .material-row textarea {
-      flex: 1;
-      min-height: 52px;
       resize: vertical;
       font-size: 16px;
+      line-height: 1.45;
     }
 
-    .material-row .ghost {
-      min-height: 42px;
-      padding: 0 10px;
-      align-self: flex-start;
+    .materials-counter {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 800;
     }
 
     .hint {
@@ -706,11 +712,6 @@
         grid-template-columns: 1fr;
       }
 
-      .material-row {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
       .sketch-actions,
       .materials-actions {
         display: grid;
@@ -719,8 +720,7 @@
 
       .sketch-actions > *,
       .materials-actions > *,
-      .material-row .ghost,
-      .file-button {
+      .upload-hint-pill {
         width: 100%;
       }
 
@@ -916,6 +916,12 @@
       state.events = sanitizeEvents(state.events);
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
       cloudUpsertEvents(state.events);
+    }
+
+    async function saveEventsConfirmed() {
+      state.events = sanitizeEvents(state.events);
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      return cloudUpsertEvents(state.events);
     }
 
     function scheduleSaveEvents(delay = 900) {
@@ -1214,24 +1220,20 @@
         input.addEventListener("change", () => updateCheck(input.dataset.check, input.checked));
       });
 
-      detail.querySelector("[data-upload-sketch]")?.addEventListener("click", () => detail.querySelector("#sketchFile")?.click());
       detail.querySelector("#sketchFile")?.addEventListener("change", handleSketchUpload);
+      detail.querySelector("[data-upload-area]")?.addEventListener("dragover", handleSketchDrag);
+      detail.querySelector("[data-upload-area]")?.addEventListener("drop", handleSketchDrop);
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
       detail.querySelector("[data-add-material]")?.addEventListener("click", addMaterial);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
-      detail.querySelectorAll("[data-material-index]").forEach((input) => {
-        input.addEventListener("input", () => updateMaterial(Number(input.dataset.materialIndex), input.value));
-      });
-      detail.querySelectorAll("[data-remove-material]").forEach((button) => {
-        button.addEventListener("click", () => removeMaterial(Number(button.dataset.removeMaterial)));
-      });
+      detail.querySelector("[data-materials-bulk]")?.addEventListener("input", updateMaterialsDraft);
 
       detail.querySelector("#deleteEvent").addEventListener("click", deleteSelected);
       detail.querySelector("#duplicateEvent").addEventListener("click", duplicateSelected);
-      detail.querySelector("#saveNow").addEventListener("click", () => {
-        saveMaterialsFromEditor({ silent: true, keepView: true });
+      detail.querySelector("#saveNow").addEventListener("click", async () => {
         showMaterialSaveProgress("Guardando todos los cambios...");
-        saveEvents();
+        const result = await saveMaterialsFromEditor({ silent: true, keepView: true });
+        if (!result?.ok) return;
         window.setTimeout(() => {
           showMaterialSaveDone("Cambios guardados y sincronizados");
           renderList();
@@ -1299,10 +1301,12 @@
       return `
         <div class="sketch-card">
           <label>Boceto del evento</label>
-          <div class="sketch-preview">${preview}</div>
-          <div class="sketch-actions">
-            <button class="file-button" type="button" data-upload-sketch>Cargar archivo</button>
+          <div class="sketch-upload-area" data-upload-area>
+            <div class="sketch-preview">${preview}</div>
+            <span class="upload-hint-pill">${sketch ? "Cambiar archivo" : "Cargar archivo"}</span>
             <input class="hidden-file" id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          </div>
+          <div class="sketch-actions">
             ${sketch ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar</a>` : ""}
             ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar boceto</button>` : ""}
           </div>
@@ -1328,30 +1332,31 @@
     }
 
     function renderMaterialsEditor(event) {
-      const materials = event.materials?.length ? event.materials : [""];
+      const materials = Array.isArray(event.materials) ? event.materials : parseMaterials(event.materials);
+      const materialText = materials.join("\n");
+      const materialCount = parseMaterials(materialText).length;
       return `
         <div class="sketch-card">
           <div class="section-title">
             <label>Listado de materiales</label>
             <div class="materials-actions">
-              <button class="ghost" type="button" data-add-material>Agregar ítem</button>
+              <button class="ghost" type="button" data-add-material>Agregar línea</button>
               <button class="primary" type="button" data-save-materials>Guardar materiales</button>
             </div>
           </div>
           <div class="materials-editor">
-            ${materials.map((item, index) => `
-              <div class="material-row">
-                <textarea data-material-index="${index}" rows="2" placeholder="Ej: 2 paneles, globos rosa, nombre impreso">${escapeHtml(item)}</textarea>
-                <button class="ghost" type="button" data-remove-material="${index}">Quitar</button>
-              </div>
-            `).join("")}
+            <textarea class="materials-bulk" data-materials-bulk rows="8" placeholder="Ej:
+2 paneles
+Globos rosa
+Nombre impreso">${escapeHtml(materialText)}</textarea>
+            <div class="materials-counter" data-materials-counter>${materialCount} ítem${materialCount === 1 ? "" : "s"} detectado${materialCount === 1 ? "" : "s"}</div>
           </div>
           <div class="save-progress" data-materials-progress>
             <div class="save-progress-bar"><span></span></div>
             <span>Guardando y sincronizando...</span>
           </div>
           <div class="materials-status" data-materials-status></div>
-          <span class="hint">Escribí todos los ítems y tocá Guardar materiales. Cada ítem guardado se convierte en un check de la ficha de producción.</span>
+          <span class="hint">Escribí un material por línea y tocá Guardar materiales. Cada línea guardada se convierte en un check de la ficha de producción.</span>
         </div>
       `;
     }
@@ -1377,6 +1382,20 @@
 
     function handleSketchUpload(inputEvent) {
       const file = inputEvent.target.files?.[0];
+      handleSketchFile(file, inputEvent.target);
+    }
+
+    function handleSketchDrag(event) {
+      event.preventDefault();
+    }
+
+    function handleSketchDrop(dropEvent) {
+      dropEvent.preventDefault();
+      const file = dropEvent.dataTransfer?.files?.[0];
+      handleSketchFile(file, detail.querySelector("#sketchFile"));
+    }
+
+    async function handleSketchFile(file, input) {
       const event = getSelected();
       if (!file || !event) return;
       const status = detail.querySelector("[data-sketch-status]");
@@ -1394,34 +1413,97 @@
       if (!hasAllowedType && !hasAllowedExtension) {
         setStatus(status, "Formato no permitido. Usá JPG, PNG, PDF, DOC o DOCX.", true);
         alert("Formato no permitido. Usá JPG, PNG, PDF, DOC o DOCX.");
-        inputEvent.target.value = "";
+        if (input) input.value = "";
         return;
       }
-      if (file.size > 4 * 1024 * 1024) {
-        setStatus(status, "Archivo demasiado pesado. Usá uno menor a 4 MB.", true);
-        alert("El archivo es muy pesado. Para sincronizar bien, usá uno menor a 4 MB.");
-        inputEvent.target.value = "";
+      const isImage = hasAllowedType && file.type.startsWith("image/") || /\.(jpe?g|png)$/i.test(file.name);
+      if (!isImage && file.size > 1500 * 1024) {
+        setStatus(status, "Archivo demasiado pesado. Para PDF o Word usá uno menor a 1,5 MB.", true);
+        alert("El archivo es muy pesado. Para PDF o Word usá uno menor a 1,5 MB. Las imágenes se comprimen automáticamente.");
+        if (input) input.value = "";
         return;
       }
-      const reader = new FileReader();
-      reader.onload = () => {
+      try {
+        const prepared = isImage ? await prepareImageSketch(file) : await readFileAsDataUrl(file);
         event.sketch = {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          dataUrl: reader.result,
+          name: prepared.name,
+          type: prepared.type,
+          size: prepared.size,
+          dataUrl: prepared.dataUrl,
           updatedAt: new Date().toISOString()
         };
         event.updatedAt = new Date().toISOString();
-        saveEvents();
+        setStatus(status, "Guardando boceto...");
+        const result = await saveEventsConfirmed();
+        if (!result.ok) throw result.error || new Error("No se pudo sincronizar el boceto.");
         renderDetail();
-      };
-      reader.onerror = () => {
+      } catch (error) {
+        console.error("No pude guardar el boceto", error);
         setStatus(status, "No pude leer el archivo. Probá renombrarlo o subir una versión más liviana.", true);
-        inputEvent.target.value = "";
-      };
-      reader.readAsDataURL(file);
-      inputEvent.target.value = "";
+        alert("No pude guardar el boceto. Probá con una imagen más liviana o enviámela y la ajustamos.");
+      }
+      if (input) input.value = "";
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({
+          name: file.name,
+          type: file.type || inferFileType(file.name),
+          size: file.size,
+          dataUrl: reader.result
+        });
+        reader.onerror = () => reject(reader.error || new Error("No se pudo leer el archivo."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function prepareImageSketch(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error || new Error("No se pudo leer la imagen."));
+        reader.onload = () => {
+          const image = new Image();
+          image.onerror = () => reject(new Error("No se pudo procesar la imagen."));
+          image.onload = () => {
+            const maxSide = 1600;
+            const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+            const width = Math.max(1, Math.round(image.width * scale));
+            const height = Math.max(1, Math.round(image.height * scale));
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(image, 0, 0, width, height);
+            canvas.toBlob(blob => {
+              if (!blob) {
+                reject(new Error("No se pudo comprimir la imagen."));
+                return;
+              }
+              const compressed = new File([blob], renameAsJpg(file.name), { type: "image/jpeg" });
+              readFileAsDataUrl(compressed).then(resolve, reject);
+            }, "image/jpeg", .82);
+          };
+          image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renameAsJpg(name) {
+      return String(name || "boceto").replace(/\.[^.]+$/, "") + ".jpg";
+    }
+
+    function inferFileType(name) {
+      const lower = String(name || "").toLowerCase();
+      if (lower.endsWith(".pdf")) return "application/pdf";
+      if (lower.endsWith(".doc")) return "application/msword";
+      if (lower.endsWith(".docx")) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (lower.endsWith(".png")) return "image/png";
+      return "image/jpeg";
     }
 
     function removeSketch() {
@@ -1434,56 +1516,57 @@
     }
 
     function addMaterial() {
-      const event = getSelected();
-      if (!event) return;
-      event.materials = readMaterialDrafts();
-      event.materials.push("");
-      event.updatedAt = new Date().toISOString();
-      renderDetail();
-      requestAnimationFrame(() => {
-        const inputs = detail.querySelectorAll("[data-material-index]");
-        const input = inputs[inputs.length - 1];
-        if (input) input.focus();
-      });
+      const textarea = detail.querySelector("[data-materials-bulk]");
+      if (!textarea) return;
+      const needsBreak = textarea.value.trim() && !textarea.value.endsWith("\n");
+      textarea.value += needsBreak ? "\n" : "";
+      textarea.focus();
+      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      updateMaterialsDraft();
     }
 
-    function updateMaterial(index, value) {
+    function updateMaterialsDraft() {
       const event = getSelected();
       if (!event) return;
-      event.materials = Array.isArray(event.materials) ? [...event.materials] : parseMaterials(event.materials);
-      event.materials[index] = value;
+      const text = readMaterialsText();
+      event.materials = text.split("\n");
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      updateMaterialsCounter(text);
       setStatus(detail.querySelector("[data-materials-status]"), "Cambios sin guardar");
     }
 
-    function removeMaterial(index) {
-      const event = getSelected();
-      if (!event) return;
-      event.materials = readMaterialDrafts();
-      event.materials.splice(index, 1);
-      event.updatedAt = new Date().toISOString();
-      renderDetail();
-    }
-
-    function saveMaterialsFromEditor(options = {}) {
+    async function saveMaterialsFromEditor(options = {}) {
       const event = getSelected();
       if (!event) return;
       if (!options.silent) showMaterialSaveProgress("Guardando materiales...");
-      event.materials = parseMaterials(readMaterialDrafts());
+      event.materials = parseMaterials(readMaterialsText());
       event.updatedAt = new Date().toISOString();
-      saveEvents();
+      const result = await saveEventsConfirmed();
       renderList();
+      if (!result.ok) {
+        setStatus(detail.querySelector("[data-materials-status]"), "No se pudo sincronizar. Revisá conexión y volvé a guardar.", true);
+        alert("No pude sincronizar los materiales. Quedaron guardados en este dispositivo, pero todavía no llegaron a Producción.");
+        return result;
+      }
       if (!options.silent) {
         window.setTimeout(() => showMaterialSaveDone("Materiales guardados y sincronizados"), 450);
       }
       if (!options.keepView && !options.silent) {
         window.setTimeout(() => renderDetail(), 900);
       }
+      return result;
     }
 
-    function readMaterialDrafts() {
-      return [...detail.querySelectorAll("[data-material-index]")].map(input => input.value);
+    function readMaterialsText() {
+      return detail.querySelector("[data-materials-bulk]")?.value || "";
+    }
+
+    function updateMaterialsCounter(text = readMaterialsText()) {
+      const counter = detail.querySelector("[data-materials-counter]");
+      if (!counter) return;
+      const count = parseMaterials(text).length;
+      counter.textContent = `${count} ítem${count === 1 ? "" : "s"} detectado${count === 1 ? "" : "s"}`;
     }
 
     function setStatus(element, message, isError = false) {
@@ -1627,7 +1710,7 @@
 
     async function cloudUpsertEvents(items) {
       const cleanItems = sanitizeEvents(items);
-      if (!getCloudConfig() || !cleanItems.length) return;
+      if (!getCloudConfig() || !cleanItems.length) return { ok: true, skipped: true };
       try {
         const rows = cleanItems.map(event => ({
           id: event.id,
@@ -1639,8 +1722,10 @@
           headers: { Prefer: "resolution=merge-duplicates" },
           body: JSON.stringify(rows)
         });
+        return { ok: true };
       } catch (error) {
         console.error("No pude guardar proceso en nube", error);
+        return { ok: false, error };
       }
     }
 
