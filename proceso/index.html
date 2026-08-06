@@ -1434,13 +1434,27 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
         };
         event.updatedAt = new Date().toISOString();
         setStatus(status, "Guardando boceto...");
-        const result = await saveEventsConfirmed();
-        if (!result.ok) throw result.error || new Error("No se pudo sincronizar el boceto.");
+        state.events = sanitizeEvents(state.events);
+        let localSaved = true;
+        try {
+          localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+        } catch (storageError) {
+          localSaved = false;
+          console.warn("No pude guardar el boceto localmente", storageError);
+        }
+        const result = await cloudUpsertEvents(state.events);
         renderDetail();
+        if (!result.ok) {
+          requestAnimationFrame(() => {
+            const message = localSaved
+              ? "Boceto cargado en este dispositivo. Tocá Guardar cambios para reintentar sincronizar."
+              : "El boceto es pesado y no llegó a sincronizarse. Probá con una imagen más liviana o PDF.";
+            setStatus(detail.querySelector("[data-sketch-status]"), message, true);
+          });
+        }
       } catch (error) {
         console.error("No pude guardar el boceto", error);
-        setStatus(status, "No pude leer el archivo. Probá renombrarlo o subir una versión más liviana.", true);
-        alert("No pude guardar el boceto. Probá con una imagen más liviana o enviámela y la ajustamos.");
+        setStatus(status, "No pude leer ese archivo. Probá con JPG, PNG, PDF, DOC o DOCX.", true);
       }
       if (input) input.value = "";
     }
@@ -1467,7 +1481,7 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
           const image = new Image();
           image.onerror = () => reject(new Error("No se pudo procesar la imagen."));
           image.onload = () => {
-            const maxSide = 1600;
+            const maxSide = 1200;
             const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
             const width = Math.max(1, Math.round(image.width * scale));
             const height = Math.max(1, Math.round(image.height * scale));
@@ -1485,7 +1499,7 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
               }
               const compressed = new File([blob], renameAsJpg(file.name), { type: "image/jpeg" });
               readFileAsDataUrl(compressed).then(resolve, reject);
-            }, "image/jpeg", .82);
+            }, "image/jpeg", .72);
           };
           image.src = reader.result;
         };
@@ -1546,7 +1560,6 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
       renderList();
       if (!result.ok) {
         setStatus(detail.querySelector("[data-materials-status]"), "No se pudo sincronizar. Revisá conexión y volvé a guardar.", true);
-        alert("No pude sincronizar los materiales. Quedaron guardados en este dispositivo, pero todavía no llegaron a Producción.");
         return result;
       }
       if (!options.silent) {
