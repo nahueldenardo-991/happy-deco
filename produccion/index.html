@@ -441,11 +441,56 @@
 
     function buildProductionSheets() {
       const processMap = new Map(processEvents.map(event => [event.id, event]));
-      return records
-        .filter(record => cleanText(record.estadoOperativo) === "Listo para producir")
-        .map(record => normalizeSheet(record, processMap.get(record.id) || {}))
+      const usedIds = new Set();
+      const dashboardSheets = records
+        .filter(record => isReadyForProduction(record))
+        .map(record => {
+          const event = findProcessEventForRecord(record, processMap) || {};
+          const id = record.id || event.id || "";
+          if (id) usedIds.add(id);
+          if (event.id) usedIds.add(event.id);
+          return normalizeSheet(record, event);
+        });
+      const processOnlySheets = processEvents
+        .filter(event => event?.id && !usedIds.has(event.id) && shouldShowProcessEvent(event))
+        .map(event => normalizeSheet({}, event));
+      return [...dashboardSheets, ...processOnlySheets]
         .filter(item => item.productionStatus !== "Finalizado")
         .sort((a, b) => String(a.date || "9999").localeCompare(String(b.date || "9999")));
+    }
+
+    function findProcessEventForRecord(record, processMap) {
+      if (record?.id && processMap.has(record.id)) return processMap.get(record.id);
+      const recordKey = eventMatchKey({
+        client: record?.cliente,
+        child: record?.homenajeado,
+        theme: record?.tematica,
+        date: record?.fechaEvento
+      });
+      return processEvents.find(event => eventMatchKey(event) === recordKey) || null;
+    }
+
+    function isReadyForProduction(record) {
+      return cleanText(record?.estadoOperativo).toLowerCase() === "listo para producir";
+    }
+
+    function shouldShowProcessEvent(event) {
+      if (cleanText(event.productionStatus) === "Finalizado") return false;
+      const operative = cleanText(event.operativeStatus).toLowerCase();
+      const status = cleanText(event.status).toLowerCase();
+      const hasProductionWork = Boolean(event.sketch?.dataUrl) || parseMaterials(event.materials).length > 0;
+      return operative === "listo para producir" || ["produccion", "montaje"].includes(status) || hasProductionWork;
+    }
+
+    function eventMatchKey(event) {
+      return [
+        event?.client || event?.cliente,
+        event?.child || event?.homenajeado,
+        event?.theme || event?.tematica,
+        event?.date || event?.fechaEvento
+      ]
+        .map(value => cleanText(value).toLowerCase())
+        .join("|");
     }
 
     function normalizeSheet(record, event) {
@@ -650,7 +695,7 @@
     async function persistProcessEvent(event) {
       localStorage.setItem("happyDecoEvents", JSON.stringify(processEvents));
       try {
-        await cloudRequest(`${PROCESS_TABLE}?on_conflict=id`, {
+        await cloudRequest(PROCESS_TABLE, {
           method: "POST",
           headers: { Prefer: "resolution=merge-duplicates" },
           body: JSON.stringify([{
