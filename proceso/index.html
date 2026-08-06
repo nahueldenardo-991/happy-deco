@@ -1,0 +1,1804 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Happy Deco - Tablero de eventos</title>
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --panel: #fffaf2;
+      --ink: #24201d;
+      --muted: #766d65;
+      --line: #dfd4c7;
+      --rose: #d8657d;
+      --rose-quiet: #f9dce2;
+      --teal: #298b85;
+      --teal-quiet: #d8efec;
+      --gold: #b9822f;
+      --gold-quiet: #f5e5c9;
+      --green: #3f8f56;
+      --green-quiet: #dff1e4;
+      --red: #b84b4b;
+      --red-quiet: #f5dada;
+      --shadow: 0 16px 40px rgba(41, 31, 22, .10);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 280px;
+    }
+
+    .brand-mark {
+      width: 132px;
+      min-width: 132px;
+      height: 76px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 3px solid #fff;
+      box-shadow: 0 10px 24px rgba(41, 139, 133, .18);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .primary, .ghost, .danger {
+      min-height: 40px;
+      border-radius: 8px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .primary {
+      color: #fff;
+      background: var(--teal);
+    }
+
+    .ghost {
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+    }
+
+    .danger {
+      background: var(--red-quiet);
+      color: var(--red);
+    }
+
+    main {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 22px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+    }
+
+    .sidebar, .detail {
+      min-width: 0;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar .panel {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .filters {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .search {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 11px;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(41, 139, 133, .15);
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .tab {
+      min-height: 34px;
+      border-radius: 8px;
+      background: #f3ece2;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tab.active {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .event-list {
+      padding: 10px;
+      display: grid;
+      gap: 10px;
+      max-height: calc(100vh - 210px);
+      overflow: auto;
+    }
+
+    .event-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 9px;
+      text-align: left;
+      color: inherit;
+    }
+
+    .event-card.active {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(41, 139, 133, .14);
+    }
+
+    .event-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .event-name {
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .event-meta {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .status {
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .status.consulta { background: var(--gold-quiet); color: var(--gold); }
+    .status.diseno { background: var(--rose-quiet); color: var(--rose); }
+    .status.produccion { background: var(--teal-quiet); color: var(--teal); }
+    .status.montaje { background: #e9e2fa; color: #6650a4; }
+    .status.cerrado { background: var(--green-quiet); color: var(--green); }
+    .status.trabado { background: var(--red-quiet); color: var(--red); }
+
+    .progress {
+      height: 8px;
+      background: #eee5da;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--green));
+    }
+
+    .empty {
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .detail-shell {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.12;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--panel);
+      min-height: 82px;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 18px;
+      margin-top: 5px;
+    }
+
+    .workflow {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      overflow: visible;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      overflow: visible;
+      padding: 2px;
+    }
+
+    .stage {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      min-height: 150px;
+      align-content: start;
+    }
+
+    .stage.complete {
+      border-color: rgba(63, 143, 86, .5);
+      background: var(--green-quiet);
+    }
+
+    .stage.blocked {
+      border-color: rgba(184, 75, 75, .45);
+      background: var(--red-quiet);
+    }
+
+    .stage-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: flex-start;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .stage-title span:first-child {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .owner {
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 11px;
+      font-weight: 900;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 8px;
+      align-items: start;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .check input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--teal);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .handoff {
+      display: grid;
+      gap: 10px;
+    }
+
+    .handoff-row {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      background: var(--panel);
+    }
+
+    .handoff-row strong {
+      display: block;
+    }
+
+    .production-tools {
+      display: grid;
+      gap: 16px;
+    }
+
+    .sketch-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--panel);
+      display: grid;
+      gap: 10px;
+    }
+
+    .sketch-upload-area {
+      position: relative;
+      display: grid;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .sketch-preview {
+      min-height: 180px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px;
+    }
+
+    .sketch-upload-area:hover .sketch-preview,
+    .sketch-upload-area:focus-within .sketch-preview {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
+    }
+
+    .sketch-preview img,
+    .sketch-preview iframe {
+      width: 100%;
+      max-height: 320px;
+      border: 0;
+      object-fit: contain;
+      display: block;
+    }
+
+    .sketch-preview iframe {
+      min-height: 300px;
+    }
+
+    .sketch-actions,
+    .materials-actions,
+    .material-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .sketch-actions {
+      flex-wrap: wrap;
+    }
+
+    .hidden-file {
+      position: absolute;
+      inset: 0;
+      inline-size: 100%;
+      block-size: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .upload-hint-pill {
+      justify-self: start;
+      min-height: 34px;
+      border-radius: 8px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      background: var(--teal);
+      cursor: pointer;
+    }
+
+    .sketch-status,
+    .materials-status {
+      min-height: 18px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--teal);
+    }
+
+    .sketch-status.error,
+    .materials-status.error {
+      color: var(--red);
+    }
+
+    .save-progress {
+      display: none;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .save-progress.active {
+      display: grid;
+    }
+
+    .save-progress-bar {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #efe4d8;
+    }
+
+    .save-progress-bar span {
+      display: block;
+      width: 45%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), #8fe4df, var(--gold));
+      animation: savingSlide 1s ease-in-out infinite;
+    }
+
+    @keyframes savingSlide {
+      0% { transform: translateX(-110%); }
+      100% { transform: translateX(230%); }
+    }
+
+    .materials-editor {
+      display: grid;
+      gap: 10px;
+    }
+
+    .materials-bulk {
+      width: 100%;
+      min-height: 190px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      resize: vertical;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .materials-counter {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .alert {
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--red-quiet);
+      color: var(--red);
+      font-weight: 800;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1050px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .event-list {
+        max-height: none;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar, .hero-head, .footer-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .actions {
+        justify-content: stretch;
+      }
+
+      .actions > button,
+      .actions > a {
+        flex: 1 1 150px;
+      }
+
+      main {
+        padding: 14px;
+      }
+
+      .event-list, .hero-grid, .two-col, .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sketch-actions,
+      .materials-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .sketch-actions > *,
+      .materials-actions > *,
+      .upload-hint-pill {
+        width: 100%;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+        overflow-x: visible;
+      }
+
+      .hero h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="../assets/ux-polish.css">
+</head>
+<body class="module-process">
+  <div class="app">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-mark"><img src="../assets/happy-deco-logo.png" alt="Happy Deco"></div>
+          <div>
+            <h1>Happy Deco</h1>
+            <div class="subtitle">Tablero operativo de eventos</div>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="ghost" href="../panel-control/">Panel de control</a>
+          <a class="ghost" href="../">Dashboard</a>
+          <a class="ghost" href="../crm/">CRM</a>
+          <a class="ghost" href="../produccion/">Producción</a>
+          <button class="ghost" id="cloudBtn" type="button">Configurar nube</button>
+          <button class="ghost" id="exportBtn" type="button">Exportar datos</button>
+          <button class="ghost" id="importBtn" type="button">Importar</button>
+          <button class="primary" id="newBtn" type="button">Nuevo evento</button>
+          <input id="importFile" type="file" accept="application/json" hidden>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <aside class="sidebar">
+        <div class="panel">
+          <div class="filters">
+            <div class="search">
+              <label for="search">Buscar evento</label>
+              <input id="search" type="search" placeholder="Cliente, temática, homenajeado">
+            </div>
+            <div class="tabs" aria-label="Filtros">
+              <button class="tab active" data-filter="todos" type="button">Todos</button>
+              <button class="tab" data-filter="activos" type="button">Activos</button>
+              <button class="tab" data-filter="trabados" type="button">Trabados</button>
+              <button class="tab" data-filter="cerrados" type="button">Cerrados</button>
+            </div>
+          </div>
+          <div class="event-list" id="eventList"></div>
+        </div>
+      </aside>
+
+      <section class="detail" id="detail"></section>
+    </main>
+  </div>
+
+  <script>
+    const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
+    const DEFAULT_CLOUD_CONFIG = {
+      url: "https://niwkiklxyblrvbeusqbd.supabase.co",
+      anonKey: "sb_publishable_BZOa1hRBnH0KWocgyCZmfw_-lrLIgGd"
+    };
+    const PROCESS_TABLE = "happy_deco_process_events";
+
+    const stages = [
+      {
+        id: "consulta",
+        title: "Consulta",
+        owner: "Cati",
+        checks: [
+          "Datos básicos",
+          "Fecha y lugar definido",
+          "Temática definida",
+          "Seña registrada"
+        ]
+      },
+      {
+        id: "diseno",
+        title: "Diseño y venta",
+        owner: "Cati",
+        checks: [
+          "Moodboard del evento",
+          "Posible evento",
+          "Boceto en producción"
+        ]
+      },
+      {
+        id: "traspaso",
+        title: "Traspaso a producción",
+        owner: "Cati + Xime",
+        checks: [
+          "Imprenta pedida",
+          "Nombre y boceto listo",
+          "Facturación de seña"
+        ]
+      },
+      {
+        id: "produccion",
+        title: "Producción",
+        owner: "Xime + Juli",
+        checks: [
+          "Compras realizadas",
+          "Materiales preparados",
+          "Personajes/listas impresas",
+          "Carga planificada"
+        ]
+      },
+      {
+        id: "montaje",
+        title: "Montaje y cierre",
+        owner: "Xime + Juli",
+        checks: [
+          "Montaje realizado",
+          "Fotos guardadas para redes",
+          "Desmontaje completado",
+          "Saldo/facturación cerrados"
+        ]
+      }
+    ];
+
+    const seedEvents = [];
+
+    const state = {
+      events: loadEvents(),
+      selectedId: null,
+      filter: "todos",
+      query: ""
+    };
+
+    let editingUntil = 0;
+    let pendingSaveTimer = null;
+
+    state.selectedId = getDeepLinkedEventId() || state.events[0]?.id || null;
+
+    const eventList = document.querySelector("#eventList");
+    const detail = document.querySelector("#detail");
+    const search = document.querySelector("#search");
+
+    document.querySelector("#newBtn").addEventListener("click", createEvent);
+    document.querySelector("#exportBtn").addEventListener("click", exportData);
+    document.querySelector("#cloudBtn").addEventListener("click", configureCloud);
+    document.querySelector("#importBtn").addEventListener("click", () => document.querySelector("#importFile").click());
+    document.querySelector("#importFile").addEventListener("change", importData);
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        state.filter = tab.dataset.filter;
+        document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
+        render();
+      });
+    });
+
+    search.addEventListener("input", () => {
+      state.query = search.value.trim().toLowerCase();
+      render();
+    });
+
+    render();
+    initCloudSync();
+
+    function loadEvents() {
+      try {
+        return sanitizeEvents(JSON.parse(localStorage.getItem("happyDecoEvents") || "[]"));
+      } catch {
+        return [];
+      }
+    }
+
+    function isSeedEvent(event) {
+      return event?.client === "Ejemplo - Familia Ruiz";
+    }
+
+    function sanitizeEvents(items) {
+      return Array.isArray(items)
+        ? items
+          .filter(event => event && event.id && !isSeedEvent(event))
+          .map(event => ({
+            ...event,
+            materials: Array.isArray(event.materials) ? event.materials.filter(Boolean) : parseMaterials(event.materials),
+            sketch: event.sketch && event.sketch.dataUrl ? event.sketch : null
+          }))
+        : [];
+    }
+
+    function saveEvents() {
+      state.events = sanitizeEvents(state.events);
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      cloudUpsertEvents(state.events);
+    }
+
+    async function saveEventsConfirmed() {
+      state.events = sanitizeEvents(state.events);
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      return cloudUpsertEvents(state.events);
+    }
+
+    function scheduleSaveEvents(delay = 900) {
+      markEditing();
+      state.events = sanitizeEvents(state.events);
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      clearTimeout(pendingSaveTimer);
+      pendingSaveTimer = setTimeout(() => {
+        cloudUpsertEvents(state.events);
+      }, delay);
+    }
+
+    function markEditing() {
+      editingUntil = Date.now() + 5000;
+    }
+
+    function isEditingNow() {
+      const active = document.activeElement;
+      const isFormField = active && detail.contains(active) && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName);
+      return isFormField || Date.now() < editingUntil;
+    }
+
+    function createEvent() {
+      const event = {
+        id: makeId(),
+        client: "Nuevo evento",
+        child: "",
+        date: "",
+        time: "",
+        place: "",
+        theme: "",
+        package: "",
+        budget: "",
+        deposit: "",
+        balance: "",
+        status: "consulta",
+        notes: "",
+        commercialNotes: "",
+        productionNotes: "",
+        materials: [],
+        sketch: null,
+        checks: {},
+        updatedAt: new Date().toISOString()
+      };
+      state.events.unshift(event);
+      state.selectedId = event.id;
+      saveEvents();
+      render();
+    }
+
+    function deleteSelected() {
+      const current = getSelected();
+      if (!current) return;
+      const ok = confirm(`¿Eliminar el evento de ${current.client}?`);
+      if (!ok) return;
+      state.events = state.events.filter((event) => event.id !== current.id);
+      state.selectedId = state.events[0]?.id || null;
+      saveEvents();
+      cloudDeleteEvent(current.id);
+      render();
+    }
+
+    function getSelected() {
+      return state.events.find((event) => event.id === state.selectedId);
+    }
+
+    function filteredEvents() {
+      return state.events.filter((event) => {
+        const text = [event.client, event.child, event.place, event.theme, event.package].join(" ").toLowerCase();
+        const matchesQuery = !state.query || text.includes(state.query);
+        const progress = getProgress(event);
+        const isBlocked = getBlockers(event).length > 0;
+        const matchesFilter =
+          state.filter === "todos" ||
+          (state.filter === "activos" && event.status !== "cerrado") ||
+          (state.filter === "trabados" && isBlocked) ||
+          (state.filter === "cerrados" && event.status === "cerrado");
+        return matchesQuery && matchesFilter;
+      });
+    }
+
+    function getProgress(event) {
+      const total = stages.reduce((sum, stage) => sum + stage.checks.length, 0);
+      const done = stages.reduce((sum, stage) => {
+        return sum + stage.checks.filter((_, index) => event.checks?.[`${stage.id}-${index}`]).length;
+      }, 0);
+      return Math.round((done / total) * 100);
+    }
+
+    function stageProgress(event, stage) {
+      const done = stage.checks.filter((_, index) => event.checks?.[`${stage.id}-${index}`]).length;
+      return { done, total: stage.checks.length };
+    }
+
+    function getBlockers(event) {
+      const blockers = [];
+      const diseno = stageProgress(event, stages[1]);
+      const traspaso = stageProgress(event, stages[2]);
+      const produccion = stageProgress(event, stages[3]);
+      const montaje = stageProgress(event, stages[4]);
+
+      if (event.status === "produccion" && traspaso.done < traspaso.total) {
+        blockers.push("Producción arrancó sin ficha operativa completa.");
+      }
+      if (event.status === "montaje" && produccion.done < produccion.total) {
+        blockers.push("Montaje cercano con producción incompleta.");
+      }
+      if (diseno.done >= 2 && isPendingMoney(event.deposit)) {
+        blockers.push("Hay propuesta avanzada sin seña registrada.");
+      }
+      if (!event.date) {
+        blockers.push("Falta fecha del evento.");
+      }
+      if (!event.place && event.status !== "consulta") {
+        blockers.push("Falta lugar confirmado.");
+      }
+      if (montaje.done === montaje.total && isPendingMoney(event.balance)) {
+        blockers.push("Evento cerrado operativamente con saldo pendiente.");
+      }
+      return blockers;
+    }
+
+    function render() {
+      renderList();
+      renderDetail();
+      focusDeepLinkedEvent();
+    }
+
+    function renderList() {
+      const items = filteredEvents();
+      if (!items.length) {
+        eventList.innerHTML = `<div class="empty">No hay eventos para este filtro.</div>`;
+        return;
+      }
+      eventList.innerHTML = items.map((event) => {
+        const progress = getProgress(event);
+        const blockers = getBlockers(event);
+        const status = blockers.length ? "trabado" : event.status;
+        return `
+          <button class="event-card ${event.id === state.selectedId ? "active" : ""}" data-id="${event.id}" type="button">
+            <div class="event-top">
+              <div>
+                <div class="event-name">${escapeHtml(event.client || "Sin cliente")}</div>
+                <div class="event-meta">${escapeHtml(event.theme || "Sin temática")} ${event.date ? "· " + formatDate(event.date) : ""}</div>
+              </div>
+              <span class="status ${status}">${statusLabel(status)}</span>
+            </div>
+            <div class="progress"><span style="width:${progress}%"></span></div>
+            <div class="event-meta">${progress}% completo · ${escapeHtml(event.child || "Sin homenajeado")}</div>
+          </button>
+        `;
+      }).join("");
+
+      eventList.querySelectorAll(".event-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          state.selectedId = card.dataset.id;
+          render();
+        });
+      });
+    }
+
+    function getDeepLinkedEventId() {
+      return new URLSearchParams(window.location.search).get("registro");
+    }
+
+    function focusDeepLinkedEvent() {
+      const id = getDeepLinkedEventId();
+      if (!id) return;
+      requestAnimationFrame(() => {
+        const card = eventList.querySelector(`[data-id="${escapeCssIdent(id)}"]`);
+        if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
+
+    function renderDetail() {
+      const event = getSelected();
+      if (!event) {
+        detail.innerHTML = `<div class="empty panel">Creá un evento para empezar.</div>`;
+        return;
+      }
+
+      const progress = getProgress(event);
+      const blockers = getBlockers(event);
+
+      detail.innerHTML = `
+        <div class="detail-shell">
+          <div class="hero">
+            <div class="hero-head">
+              <div>
+                <h2>${escapeHtml(event.client || "Sin cliente")}</h2>
+                <div class="subtitle">${escapeHtml(event.theme || "Sin temática")} ${event.child ? "· " + escapeHtml(event.child) : ""}</div>
+              </div>
+              <div class="actions">
+                <button class="ghost" id="duplicateEvent" type="button">Duplicar</button>
+                <button class="danger" id="deleteEvent" type="button">Eliminar</button>
+              </div>
+            </div>
+            <div class="alert ${blockers.length ? "show" : ""}">
+              ${blockers.map(escapeHtml).join("<br>")}
+            </div>
+            <div class="hero-grid">
+              <div class="metric"><label>Avance</label><b>${progress}%</b></div>
+              <div class="metric"><label>Fecha</label><b>${event.date ? formatDate(event.date) : "Sin fecha"}</b></div>
+              <div class="metric"><label>Estado</label><b>${statusLabel(blockers.length ? "trabado" : event.status)}</b></div>
+              <div class="metric"><label>Seña</label><b>${escapeHtml(event.deposit || "Pendiente")}</b></div>
+            </div>
+          </div>
+
+          <div class="workflow">
+            <div class="section-title">
+              <h3>Flujo del evento</h3>
+              <span class="hint">Cada bloque tiene responsable, entregables y checks visibles.</span>
+            </div>
+            <div class="flow">
+              ${stages.map((stage) => renderStage(event, stage)).join("")}
+            </div>
+          </div>
+
+          <div class="form-panel production-tools">
+            <div class="section-title">
+              <h3>Producción</h3>
+              <span class="hint">Boceto y materiales que van a aparecer en la ficha independiente.</span>
+            </div>
+            ${renderSketchEditor(event)}
+            ${renderMaterialsEditor(event)}
+          </div>
+
+          <div class="two-col">
+            <div class="form-panel">
+              <div class="section-title">
+                <h3>Ficha del evento</h3>
+              </div>
+              <div class="form-grid">
+                ${field("client", "Cliente", event.client)}
+                ${field("child", "Homenajeado/a", event.child)}
+                ${field("date", "Fecha", event.date, "date")}
+                ${field("time", "Hora", event.time, "time")}
+                ${field("place", "Lugar", event.place)}
+                ${field("theme", "Temática", event.theme)}
+                ${field("budget", "Monto/presupuesto", event.budget)}
+                ${field("deposit", "Seña", event.deposit)}
+                ${field("balance", "Saldo", event.balance)}
+                <div>
+                  <label for="status">Estado manual</label>
+                  <select id="status" data-field="status">
+                    ${["consulta", "diseno", "produccion", "montaje", "cerrado"].map((status) => `
+                      <option value="${status}" ${event.status === status ? "selected" : ""}>${statusLabel(status)}</option>
+                    `).join("")}
+                  </select>
+                </div>
+                ${area("package", "Elementos vendidos", event.package, "full")}
+                ${area("notes", "Notas generales", event.notes, "full")}
+              </div>
+            </div>
+
+            <div class="form-panel">
+              <div class="section-title">
+                <h3>Traspasos claros</h3>
+              </div>
+              <div class="handoff">
+                <div class="handoff-row">
+                  <strong>Cati entrega a Xime</strong>
+                  <span class="hint">Ficha completa, propuesta vendida, elementos incluidos, seña y referencias visuales.</span>
+                </div>
+                <div class="handoff-row">
+                  <strong>Xime devuelve a Cati</strong>
+                  <span class="hint">Factibilidad, faltantes, cambios necesarios, tiempos de producción y fotos finales.</span>
+                </div>
+                <div class="handoff-row">
+                  <strong>Juli aprende con checklist</strong>
+                  <span class="hint">Preparación, armado, terminaciones, carga, descarga y orden posterior.</span>
+                </div>
+              </div>
+              ${area("commercialNotes", "Notas comerciales / Cati", event.commercialNotes)}
+              ${area("productionNotes", "Notas producción / Xime y Juli", event.productionNotes)}
+            </div>
+          </div>
+
+          <div class="footer-actions">
+            <span class="hint">Los datos quedan guardados en este navegador. Usá Exportar para compartir o hacer backup.</span>
+            <button class="primary" id="saveNow" type="button">Guardar cambios</button>
+          </div>
+        </div>
+      `;
+
+      detail.querySelectorAll("[data-field]").forEach((input) => {
+        input.addEventListener("input", () => updateField(input.dataset.field, input.value));
+      });
+      detail.querySelectorAll("input, textarea, select").forEach((input) => {
+        input.addEventListener("focusin", markEditing);
+        input.addEventListener("input", markEditing);
+        input.addEventListener("change", markEditing);
+      });
+
+      detail.querySelectorAll("[data-check]").forEach((input) => {
+        input.addEventListener("change", () => updateCheck(input.dataset.check, input.checked));
+      });
+
+      detail.querySelector("#sketchFile")?.addEventListener("change", handleSketchUpload);
+      detail.querySelector("[data-upload-area]")?.addEventListener("dragover", handleSketchDrag);
+      detail.querySelector("[data-upload-area]")?.addEventListener("drop", handleSketchDrop);
+      detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
+      detail.querySelector("[data-add-material]")?.addEventListener("click", addMaterial);
+      detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
+      detail.querySelector("[data-materials-bulk]")?.addEventListener("input", updateMaterialsDraft);
+
+      detail.querySelector("#deleteEvent").addEventListener("click", deleteSelected);
+      detail.querySelector("#duplicateEvent").addEventListener("click", duplicateSelected);
+      detail.querySelector("#saveNow").addEventListener("click", async () => {
+        showMaterialSaveProgress("Guardando todos los cambios...");
+        const result = await saveMaterialsFromEditor({ silent: true, keepView: true });
+        if (!result?.ok) return;
+        window.setTimeout(() => {
+          showMaterialSaveDone("Cambios guardados y sincronizados");
+          renderList();
+        }, 450);
+      });
+    }
+
+    function renderStage(event, stage) {
+      const progress = stageProgress(event, stage);
+      const complete = progress.done === progress.total;
+      const blocked = getBlockers(event).some((text) => {
+        if (stage.id === "traspaso") return text.includes("ficha operativa");
+        if (stage.id === "produccion") return text.includes("producción incompleta");
+        if (stage.id === "consulta") return text.includes("fecha") || text.includes("lugar");
+        if (stage.id === "diseno") return text.includes("seña");
+        if (stage.id === "montaje") return text.includes("saldo");
+        return false;
+      });
+
+      return `
+        <div class="stage ${complete ? "complete" : ""} ${blocked ? "blocked" : ""}">
+          <div class="stage-title">
+            <span>${stage.title}</span>
+            <span class="owner">${stage.owner}</span>
+          </div>
+          <div class="progress"><span style="width:${Math.round((progress.done / progress.total) * 100)}%"></span></div>
+          <div class="checklist">
+            ${stage.checks.map((text, index) => {
+              const key = `${stage.id}-${index}`;
+              return `
+                <label class="check">
+                  <input type="checkbox" data-check="${key}" ${event.checks?.[key] ? "checked" : ""}>
+                  <span>${escapeHtml(text)}</span>
+                </label>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function field(name, labelText, value, type = "text") {
+      return `
+        <div>
+          <label for="${name}">${labelText}</label>
+          <input id="${name}" data-field="${name}" type="${type}" value="${escapeAttr(value || "")}">
+        </div>
+      `;
+    }
+
+    function area(name, labelText, value, extraClass = "") {
+      return `
+        <div class="${extraClass}">
+          <label for="${name}">${labelText}</label>
+          <textarea id="${name}" data-field="${name}">${escapeHtml(value || "")}</textarea>
+        </div>
+      `;
+    }
+
+    function renderSketchEditor(event) {
+      const sketch = event.sketch || null;
+      const preview = sketch
+        ? renderSketchPreview(sketch)
+        : `<div class="hint">Todavía no hay boceto cargado. Podés subir JPG, PNG, PDF, DOC o DOCX.</div>`;
+      return `
+        <div class="sketch-card">
+          <label>Boceto del evento</label>
+          <div class="sketch-upload-area" data-upload-area>
+            <div class="sketch-preview">${preview}</div>
+            <span class="upload-hint-pill">${sketch ? "Cambiar archivo" : "Cargar archivo"}</span>
+            <input class="hidden-file" id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          </div>
+          <div class="sketch-actions">
+            ${sketch ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar</a>` : ""}
+            ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar boceto</button>` : ""}
+          </div>
+          <div class="sketch-status" data-sketch-status></div>
+          <span class="hint">${sketch ? escapeHtml(`${sketch.name || "Archivo cargado"} · ${sketch.type || "archivo"}`) : "Tamaño recomendado: archivos livianos para que sincronicen rápido."}</span>
+        </div>
+      `;
+    }
+
+    function renderSketchPreview(sketch) {
+      if (sketch.type?.startsWith("image/")) {
+        return `<img src="${escapeAttr(sketch.dataUrl)}" alt="Boceto ${escapeAttr(sketch.name || "")}">`;
+      }
+      if (sketch.type === "application/pdf") {
+        return `<iframe src="${escapeAttr(sketch.dataUrl)}" title="Boceto PDF"></iframe>`;
+      }
+      return `
+        <div>
+          <strong>${escapeHtml(sketch.name || "Archivo de boceto")}</strong>
+          <div class="hint">Archivo Word cargado. Usá Descargar para abrirlo.</div>
+        </div>
+      `;
+    }
+
+    function renderMaterialsEditor(event) {
+      const materials = Array.isArray(event.materials) ? event.materials : parseMaterials(event.materials);
+      const materialText = materials.join("\n");
+      const materialCount = parseMaterials(materialText).length;
+      return `
+        <div class="sketch-card">
+          <div class="section-title">
+            <label>Listado de materiales</label>
+            <div class="materials-actions">
+              <button class="ghost" type="button" data-add-material>Agregar línea</button>
+              <button class="primary" type="button" data-save-materials>Guardar materiales</button>
+            </div>
+          </div>
+          <div class="materials-editor">
+            <textarea class="materials-bulk" data-materials-bulk rows="8" placeholder="Ej:
+2 paneles
+Globos rosa
+Nombre impreso">${escapeHtml(materialText)}</textarea>
+            <div class="materials-counter" data-materials-counter>${materialCount} ítem${materialCount === 1 ? "" : "s"} detectado${materialCount === 1 ? "" : "s"}</div>
+          </div>
+          <div class="save-progress" data-materials-progress>
+            <div class="save-progress-bar"><span></span></div>
+            <span>Guardando y sincronizando...</span>
+          </div>
+          <div class="materials-status" data-materials-status></div>
+          <span class="hint">Escribí un material por línea y tocá Guardar materiales. Cada línea guardada se convierte en un check de la ficha de producción.</span>
+        </div>
+      `;
+    }
+
+    function updateField(fieldName, value) {
+      const event = getSelected();
+      if (!event) return;
+      event[fieldName] = value;
+      event.updatedAt = new Date().toISOString();
+      scheduleSaveEvents();
+      renderList();
+    }
+
+    function updateCheck(key, checked) {
+      const event = getSelected();
+      if (!event) return;
+      event.checks = event.checks || {};
+      event.checks[key] = checked;
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      render();
+    }
+
+    function handleSketchUpload(inputEvent) {
+      const file = inputEvent.target.files?.[0];
+      handleSketchFile(file, inputEvent.target);
+    }
+
+    function handleSketchDrag(event) {
+      event.preventDefault();
+    }
+
+    function handleSketchDrop(dropEvent) {
+      dropEvent.preventDefault();
+      const file = dropEvent.dataTransfer?.files?.[0];
+      handleSketchFile(file, detail.querySelector("#sketchFile"));
+    }
+
+    async function handleSketchFile(file, input) {
+      const event = getSelected();
+      if (!file || !event) return;
+      const status = detail.querySelector("[data-sketch-status]");
+      setStatus(status, "Cargando archivo...");
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ];
+      const allowedExtensions = [".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx"];
+      const hasAllowedType = file.type && allowedTypes.includes(file.type);
+      const hasAllowedExtension = allowedExtensions.some(extension => file.name.toLowerCase().endsWith(extension));
+      if (!hasAllowedType && !hasAllowedExtension) {
+        setStatus(status, "Formato no permitido. Usá JPG, PNG, PDF, DOC o DOCX.", true);
+        alert("Formato no permitido. Usá JPG, PNG, PDF, DOC o DOCX.");
+        if (input) input.value = "";
+        return;
+      }
+      const isImage = hasAllowedType && file.type.startsWith("image/") || /\.(jpe?g|png)$/i.test(file.name);
+      if (!isImage && file.size > 1500 * 1024) {
+        setStatus(status, "Archivo demasiado pesado. Para PDF o Word usá uno menor a 1,5 MB.", true);
+        alert("El archivo es muy pesado. Para PDF o Word usá uno menor a 1,5 MB. Las imágenes se comprimen automáticamente.");
+        if (input) input.value = "";
+        return;
+      }
+      try {
+        const prepared = isImage ? await prepareImageSketch(file) : await readFileAsDataUrl(file);
+        event.sketch = {
+          name: prepared.name,
+          type: prepared.type,
+          size: prepared.size,
+          dataUrl: prepared.dataUrl,
+          updatedAt: new Date().toISOString()
+        };
+        event.updatedAt = new Date().toISOString();
+        setStatus(status, "Guardando boceto...");
+        const result = await saveEventsConfirmed();
+        if (!result.ok) throw result.error || new Error("No se pudo sincronizar el boceto.");
+        renderDetail();
+      } catch (error) {
+        console.error("No pude guardar el boceto", error);
+        setStatus(status, "No pude leer el archivo. Probá renombrarlo o subir una versión más liviana.", true);
+        alert("No pude guardar el boceto. Probá con una imagen más liviana o enviámela y la ajustamos.");
+      }
+      if (input) input.value = "";
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({
+          name: file.name,
+          type: file.type || inferFileType(file.name),
+          size: file.size,
+          dataUrl: reader.result
+        });
+        reader.onerror = () => reject(reader.error || new Error("No se pudo leer el archivo."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function prepareImageSketch(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error || new Error("No se pudo leer la imagen."));
+        reader.onload = () => {
+          const image = new Image();
+          image.onerror = () => reject(new Error("No se pudo procesar la imagen."));
+          image.onload = () => {
+            const maxSide = 1600;
+            const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+            const width = Math.max(1, Math.round(image.width * scale));
+            const height = Math.max(1, Math.round(image.height * scale));
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(image, 0, 0, width, height);
+            canvas.toBlob(blob => {
+              if (!blob) {
+                reject(new Error("No se pudo comprimir la imagen."));
+                return;
+              }
+              const compressed = new File([blob], renameAsJpg(file.name), { type: "image/jpeg" });
+              readFileAsDataUrl(compressed).then(resolve, reject);
+            }, "image/jpeg", .82);
+          };
+          image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renameAsJpg(name) {
+      return String(name || "boceto").replace(/\.[^.]+$/, "") + ".jpg";
+    }
+
+    function inferFileType(name) {
+      const lower = String(name || "").toLowerCase();
+      if (lower.endsWith(".pdf")) return "application/pdf";
+      if (lower.endsWith(".doc")) return "application/msword";
+      if (lower.endsWith(".docx")) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (lower.endsWith(".png")) return "image/png";
+      return "image/jpeg";
+    }
+
+    function removeSketch() {
+      const event = getSelected();
+      if (!event) return;
+      event.sketch = null;
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      renderDetail();
+    }
+
+    function addMaterial() {
+      const textarea = detail.querySelector("[data-materials-bulk]");
+      if (!textarea) return;
+      const needsBreak = textarea.value.trim() && !textarea.value.endsWith("\n");
+      textarea.value += needsBreak ? "\n" : "";
+      textarea.focus();
+      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      updateMaterialsDraft();
+    }
+
+    function updateMaterialsDraft() {
+      const event = getSelected();
+      if (!event) return;
+      const text = readMaterialsText();
+      event.materials = text.split("\n");
+      event.updatedAt = new Date().toISOString();
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      updateMaterialsCounter(text);
+      setStatus(detail.querySelector("[data-materials-status]"), "Cambios sin guardar");
+    }
+
+    async function saveMaterialsFromEditor(options = {}) {
+      const event = getSelected();
+      if (!event) return;
+      if (!options.silent) showMaterialSaveProgress("Guardando materiales...");
+      event.materials = parseMaterials(readMaterialsText());
+      event.updatedAt = new Date().toISOString();
+      const result = await saveEventsConfirmed();
+      renderList();
+      if (!result.ok) {
+        setStatus(detail.querySelector("[data-materials-status]"), "No se pudo sincronizar. Revisá conexión y volvé a guardar.", true);
+        alert("No pude sincronizar los materiales. Quedaron guardados en este dispositivo, pero todavía no llegaron a Producción.");
+        return result;
+      }
+      if (!options.silent) {
+        window.setTimeout(() => showMaterialSaveDone("Materiales guardados y sincronizados"), 450);
+      }
+      if (!options.keepView && !options.silent) {
+        window.setTimeout(() => renderDetail(), 900);
+      }
+      return result;
+    }
+
+    function readMaterialsText() {
+      return detail.querySelector("[data-materials-bulk]")?.value || "";
+    }
+
+    function updateMaterialsCounter(text = readMaterialsText()) {
+      const counter = detail.querySelector("[data-materials-counter]");
+      if (!counter) return;
+      const count = parseMaterials(text).length;
+      counter.textContent = `${count} ítem${count === 1 ? "" : "s"} detectado${count === 1 ? "" : "s"}`;
+    }
+
+    function setStatus(element, message, isError = false) {
+      if (!element) return;
+      element.textContent = message || "";
+      element.classList.toggle("error", isError);
+    }
+
+    function showMaterialSaveProgress(message) {
+      const progress = detail.querySelector("[data-materials-progress]");
+      const status = detail.querySelector("[data-materials-status]");
+      if (progress) progress.classList.add("active");
+      setStatus(status, message || "Guardando...");
+    }
+
+    function showMaterialSaveDone(message) {
+      const progress = detail.querySelector("[data-materials-progress]");
+      if (progress) progress.classList.remove("active");
+      setStatus(detail.querySelector("[data-materials-status]"), message || "Guardado");
+    }
+
+    function duplicateSelected() {
+      const event = getSelected();
+      if (!event) return;
+      const copy = {
+        ...structuredClone(event),
+        id: makeId(),
+        client: `${event.client} - copia`,
+        status: "consulta",
+        checks: {},
+        updatedAt: new Date().toISOString()
+      };
+      state.events.unshift(copy);
+      state.selectedId = copy.id;
+      saveEvents();
+      render();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(state.events, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `happy-deco-eventos-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function makeId() {
+      if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+      return `evento-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function isPendingMoney(value) {
+      const text = String(value || "").trim().toLowerCase();
+      return !text || ["pendiente", "no", "sin pagar", "falta", "adeuda"].some((word) => text.includes(word));
+    }
+
+    function importData(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!Array.isArray(data)) throw new Error("Formato inválido");
+          state.events = data;
+          state.selectedId = state.events[0]?.id || null;
+          saveEvents();
+          render();
+        } catch {
+          alert("No pude importar el archivo. Revisá que sea un JSON exportado desde este tablero.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function getCloudConfig() {
+      try {
+        const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
+        const activeConfig = config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
+        if (!activeConfig.url || !activeConfig.anonKey) return null;
+        return {
+          url: String(activeConfig.url).replace(/\/$/, ""),
+          anonKey: String(activeConfig.anonKey)
+        };
+      } catch {
+        return DEFAULT_CLOUD_CONFIG;
+      }
+    }
+
+    function configureCloud() {
+      const current = getCloudConfig() || {};
+      const url = prompt("URL del proyecto Supabase:", current.url || "");
+      if (url === null) return;
+      const anonKey = prompt("Anon public key de Supabase:", current.anonKey || "");
+      if (anonKey === null) return;
+      localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify({ url: url.trim(), anonKey: anonKey.trim() }));
+      alert("Nube configurada. Voy a sincronizar los eventos compartidos.");
+      initCloudSync(true);
+    }
+
+    async function cloudRequest(path, options = {}) {
+      const config = getCloudConfig();
+      if (!config) return null;
+      const response = await fetch(`${config.url}/rest/v1/${path}`, {
+        ...options,
+        headers: {
+          apikey: config.anonKey,
+          Authorization: `Bearer ${config.anonKey}`,
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      });
+      if (!response.ok) throw new Error(await response.text());
+      if (response.status === 204) return null;
+      return response.json();
+    }
+
+    async function pullCloudEvents() {
+      const button = document.querySelector("#cloudBtn");
+      if (!getCloudConfig()) return;
+      if (isEditingNow()) return;
+      try {
+        const rows = await cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`);
+        if (!Array.isArray(rows)) return;
+        const selectedId = state.selectedId;
+        state.events = sanitizeEvents(rows.map(row => row.data));
+        state.selectedId = state.events.some(event => event.id === selectedId)
+          ? selectedId
+          : state.events[0]?.id || null;
+        localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+        render();
+        button.textContent = "Nube activa";
+      } catch (error) {
+        button.textContent = "Error nube";
+        console.error("No pude sincronizar proceso", error);
+      }
+    }
+
+    async function cloudUpsertEvents(items) {
+      const cleanItems = sanitizeEvents(items);
+      if (!getCloudConfig() || !cleanItems.length) return { ok: true, skipped: true };
+      try {
+        const rows = cleanItems.map(event => ({
+          id: event.id,
+          data: { ...event, updatedAt: event.updatedAt || new Date().toISOString() },
+          updated_at: event.updatedAt || new Date().toISOString()
+        }));
+        await cloudRequest(PROCESS_TABLE, {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify(rows)
+        });
+        return { ok: true };
+      } catch (error) {
+        console.error("No pude guardar proceso en nube", error);
+        return { ok: false, error };
+      }
+    }
+
+    async function cloudDeleteEvent(id) {
+      if (!getCloudConfig() || !id) return;
+      try {
+        await cloudRequest(`${PROCESS_TABLE}?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+      } catch (error) {
+        console.error("No pude eliminar proceso en nube", error);
+      }
+    }
+
+    function initCloudSync(force = false) {
+      const button = document.querySelector("#cloudBtn");
+      if (!getCloudConfig()) {
+        button.textContent = "Configurar nube";
+        return;
+      }
+      button.textContent = "Nube activa";
+      pullCloudEvents();
+      if (force || !window.happyDecoProcessCloudTimer) {
+        window.happyDecoProcessCloudTimer = setInterval(pullCloudEvents, 3000);
+      }
+      if (!window.happyDecoProcessCloudFocusHandlers) {
+        window.happyDecoProcessCloudFocusHandlers = true;
+        window.addEventListener("focus", pullCloudEvents);
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden && !isEditingNow()) pullCloudEvents();
+        });
+      }
+    }
+
+    function statusLabel(status) {
+      return {
+        consulta: "Consulta",
+        diseno: "Diseño",
+        produccion: "Producción",
+        montaje: "Montaje",
+        cerrado: "Cerrado",
+        trabado: "Trabado"
+      }[status] || status;
+    }
+
+    function formatDate(value) {
+      const date = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function parseMaterials(value) {
+      if (Array.isArray(value)) return value.map(item => String(item || "").trim()).filter(Boolean);
+      return String(value || "")
+        .split(/\n|,/)
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replaceAll("\n", " ");
+    }
+
+    function escapeCssIdent(value) {
+      return globalThis.CSS?.escape ? CSS.escape(value) : String(value).replace(/"/g, '\\"');
+    }
+  </script>
+</body>
+</html>
