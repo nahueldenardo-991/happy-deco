@@ -508,8 +508,20 @@
         materials: parseMaterials(event.materials).length ? parseMaterials(event.materials) : parseProposalItems(event.package || record.incluye || record.propuesta || ""),
         materialChecks: event.materialChecks || {},
         productionStatus: event.productionStatus || "Listo para producir",
-        notes: [event.productionNotes, event.notes, record.observaciones].filter(Boolean).join("\n\n")
+        notes: mergeNotes([event.productionNotes, event.notes, event.id ? "" : record.observaciones])
       };
+    }
+
+    function mergeNotes(items) {
+      const seen = new Set();
+      return items
+        .map(note => cleanText(note).replace(/Producci\?n/g, "Producción"))
+        .filter(note => {
+          if (!note || seen.has(note.toLowerCase())) return false;
+          seen.add(note.toLowerCase());
+          return true;
+        })
+        .join("\n\n");
     }
 
     function renderSheet(item) {

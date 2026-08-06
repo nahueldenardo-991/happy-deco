@@ -651,21 +651,38 @@
       100% { transform: translateX(230%); }
     }
 
-    .materials-editor {
+    .materials-editor,
+    .materials-list {
       display: grid;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .materials-bulk {
-      width: 100%;
-      min-height: 190px;
-      padding: 14px;
+    .material-row {
+      align-items: stretch;
+      padding: 10px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff;
-      resize: vertical;
+    }
+
+    .material-row input {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
       font-size: 16px;
-      line-height: 1.45;
+      background: #fff;
+    }
+
+    .material-row input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
+    }
+
+    .material-row .danger {
+      min-width: 88px;
     }
 
     .materials-counter {
@@ -736,13 +753,15 @@
       }
 
       .sketch-actions,
-      .materials-actions {
+      .materials-actions,
+      .material-row {
         display: grid;
         grid-template-columns: 1fr;
       }
 
       .sketch-actions > *,
       .materials-actions > *,
+      .material-row > *,
       .upload-hint-pill {
         width: 100%;
       }
@@ -1249,7 +1268,12 @@
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
       detail.querySelector("[data-add-material]")?.addEventListener("click", addMaterial);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
-      detail.querySelector("[data-materials-bulk]")?.addEventListener("input", updateMaterialsDraft);
+      detail.querySelectorAll("[data-material-input]").forEach(input => {
+        input.addEventListener("input", updateMaterialsDraft);
+      });
+      detail.querySelectorAll("[data-remove-material]").forEach(button => {
+        button.addEventListener("click", () => removeMaterial(Number(button.dataset.removeMaterial)));
+      });
 
       detail.querySelector("#deleteEvent").addEventListener("click", deleteSelected);
       detail.querySelector("#duplicateEvent").addEventListener("click", duplicateSelected);
@@ -1366,22 +1390,21 @@
 
     function renderMaterialsEditor(event) {
       const materials = Array.isArray(event.materials) ? event.materials : parseMaterials(event.materials);
-      const materialText = materials.join("\n");
-      const materialCount = parseMaterials(materialText).length;
+      const rows = materials.length ? materials : [""];
+      const materialCount = parseMaterials(materials).length;
       return `
         <div class="sketch-card">
           <div class="section-title">
             <label>Listado de materiales</label>
             <div class="materials-actions">
-              <button class="ghost" type="button" data-add-material>Agregar línea</button>
+              <button class="ghost" type="button" data-add-material>Agregar material</button>
               <button class="primary" type="button" data-save-materials>Guardar materiales</button>
             </div>
           </div>
           <div class="materials-editor">
-            <textarea class="materials-bulk" data-materials-bulk rows="8" placeholder="Ej:
-2 paneles
-Globos rosa
-Nombre impreso">${escapeHtml(materialText)}</textarea>
+            <div class="materials-list" data-materials-list>
+              ${rows.map((material, index) => renderMaterialRow(material, index)).join("")}
+            </div>
             <div class="materials-counter" data-materials-counter>${materialCount} ítem${materialCount === 1 ? "" : "s"} detectado${materialCount === 1 ? "" : "s"}</div>
           </div>
           <div class="save-progress" data-materials-progress>
@@ -1389,7 +1412,16 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
             <span>Guardando y sincronizando...</span>
           </div>
           <div class="materials-status" data-materials-status></div>
-          <span class="hint">Escribí un material por línea y tocá Guardar materiales. Cada línea guardada se convierte en un check de la ficha de producción.</span>
+          <span class="hint">Cargá un material por casilla y tocá Guardar materiales. Cada material guardado se convierte en un check de la ficha de producción.</span>
+        </div>
+      `;
+    }
+
+    function renderMaterialRow(material, index) {
+      return `
+        <div class="material-row" data-material-row>
+          <input data-material-input value="${escapeAttr(material || "")}" placeholder="Ej: Panel curvo con patas" aria-label="Material ${index + 1}">
+          <button class="danger" type="button" data-remove-material="${index}">Quitar</button>
         </div>
       `;
     }
@@ -1569,23 +1601,41 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
     }
 
     function addMaterial() {
-      const textarea = detail.querySelector("[data-materials-bulk]");
-      if (!textarea) return;
-      const needsBreak = textarea.value.trim() && !textarea.value.endsWith("\n");
-      textarea.value += needsBreak ? "\n" : "";
-      textarea.focus();
-      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-      updateMaterialsDraft();
+      const event = getSelected();
+      if (!event) return;
+      event.materials = readMaterialsRows();
+      event.materials.push("");
+      event.updatedAt = new Date().toISOString();
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      renderDetail();
+      requestAnimationFrame(() => {
+        const inputs = detail.querySelectorAll("[data-material-input]");
+        const last = inputs[inputs.length - 1];
+        if (last) last.focus();
+      });
+      setStatus(detail.querySelector("[data-materials-status]"), "Material agregado. Recordá guardar cambios.");
+    }
+
+    function removeMaterial(index) {
+      const event = getSelected();
+      if (!event) return;
+      const values = readMaterialsRows();
+      values.splice(index, 1);
+      event.materials = values.length ? values : [""];
+      event.updatedAt = new Date().toISOString();
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      renderDetail();
+      setStatus(detail.querySelector("[data-materials-status]"), "Material quitado. Recordá guardar cambios.");
     }
 
     function updateMaterialsDraft() {
       const event = getSelected();
       if (!event) return;
-      const text = readMaterialsText();
-      event.materials = text.split("\n");
+      const materials = readMaterialsRows();
+      event.materials = materials;
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
-      updateMaterialsCounter(text);
+      updateMaterialsCounter(materials);
       setStatus(detail.querySelector("[data-materials-status]"), "Cambios sin guardar");
     }
 
@@ -1593,7 +1643,7 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
       const event = getSelected();
       if (!event) return;
       if (!options.silent) showMaterialSaveProgress("Guardando materiales...");
-      event.materials = parseMaterials(readMaterialsText());
+      event.materials = parseMaterials(readMaterialsRows());
       event.updatedAt = new Date().toISOString();
       const result = await saveEventsConfirmed();
       renderList();
@@ -1604,20 +1654,18 @@ Nombre impreso">${escapeHtml(materialText)}</textarea>
       if (!options.silent) {
         window.setTimeout(() => showMaterialSaveDone("Materiales guardados y sincronizados"), 450);
       }
-      if (!options.keepView && !options.silent) {
-        window.setTimeout(() => renderDetail(), 900);
-      }
       return result;
     }
 
-    function readMaterialsText() {
-      return detail.querySelector("[data-materials-bulk]")?.value || "";
+    function readMaterialsRows() {
+      return [...detail.querySelectorAll("[data-material-input]")]
+        .map(input => input.value.trim());
     }
 
-    function updateMaterialsCounter(text = readMaterialsText()) {
+    function updateMaterialsCounter(materials = readMaterialsRows()) {
       const counter = detail.querySelector("[data-materials-counter]");
       if (!counter) return;
-      const count = parseMaterials(text).length;
+      const count = parseMaterials(materials).length;
       counter.textContent = `${count} ítem${count === 1 ? "" : "s"} detectado${count === 1 ? "" : "s"}`;
     }
 
