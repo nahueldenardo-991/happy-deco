@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manual Interactivo | Happy Deco</title>
+  <style>
+    :root {
+      --bg: #fff9f1;
+      --panel: #ffffff;
+      --ink: #3a2d35;
+      --muted: #82717a;
+      --line: #f2dce7;
+      --rose: #ff96bf;
+      --rose-dark: #cc5f8b;
+      --teal: #7edbdf;
+      --teal-dark: #2c9791;
+      --gold: #ffd67a;
+      --green: #8ce1ce;
+      --red: #d96666;
+      --lavender: #cfabe9;
+      --shadow: 0 20px 50px rgba(148, 96, 126, .13);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(255, 150, 191, .12) 0 14%, transparent 14% 100%),
+        linear-gradient(45deg, transparent 0 78%, rgba(126, 219, 223, .16) 78% 100%),
+        linear-gradient(180deg, #fff 0, var(--bg) 360px),
+        var(--bg);
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; border: 0; }
+
+    .shell {
+      width: min(1280px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px;
+      border: 2px solid rgba(255, 150, 191, .24);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,245,250,.96));
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 12px;
+      z-index: 5;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 150px;
+      height: 88px;
+      object-fit: contain;
+      background: #fff;
+      border: 4px solid #fff;
+      border-radius: 18px;
+      box-shadow: 0 14px 30px rgba(126, 219, 223, .28);
+    }
+
+    .eyebrow {
+      color: var(--rose-dark);
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 6px; font-size: clamp(28px, 4vw, 48px); line-height: 1; }
+    h2 { margin-bottom: 10px; font-size: clamp(22px, 2.4vw, 32px); }
+    h3 { margin-bottom: 8px; font-size: 18px; }
+
+    .subtitle {
+      color: var(--muted);
+      line-height: 1.45;
+      margin-bottom: 0;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn,
+    .ghost,
+    .primary,
+    .tab {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: #fff;
+      font-weight: 900;
+      text-decoration: none;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .primary,
+    .tab.active {
+      color: #fff;
+      background: var(--teal-dark);
+      border-color: var(--teal-dark);
+    }
+
+    .btn:hover,
+    .ghost:hover,
+    .primary:hover,
+    .tab:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(58,45,53,.08);
+    }
+
+    .hero {
+      margin: 18px 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.94);
+      box-shadow: 0 16px 36px rgba(72,52,35,.08);
+      padding: 18px;
+    }
+
+    .quick-map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .map-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      min-height: 122px;
+    }
+
+    .map-card strong { display: block; margin-bottom: 8px; }
+    .map-card span { color: var(--muted); font-size: 14px; line-height: 1.35; }
+
+    .role-tabs,
+    .manual-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 10px 0 16px;
+    }
+
+    .role-output {
+      display: grid;
+      gap: 10px;
+    }
+
+    .role-card {
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--teal);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .section {
+      scroll-margin-top: 128px;
+      margin-top: 18px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 10px;
+      counter-reset: steps;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .step::before {
+      counter-increment: steps;
+      content: counter(steps);
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--teal);
+      color: #fff;
+      font-weight: 950;
+    }
+
+    .visual-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .visual-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      background: #fff1f7;
+      border-bottom: 1px solid var(--line);
+      font-weight: 900;
+    }
+
+    .fake-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .fake-table th,
+    .fake-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .fake-table th {
+      background: #fff8fb;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+      background: #fff1f7;
+      color: var(--rose-dark);
+    }
+
+    .tag.green { background: rgba(140,225,206,.24); color: #247f78; }
+    .tag.red { background: rgba(217,102,102,.15); color: #b04444; }
+    .tag.gold { background: rgba(255,214,122,.28); color: #8b6500; }
+    .tag.teal { background: rgba(126,219,223,.24); color: #247f78; }
+
+    .fake-form {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .control {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 750;
+    }
+
+    .mini-flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .flow-step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+      min-height: 160px;
+    }
+
+    .flow-step strong { display: block; margin-bottom: 8px; }
+    .flow-step label {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin: 8px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .simulator {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, .8fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .result-box {
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--teal);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .result-box.warning { border-left-color: var(--red); }
+    .result-box.good { border-left-color: var(--green); }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .check-item input {
+      width: 20px;
+      height: 20px;
+      margin-top: 1px;
+      accent-color: var(--teal-dark);
+    }
+
+    .callout {
+      padding: 14px;
+      border: 1px solid rgba(255,214,122,.8);
+      border-left: 6px solid var(--gold);
+      border-radius: 8px;
+      background: rgba(255,214,122,.18);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 1020px) {
+      .hero,
+      .grid-2,
+      .simulator {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-map,
+      .grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .topbar {
+        position: static;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .shell { width: min(100% - 20px, 1280px); padding-top: 10px; }
+      .brand { align-items: flex-start; flex-direction: column; }
+      .brand img { width: 136px; height: 80px; }
+      .quick-map,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+      .actions a,
+      .actions button,
+      .role-tabs button,
+      .manual-nav a {
+        width: 100%;
+      }
+      .fake-table { min-width: 680px; }
+      .visual-card { overflow-x: auto; }
+    }
+  </style>
+  <link rel="stylesheet" href="../assets/ux-polish.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="../assets/happy-deco-logo.png" alt="Happy Deco">
+        <div>
+          <div class="eyebrow">Manual interactivo</div>
+          <h1>Cómo usar el sistema Happy Deco</h1>
+          <p class="subtitle">Guía visual para cargar eventos, pasar a proceso, preparar producción y evitar que queden pendientes invisibles.</p>
+        </div>
+      </div>
+      <nav class="actions" aria-label="Accesos principales">
+        <a class="btn" href="../">Dashboard</a>
+        <a class="btn" href="../proceso/">Proceso</a>
+        <a class="btn" href="../produccion/">Producción</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="panel">
+        <div class="eyebrow">Mapa rápido</div>
+        <h2>La lógica del sistema</h2>
+        <p class="subtitle">El Dashboard concentra la información comercial. Proceso ordena lo operativo. Producción muestra sólo lo necesario para preparar y montar.</p>
+        <div class="quick-map">
+          <div class="map-card">
+            <strong>Dashboard</strong>
+            <span>Carga comercial, fechas, responsable, estado, agenda y datos administrativos.</span>
+          </div>
+          <div class="map-card">
+            <strong>Proceso</strong>
+            <span>Checks por etapa, boceto, materiales y preparación interna.</span>
+          </div>
+          <div class="map-card">
+            <strong>Producción</strong>
+            <span>Ficha limpia para Xime y Juli: datos clave, boceto y checklist.</span>
+          </div>
+          <div class="map-card">
+            <strong>Calendario</strong>
+            <span>Agenda eventos y reuniones para que el equipo reciba avisos.</span>
+          </div>
+        </div>
+      </div>
+      <aside class="panel">
+        <div class="eyebrow">Por rol</div>
+        <h2>Qué tiene que mirar cada una</h2>
+        <div class="role-tabs" role="tablist">
+          <button class="tab active" data-role="cati" type="button">Cati</button>
+          <button class="tab" data-role="xime" type="button">Xime</button>
+          <button class="tab" data-role="juli" type="button">Juli</button>
+          <button class="tab" data-role="nahuel" type="button">Nahuel</button>
+        </div>
+        <div class="role-output" id="roleOutput"></div>
+      </aside>
+    </section>
+
+    <nav class="panel manual-nav" aria-label="Secciones del manual">
+      <a class="ghost" href="#dashboard">Dashboard</a>
+      <a class="ghost" href="#proceso">Proceso</a>
+      <a class="ghost" href="#produccion">Producción</a>
+      <a class="ghost" href="#agenda">Agenda</a>
+      <a class="ghost" href="#trabado">Trabados</a>
+      <a class="ghost" href="#rutina">Rutina sugerida</a>
+    </nav>
+
+    <section class="section panel" id="dashboard">
+      <div class="eyebrow">1. Dashboard</div>
+      <h2>Cargar y controlar un evento</h2>
+      <div class="grid-2">
+        <div class="step-list">
+          <div class="step"><div><strong>Cargar registro</strong><p class="subtitle">Usar Nuevo evento y completar cliente, homenajeado, edad, temática, tipo de evento, propuesta y fechas.</p></div></div>
+          <div class="step"><div><strong>Definir etapa comercial</strong><p class="subtitle">Elegir Presupuesto enviado, Seguimiento, Señado, Pagado completo o Cancelado.</p></div></div>
+          <div class="step"><div><strong>Definir operativo</strong><p class="subtitle">Cuando ya puede prepararse, cambiar a Listo para producir. Eso habilita la ficha de Producción.</p></div></div>
+          <div class="step"><div><strong>Agendar</strong><p class="subtitle">Usar el botón de agenda. Debe quedar verde sólo si efectivamente se creó en Google Calendar.</p></div></div>
+        </div>
+        <div class="visual-card">
+          <div class="visual-head">
+            <span>Ejemplo visual del dashboard</span>
+            <span class="tag green">Agendado</span>
+          </div>
+          <table class="fake-table">
+            <thead>
+              <tr>
+                <th>Cierre</th>
+                <th>Evento</th>
+                <th>Cliente</th>
+                <th>Etapa</th>
+                <th>Operativo</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>06/08/2026</td>
+                <td>20/09/2026</td>
+                <td><strong>Prueba Nahuel</strong><br><span class="small">Nahuel · 1</span></td>
+                <td><span class="tag gold">Señado</span></td>
+                <td><span class="tag teal">Listo para producir</span></td>
+                <td>Xime + Juli</td>
+              </tr>
+              <tr>
+                <td>08/08/2026</td>
+                <td>Sin fecha</td>
+                <td><strong>Consulta nueva</strong><br><span class="small">Temática a definir</span></td>
+                <td><span class="tag">Presupuesto enviado</span></td>
+                <td><span class="tag red">Diseño pendiente</span></td>
+                <td>Cati</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section panel" id="proceso">
+      <div class="eyebrow">2. Proceso</div>
+      <h2>Pasar del evento vendido a una ejecución ordenada</h2>
+      <div class="mini-flow">
+        <div class="flow-step">
+          <strong>Consulta</strong>
+          <label><input type="checkbox" checked> Datos básicos</label>
+          <label><input type="checkbox" checked> Fecha y lugar</label>
+          <label><input type="checkbox"> Temática definida</label>
+        </div>
+        <div class="flow-step">
+          <strong>Diseño y venta</strong>
+          <label><input type="checkbox" checked> Moodboard</label>
+          <label><input type="checkbox"> Boceto en producción</label>
+          <label><input type="checkbox"> Propuesta enviada</label>
+        </div>
+        <div class="flow-step">
+          <strong>Traspaso</strong>
+          <label><input type="checkbox"> Imprenta pedida</label>
+          <label><input type="checkbox"> Nombre listo</label>
+          <label><input type="checkbox"> Seña facturada</label>
+        </div>
+        <div class="flow-step">
+          <strong>Producción</strong>
+          <label><input type="checkbox"> Compras</label>
+          <label><input type="checkbox"> Materiales</label>
+          <label><input type="checkbox"> Carga planificada</label>
+        </div>
+        <div class="flow-step">
+          <strong>Montaje</strong>
+          <label><input type="checkbox"> Montaje realizado</label>
+          <label><input type="checkbox"> Fotos guardadas</label>
+          <label><input type="checkbox"> Saldo cerrado</label>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:18px">
+        <div class="visual-card">
+          <div class="visual-head">
+            <span>Cargar boceto</span>
+            <span class="tag teal">JPG, PNG, PDF o Word</span>
+          </div>
+          <div class="fake-form">
+            <div class="field">
+              <label>Boceto del evento</label>
+              <div class="control" style="height:90px; display:grid; place-items:center; color:var(--muted)">Tocá para cargar el boceto</div>
+            </div>
+            <button class="primary" type="button">Cargar archivo</button>
+            <p class="small">El sistema muestra una barra mientras lee, comprime, guarda y sincroniza.</p>
+          </div>
+        </div>
+        <div class="visual-card">
+          <div class="visual-head">
+            <span>Cargar materiales</span>
+            <span class="tag green">Uno por casilla</span>
+          </div>
+          <div class="fake-form">
+            <div class="field"><label>Material 1</label><input class="control" value="Panel curvo con patas"></div>
+            <div class="field"><label>Material 2</label><input class="control" value="Globos celeste y blanco"></div>
+            <div class="field"><label>Material 3</label><input class="control" value="Nombre impreso Nahuel"></div>
+            <button class="primary" type="button">Guardar materiales</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section panel" id="produccion">
+      <div class="eyebrow">3. Producción</div>
+      <h2>La ficha que usa Xime y Juli</h2>
+      <div class="grid-2">
+        <div>
+          <p class="subtitle">Producción muestra eventos que están listos para producir o que tienen materiales/boceto cargados en Proceso. Los finalizados se ocultan para que no ocupen lugar.</p>
+          <div class="callout" style="margin-top:12px">
+            <strong>Regla clave:</strong> usar <strong>Decorado</strong> si el evento ya está armado pero debe seguir visible. Usar <strong>Finalizado</strong> sólo cuando puede desaparecer de esta pantalla.
+          </div>
+        </div>
+        <div class="visual-card">
+          <div class="visual-head">
+            <span>Ficha ejemplo</span>
+            <span class="tag teal">Listo para producir</span>
+          </div>
+          <div class="fake-form">
+            <div class="grid-2">
+              <div class="field"><label>Fecha</label><div class="control">20/09/2026</div></div>
+              <div class="field"><label>Horario</label><div class="control">18:00</div></div>
+              <div class="field"><label>Clienta</label><div class="control">Prueba Nahuel</div></div>
+              <div class="field"><label>Temática</label><div class="control">Prueba Happy Deco</div></div>
+            </div>
+            <div class="checklist">
+              <label class="check-item"><input type="checkbox"> Panel de prueba</label>
+              <label class="check-item"><input type="checkbox"> Globos de prueba</label>
+              <label class="check-item"><input type="checkbox"> Nombre impreso Nahuel</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section panel" id="agenda">
+      <div class="eyebrow">4. Agenda</div>
+      <h2>Cómo usar Google Calendar</h2>
+      <div class="grid-3">
+        <div class="map-card"><strong>Sin agendar</strong><span>Rojo. El evento todavía no fue enviado correctamente al calendario.</span></div>
+        <div class="map-card"><strong>Agendado</strong><span>Verde. Sólo debe aparecer si el evento se creó en Google Calendar.</span></div>
+        <div class="map-card"><strong>Recordatorios</strong><span>El calendario avisa antes del evento según la configuración del sistema.</span></div>
+      </div>
+    </section>
+
+    <section class="section panel" id="trabado">
+      <div class="eyebrow">5. Simulador</div>
+      <h2>Cuándo un evento aparece como Trabado</h2>
+      <div class="simulator">
+        <div class="fake-form">
+          <div class="field">
+            <label>Estado del proceso</label>
+            <select class="control" id="simStatus">
+              <option value="consulta">Consulta</option>
+              <option value="diseno">Diseño</option>
+              <option value="produccion" selected>Producción</option>
+              <option value="montaje">Montaje</option>
+              <option value="cerrado">Cerrado</option>
+            </select>
+          </div>
+          <label class="check-item"><input id="simDate" type="checkbox" checked> Tiene fecha del evento</label>
+          <label class="check-item"><input id="simPlace" type="checkbox"> Tiene lugar confirmado</label>
+          <label class="check-item"><input id="simDeposit" type="checkbox"> Seña registrada</label>
+          <label class="check-item"><input id="simTransfer" type="checkbox"> Traspaso a producción completo</label>
+          <label class="check-item"><input id="simProduction" type="checkbox"> Producción completa</label>
+          <label class="check-item"><input id="simBalance" type="checkbox"> Saldo cerrado</label>
+        </div>
+        <div class="result-box warning" id="simResult"></div>
+      </div>
+    </section>
+
+    <section class="section panel" id="rutina">
+      <div class="eyebrow">6. Rutina sugerida</div>
+      <h2>Cómo usarlo sin que se vuelva una carga más</h2>
+      <div class="checklist">
+        <label class="check-item"><input type="checkbox"> Al entrar una consulta, Cati o quien atienda carga el registro en Dashboard.</label>
+        <label class="check-item"><input type="checkbox"> Al señar, se actualiza etapa comercial y se revisa si debe pasar a Proceso.</label>
+        <label class="check-item"><input type="checkbox"> Antes de producir, Xime revisa Proceso: boceto, materiales, imprenta y faltantes.</label>
+        <label class="check-item"><input type="checkbox"> Juli usa Producción para preparar materiales y marcar checklist.</label>
+        <label class="check-item"><input type="checkbox"> Después del evento, se cambia a Decorado o Finalizado según corresponda.</label>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const roleContent = {
+      cati: [
+        ["Carga comercial", "Registrar consultas, temática, propuesta y estado comercial."],
+        ["Diseño", "Subir bocetos o referencias cuando estén listos para pasar a producción."],
+        ["Seguimiento", "Mantener actualizado si está enviado, señado, pagado o cancelado."]
+      ],
+      xime: [
+        ["Operativo", "Revisar estado operativo, fecha, lugar, materiales y traspaso."],
+        ["Producción", "Validar que todo lo listo para producir tenga ficha clara."],
+        ["Cierre", "Controlar montaje, saldo, facturación y finalización."]
+      ],
+      juli: [
+        ["Producción", "Entrar a la ficha, ver boceto, revisar datos clave y preparar materiales."],
+        ["Checklist", "Marcar cada material cuando esté preparado."],
+        ["Estado", "Usar En preparación, Materiales listos, Decorado o Finalizado según avance."]
+      ],
+      nahuel: [
+        ["Control", "Mirar Panel de control, trabados, próximos eventos y pendientes."],
+        ["Mejora", "Detectar cuellos de botella y ajustar procesos con el equipo."],
+        ["Soporte", "Revisar si Dashboard, Proceso, Producción y Calendar están sincronizando."]
+      ]
+    };
+
+    const roleOutput = document.querySelector("#roleOutput");
+    document.querySelectorAll("[data-role]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-role]").forEach(item => item.classList.toggle("active", item === button));
+        renderRole(button.dataset.role);
+      });
+    });
+
+    function renderRole(role) {
+      roleOutput.innerHTML = roleContent[role].map(([title, text]) => `
+        <div class="role-card">
+          <strong>${escapeHtml(title)}</strong>
+          <p class="subtitle">${escapeHtml(text)}</p>
+        </div>
+      `).join("");
+    }
+
+    const simFields = ["simStatus", "simDate", "simPlace", "simDeposit", "simTransfer", "simProduction", "simBalance"]
+      .map(id => document.querySelector(`#${id}`));
+    simFields.forEach(field => field.addEventListener("change", updateSimulator));
+
+    function updateSimulator() {
+      const status = document.querySelector("#simStatus").value;
+      const hasDate = document.querySelector("#simDate").checked;
+      const hasPlace = document.querySelector("#simPlace").checked;
+      const hasDeposit = document.querySelector("#simDeposit").checked;
+      const transferDone = document.querySelector("#simTransfer").checked;
+      const productionDone = document.querySelector("#simProduction").checked;
+      const balanceDone = document.querySelector("#simBalance").checked;
+      const blockers = [];
+
+      if (status === "produccion" && !transferDone) blockers.push("Producción arrancó sin traspaso completo.");
+      if (status === "montaje" && !productionDone) blockers.push("Montaje cercano con producción incompleta.");
+      if (["diseno", "produccion", "montaje", "cerrado"].includes(status) && !hasDeposit) blockers.push("Hay avance sin seña registrada.");
+      if (!hasDate) blockers.push("Falta fecha del evento.");
+      if (status !== "consulta" && !hasPlace) blockers.push("Falta lugar confirmado.");
+      if (status === "cerrado" && !balanceDone) blockers.push("Evento cerrado operativamente con saldo pendiente.");
+
+      const box = document.querySelector("#simResult");
+      box.className = `result-box ${blockers.length ? "warning" : "good"}`;
+      box.innerHTML = blockers.length
+        ? `<span class="tag red">Trabado</span><h3>Revisar antes de avanzar</h3><p class="subtitle">${blockers.map(escapeHtml).join("<br>")}</p>`
+        : `<span class="tag green">Sin trabas</span><h3>Evento consistente</h3><p class="subtitle">No se detectan faltantes críticos para esta combinación.</p>`;
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    renderRole("cati");
+    updateSimulator();
+  </script>
+</body>
+</html>
