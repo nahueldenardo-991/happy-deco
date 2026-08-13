@@ -577,6 +577,31 @@
       gap: 18px;
     }
 
+    #manualView {
+      display: none;
+    }
+
+    .dashboard.manual-mode > :not(.view-tabs):not(#manualView) {
+      display: none;
+    }
+
+    .dashboard.manual-mode #manualView {
+      display: grid;
+    }
+
+    .manual-frame-panel {
+      min-height: 78vh;
+      overflow: hidden;
+    }
+
+    .manual-frame {
+      width: 100%;
+      min-height: 78vh;
+      border: 0;
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
     .control-panel {
       display: grid;
       gap: 18px;
@@ -1421,6 +1446,22 @@
       </aside>
 
       <main class="dashboard">
+        <div class="view-tabs" aria-label="Solapas del dashboard">
+          <button class="view-tab active" type="button" data-dashboard-view="operacion">Operación</button>
+          <button class="view-tab" type="button" data-dashboard-view="manual">Manual de usuario</button>
+        </div>
+
+        <section class="panel manual-frame-panel" id="manualView" aria-label="Manual de usuario">
+          <div class="panel-head">
+            <div>
+              <h2>Manual de usuario completo</h2>
+              <div class="small-note">Guía interactiva para Dashboard, Panel de control, CRM, Proceso, Producción, Finanzas y Agenda.</div>
+            </div>
+            <a class="btn secondary" href="manual/" target="_blank" rel="noopener">Abrir en pantalla completa</a>
+          </div>
+          <iframe class="manual-frame" title="Manual de usuario Happy Deco" src="manual/"></iframe>
+        </section>
+
         <section class="metrics" aria-label="Resumen">
           <article class="metric teal">
             <div class="label">Registros</div>
@@ -1707,6 +1748,9 @@
     els.refreshCloudBtn.addEventListener("click", () => pullCloudRecords({ manual: true }));
     els.clearBtn.addEventListener("click", clearAll);
     els.resetFiltersBtn.addEventListener("click", resetFilters);
+    document.querySelectorAll("[data-dashboard-view]").forEach(tab => {
+      tab.addEventListener("click", () => switchDashboardView(tab.dataset.dashboardView, tab));
+    });
     [els.filterEtapa, els.filterOperativo, els.filterCanal, els.filterResponsable, els.filterPeriodoTipo, els.filterPeriodoValor].forEach(select => {
       select.addEventListener("change", render);
     });
@@ -1727,6 +1771,13 @@
 
     function initDefaults() {
       document.getElementById("fechaCierre").value = new Date().toISOString().slice(0, 10);
+    }
+
+    function switchDashboardView(view, selectedTab) {
+      document.querySelector(".dashboard")?.classList.toggle("manual-mode", view === "manual");
+      document.querySelectorAll("[data-dashboard-view]").forEach(tab => {
+        tab.classList.toggle("active", tab === selectedTab);
+      });
     }
 
     function loadRecords() {
