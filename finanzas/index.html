@@ -99,116 +99,112 @@ equilibrio.innerHTML=`<div class="explain"><strong>¿Qué es el punto de equilib
 publicidad.innerHTML=`<div class="explain"><strong>¿Qué se carga aquí?</strong> Una fila por campaña o mes: inversión, consultas, reservas y facturación atribuida. Así se distingue publicidad que genera negocio de publicidad que sólo genera movimiento.</div><div class="card"><div class="section-head"><div><h2>Rendimiento publicitario</h2><p class="crud-help">ROAS 3x significa que por cada $1 invertido se atribuyeron $3 de ventas; no equivale a ganancia.</p></div><button class="btn primary" data-add="ad">+ Agregar campaña</button></div><div class="table-wrap"><table><thead><tr><th>Mes / campaña</th><th class="num">Gasto</th><th class="num">Leads</th><th class="num">Reservas</th><th class="num">Costo/lead</th><th class="num">Costo/reserva</th><th class="num">Conversión</th><th class="num">ROAS</th><th></th></tr></thead><tbody>${state.ads.map((a,i)=>`<tr><td><strong>${a.month}</strong><br><span class="mini">${a.campaign||'General'}</span></td><td class="num">${money(a.spend)}</td><td class="num">${a.leads}</td><td class="num">${a.bookings}</td><td class="num">${money(a.leads?a.spend/a.leads:0)}</td><td class="num">${money(a.bookings?a.spend/a.bookings:0)}</td><td class="num">${pct(a.leads?a.bookings/a.leads:0)}</td><td class="num">${a.spend?(a.revenue/a.spend).toFixed(1):'0.0'}x</td><td class="action-cell"><button class="icon-btn" data-edit="ad" data-index="${i}">Editar</button><button class="icon-btn danger-btn" data-remove="ad" data-index="${i}">Eliminar</button></td></tr>`).join('')}</tbody></table></div></div>`;
 manual.innerHTML=`
 <div class="card" style="margin-bottom:14px">
-  <h2>Manual de uso para las socias</h2>
-  <p>Esta herramienta ayuda a responder tres preguntas: <strong>¿cuánto cuesta cada evento?, ¿cuánto ganamos realmente? y ¿cuánto dinero podemos retirar sin descuidar la caja?</strong></p>
-  <div class="note"><strong>Regla principal:</strong> dinero cobrado no significa ganancia. Antes de retirar hay que descontar costos, impuestos, reposición, emergencia y reinversión.</div>
+  <h2>Manual de uso financiero — desde cero</h2>
+  <p>El sistema conecta las ventas con el seguimiento de cobros y permite registrar los costos reales del negocio. El objetivo es conocer <strong>qué se vendió, qué se cobró, cuánto costó trabajar y qué resultado dejó el mes</strong>.</p>
+  <div class="note"><strong>Dos lecturas distintas:</strong> Cobranzas muestra el dinero recibido y pendiente. Rentabilidad muestra si los eventos realizados dejaron resultado. Una seña mejora la caja, pero todavía no es ganancia.</div>
 </div>
 <div class="grid two">
   <div class="card">
-    <h2>1. Antes de empezar</h2>
-    <p>Entren primero a <strong>Configuración</strong> y revisen:</p>
+    <h2>1. Preparación inicial</h2>
+    <p>Antes de analizar resultados, completen esta base una sola vez y revísenla mensualmente:</p>
     <ol>
-      <li>Margen mínimo y margen objetivo.</li>
-      <li>Impuestos y costo por kilómetro.</li>
-      <li>Costos fijos mensuales.</li>
-      <li>Porcentajes de reposición, emergencia y reinversión.</li>
+      <li>En <strong>Ítems y precios</strong>, carguen materiales, servicios, viajes, impresiones y horas con su precio unitario vigente.</li>
+      <li>En <strong>Personal</strong>, carguen a todas las personas —también las socias— con su valor hora.</li>
+      <li>En <strong>Mobiliario</strong>, carguen elementos reutilizables, valor de reposición y vida útil estimada.</li>
+      <li>En <strong>Configuración</strong>, revisen costos fijos, márgenes, impuestos, kilómetros y reservas.</li>
+      <li>En <strong>Propuestas</strong>, creen cada servicio y definan su precio de venta.</li>
     </ol>
-    <div class="alert"><strong>Importante:</strong> los valores identificados como DEMO son ejemplos. No deben usarse para definir precios reales.</div>
+    <div class="alert"><strong>Importante:</strong> reemplacen los importes DEMO antes de utilizar precios mínimos o recomendados para cotizar.</div>
   </div>
   <div class="card">
-    <h2>2. Cómo cargar un evento</h2>
+    <h2>2. Armar una propuesta correctamente</h2>
     <ol>
-      <li>Presionen <strong>+ Nuevo evento</strong>.</li>
-      <li>Escriban cliente y fecha.</li>
-      <li>Elijan la propuesta vendida.</li>
-      <li>Carguen precio, extras y descuento.</li>
-      <li>Indiquen medio de pago y comisión.</li>
-      <li>Carguen kilómetros. Si ya ocurrió, agreguen horas y costo real.</li>
-      <li>Lean la simulación y presionen <strong>Guardar evento</strong>.</li>
+      <li>Abran <strong>Propuestas</strong> y presionen <strong>Crear propuesta</strong>.</li>
+      <li>Carguen nombre, precio de venta y horas previstas.</li>
+      <li>Presionen <strong>Gestionar componentes</strong>.</li>
+      <li>Agreguen cada elemento por separado, con cantidad y costo unitario.</li>
+      <li>Si el componente ya existe en <strong>Ítems y precios</strong>, selecciónenlo para traer su valor vigente.</li>
+      <li>Guarden los componentes y comparen precio actual, mínimo y recomendado.</li>
     </ol>
-    <p class="muted">Si todavía no conocen el costo real, déjenlo vacío. La herramienta utilizará el costo estándar.</p>
+    <p class="muted">Ejemplo: 2 paneles, 1 guirnalda, 3 horas de armado y 1 traslado son cuatro componentes distintos. Así se puede detectar qué parte encarece la propuesta.</p>
   </div>
 </div>
 <div class="grid two" style="margin-top:14px">
   <div class="card">
-    <h2>3. Cómo leer el semáforo</h2>
+    <h2>3. Desde que se confirma una venta</h2>
+    <ol>
+      <li>La venta se carga y actualiza en el <strong>Dashboard comercial</strong>, con monto total, seña, saldo, fecha y etapa.</li>
+      <li>En Finanzas presionen <strong>Actualizar ventas</strong>.</li>
+      <li>Si está <strong>Señado</strong>, aparece en Cobranzas: la seña figura como cobrada y el resto como pendiente.</li>
+      <li>Si está <strong>Pagado completo</strong>, el saldo queda cerrado.</li>
+      <li>Cuando la etapa comercial o el estado operativo sea <strong>Realizado</strong>, también pasa a Eventos realizados y entra en Rentabilidad.</li>
+    </ol>
+    <div class="note">No vuelvan a cargar en Finanzas una venta que ya está en el Dashboard comercial. Usen el botón de actualización para evitar duplicados.</div>
+  </div>
+  <div class="card">
+    <h2>4. Gestionar cobranzas</h2>
+    <p><strong>Total vendido:</strong> valor completo de las ventas confirmadas.</p>
+    <p><strong>Total cobrado:</strong> señas y pagos registrados en Ventas.</p>
+    <p><strong>Resta cobrar:</strong> monto que todavía deben pagar las clientas.</p>
+    <p><strong>Pendiente:</strong> el evento es futuro y conserva saldo.</p>
+    <p><strong>Vencido:</strong> la fecha del evento pasó y todavía figura saldo.</p>
+    <p><strong>Revisar datos:</strong> falta monto o información suficiente para calcular el cobro.</p>
+    <div class="alert">Si cobran una nueva parte, actualicen seña o saldo en Ventas y luego presionen <strong>Actualizar cobranzas</strong>.</div>
+  </div>
+</div>
+<div class="grid two" style="margin-top:14px">
+  <div class="card">
+    <h2>5. Registrar ingresos y gastos</h2>
+    <h3>Cuando entra dinero</h3>
+    <p>Entren a <strong>Ingresos y gastos</strong>, elijan <strong>Registrar ingreso</strong> y carguen fecha, concepto, categoría e importe. Puede ser una seña, saldo, extra u otro ingreso.</p>
+    <h3>Cuando sale dinero</h3>
+    <p>Elijan <strong>Registrar egreso</strong> y carguen cada pago: materiales, proveedores, sueldos, servicios, impuestos, publicidad o compras.</p>
+    <div class="note">Cargar el movimiento cuando ocurre. No agrupar todo el mes en una sola fila: el detalle permite entender dónde se fue el dinero.</div>
+  </div>
+  <div class="card">
+    <h2>6. Leer rentabilidad y el semáforo</h2>
     <p>${pill('Rentable')} alcanza el margen objetivo configurado.</p>
-    <p>${pill('Revisar')} supera el mínimo, pero todavía está por debajo del objetivo.</p>
+    <p>${pill('Revisar')} supera el mínimo, pero queda debajo del objetivo.</p>
     <p>${pill('No rentable')} no alcanza el margen mínimo.</p>
-    <div class="note">Si un evento da rojo, revisar precio, alcance, horas, logística, desperdicio y extras. Nunca bajar la calidad Happy Deco.</div>
-  </div>
-  <div class="card">
-    <h2>4. Qué mirar en el Dashboard</h2>
-    <p><strong>Facturación:</strong> ventas del mes.</p>
-    <p><strong>Cobrado:</strong> dinero efectivamente recibido.</p>
-    <p><strong>Costos:</strong> recursos consumidos por los eventos.</p>
-    <p><strong>Resultado operativo:</strong> lo que queda después de costos de eventos y estructura mensual.</p>
-    <p><strong>Punto de equilibrio:</strong> cuánto falta vender para cubrir la estructura mensual.</p>
+    <p><strong>Margen de contribución:</strong> venta menos costos variables y directos. Es lo que aporta el evento para pagar la estructura.</p>
+    <p><strong>Resultado operativo:</strong> contribución menos la parte de costos fijos.</p>
+    <div class="note">Ante un resultado bajo, revisen precio, componentes, horas, traslado, comisión, desperdicio, extras y descuentos.</div>
   </div>
 </div>
 <div class="grid two" style="margin-top:14px">
   <div class="card">
-    <h2>5. Para qué sirve cada pantalla</h2>
-    <p><strong>Eventos:</strong> revisar cada trabajo y eliminar cargas incorrectas.</p>
-    <p><strong>Rentabilidad:</strong> detectar qué eventos dejan mayor contribución para pagar la estructura.</p>
-    <p><strong>Propuestas:</strong> comparar costo, precio mínimo y recomendado.</p>
-    <p><strong>Gastos:</strong> controlar costos y presupuesto mensual.</p>
-    <p><strong>Personal:</strong> reconocer el costo del trabajo, incluso el de las socias.</p>
-    <p><strong>Mobiliario:</strong> calcular desgaste y anticipar reposiciones.</p>
-    <p><strong>Caja:</strong> ver cobros, pagos y dinero disponible.</p>
-    <p><strong>Publicidad:</strong> medir leads, reservas y retorno.</p>
+    <h2>7. Entender el punto de equilibrio</h2>
+    <p>Es la facturación necesaria para pagar la estructura mensual sin ganar ni perder.</p>
+    <p><strong>Costos fijos ÷ margen de contribución promedio = punto de equilibrio.</strong></p>
+    <p>Ejemplo: con $1.000.000 de costos fijos y 40% de contribución, se necesitan $2.500.000 de facturación realizada.</p>
+    <div class="alert">Sólo cuentan los eventos realizados. Las señas de eventos futuros forman parte de la caja y las cobranzas, no de la facturación realizada del mes.</div>
   </div>
   <div class="card">
-    <h2>6. Rutina recomendada</h2>
-    <h3>Al cotizar</h3>
-    <p>Simular el evento y confirmar que alcanza el margen mínimo.</p>
-    <h3>Al recibir una seña</h3>
-    <p>Entrar a <strong>Ingresos y gastos</strong>, elegir <strong>Entró dinero</strong> y cargar cliente, fecha e importe. No confundir la seña con ganancia.</p>
-    <h3>Después del evento</h3>
-    <p>Completar horas, costo real, kilómetros, roturas y saldo cobrado.</p>
-    <h3>Una vez por semana</h3>
-    <p>Cargar todas las entradas y salidas de dinero, revisar alertas, cuentas a cobrar y eventos en rojo.</p>
-    <h3>Al cerrar el mes</h3>
-    <p>Comparar presupuesto contra real y recién después evaluar retiros.</p>
-  </div>
-</div>
-<div class="grid two" style="margin-top:14px">
-  <div class="card">
-    <h2>7. Retiros de las socias</h2>
-    <p>El retiro no se calcula mirando el saldo de la cuenta.</p>
-    <p><strong>Resultado operativo</strong><br>menos impuestos y reservas<br>menos reposición<br>menos emergencia<br>menos reinversión<br><strong>= utilidad distribuible</strong></p>
-    <div class="alert">Si la utilidad distribuible es cero o negativa, no corresponde retirar ganancias. La remuneración por trabajar debe registrarse por separado.</div>
-  </div>
-  <div class="card">
-    <h2>8. Cuidado y respaldo de datos</h2>
-    <ol>
-      <li>Presionen <strong>Exportar backup</strong> al finalizar cada semana.</li>
-      <li>Guarden el archivo con la fecha en una carpeta compartida.</li>
-      <li>Para recuperar información, usen <strong>Importar backup</strong> en Configuración.</li>
-      <li>No borren datos DEMO hasta reconocer cómo funciona cada pantalla.</li>
-    </ol>
-    <p class="muted">En esta versión, la información queda guardada en el dispositivo desde el que se carga.</p>
+    <h2>8. Decidir retiros sin debilitar el negocio</h2>
+    <p>El saldo bancario no indica cuánto se puede retirar.</p>
+    <p><strong>Resultado operativo</strong><br>menos impuestos<br>menos reposición de mobiliario<br>menos fondo de emergencia<br>menos reinversión<br><strong>= máximo distribuible</strong></p>
+    <div class="alert">El pago por el trabajo de las socias se registra como costo. La distribución de utilidades se evalúa aparte y sólo después del cierre.</div>
   </div>
 </div>
 <div class="card" style="margin-top:14px">
-  <h2>Checklist de cierre mensual</h2>
+  <h2>9. Rutina simple de trabajo</h2>
   <div class="grid three">
-    <div><strong>Ventas</strong><p>Todos los eventos cargados, descuentos y extras completos.</p></div>
-    <div><strong>Costos</strong><p>Horas, materiales, logística, mobiliario e indirectos revisados.</p></div>
-    <div><strong>Caja</strong><p>Señas, saldos, pagos, deudas y próximos compromisos actualizados.</p></div>
-    <div><strong>Alertas</strong><p>Eventos rojos explicados y acciones definidas.</p></div>
-    <div><strong>Fondos</strong><p>Impuestos, reposición, emergencia y reinversión separados.</p></div>
-    <div><strong>Backup</strong><p>Archivo exportado y guardado en la carpeta compartida.</p></div>
+    <div><strong>Al confirmar una venta</strong><p>Cargar monto, seña, saldo, fecha y etapa en Ventas; luego actualizar Finanzas.</p></div>
+    <div><strong>Al cobrar o pagar</strong><p>Registrar el movimiento ese mismo día y conservar su comprobante.</p></div>
+    <div><strong>Después del evento</strong><p>Marcarlo Realizado y completar costos, horas, extras, roturas y saldo.</p></div>
+    <div><strong>Cada semana</strong><p>Revisar Cobranzas, vencidos, movimientos faltantes y precios desactualizados.</p></div>
+    <div><strong>Cada mes</strong><p>Revisar punto de equilibrio, eventos en rojo, reservas y utilidad distribuible.</p></div>
+    <div><strong>Respaldo</strong><p>Exportar un backup con fecha y guardarlo en la carpeta compartida.</p></div>
   </div>
 </div>
 <div class="card" style="margin-top:14px">
-  <h2>Cómo leer la salud del negocio</h2>
+  <h2>10. Señales de salud del negocio</h2>
   <div class="grid three">
-    <div><strong>Negocio en riesgo</strong><p>No cubre el punto de equilibrio, tiene eventos rojos o no alcanza la caja para los próximos compromisos. No distribuir utilidades.</p></div>
-    <div><strong>Negocio estable</strong><p>Cubre la estructura, paga el trabajo y sostiene impuestos y reposición. Los retiros deben ser prudentes.</p></div>
-    <div><strong>Negocio sano</strong><p>Supera el punto de equilibrio de forma repetida, mantiene reservas, cobra a tiempo y conserva margen sin bajar calidad.</p></div>
+    <div><strong>Atención</strong><p>No cubre el punto de equilibrio, acumula vencidos o tiene eventos debajo del margen mínimo.</p></div>
+    <div><strong>Estable</strong><p>Cubre estructura, paga el trabajo y mantiene al día impuestos y reposición.</p></div>
+    <div><strong>Sano</strong><p>Supera el equilibrio de manera sostenida, cobra a tiempo, mantiene reservas y conserva el margen.</p></div>
   </div>
-  <div class="note"><strong>La meta no es hacer más eventos a cualquier precio.</strong> La meta es vender una cantidad sostenible de eventos rentables, con calidad Happy Deco, horas razonables y caja suficiente.</div>
+  <div class="note"><strong>Criterio final:</strong> vender con margen, cobrar a tiempo, registrar todos los costos y separar reservas antes de distribuir.</div>
 </div>`;
 configuracion.innerHTML=`<div class="grid two"><div class="card"><h2>Supuestos financieros</h2>${settingRows()}</div><div class="card"><h2>Datos y seguridad</h2><p>Los datos quedan persistidos en este dispositivo y se pueden exportar como backup. La arquitectura prevista sincroniza este módulo con la base compartida de Happy Deco.</p><button class="btn" id="importBtn">Importar backup</button> <button class="btn danger" id="deleteDemoBtn">Eliminar datos DEMO</button><input id="importFile" type="file" accept="application/json" hidden><h3>Estado del modelo</h3><p class="good">✓ Fórmulas principales operativas</p><p class="warning">⚠ Costos estándar pendientes de validar con proveedores reales</p></div></div>`;
 bindDynamic(); save()}

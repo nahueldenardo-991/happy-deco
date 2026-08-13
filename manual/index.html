@@ -454,6 +454,7 @@
         <a class="btn" href="../">Dashboard</a>
         <a class="btn" href="../proceso/">Proceso</a>
         <a class="btn" href="../produccion/">Producción</a>
+        <a class="btn" href="../finanzas/">Finanzas</a>
       </nav>
     </header>
 
@@ -500,6 +501,7 @@
       <a class="ghost" href="#produccion">Producción</a>
       <a class="ghost" href="#agenda">Agenda</a>
       <a class="ghost" href="#trabado">Trabados</a>
+      <a class="ghost" href="#finanzas">Finanzas desde cero</a>
       <a class="ghost" href="#rutina">Rutina sugerida</a>
     </nav>
 
@@ -685,8 +687,65 @@
       </div>
     </section>
 
+    <section class="section panel" id="finanzas">
+      <div class="eyebrow">6. Finanzas</div>
+      <h2>Cómo usar el módulo financiero desde cero</h2>
+      <p class="subtitle">Finanzas toma las ventas confirmadas del Dashboard comercial y las combina con costos, gastos y movimientos de dinero. Conviene completar la base en este orden.</p>
+
+      <div class="step-list" style="margin-top:16px">
+        <div class="step"><div><strong>Cargar los precios base</strong><p class="subtitle">En <strong>Ítems y precios</strong>, registrar cada material, servicio, hora, viaje o impresión con una unidad clara y su precio vigente.</p></div></div>
+        <div class="step"><div><strong>Registrar personal y mobiliario</strong><p class="subtitle">Cargar el valor hora de todas las personas, incluidas las socias. En Mobiliario, informar valor de reposición, vida útil y usos acumulados.</p></div></div>
+        <div class="step"><div><strong>Armar las propuestas</strong><p class="subtitle">Crear cada propuesta con su precio de venta y horas previstas. En <strong>Gestionar componentes</strong>, agregar cada elemento con cantidad y costo unitario.</p></div></div>
+        <div class="step"><div><strong>Revisar la configuración</strong><p class="subtitle">Validar costos fijos, márgenes, impuestos, kilómetros y reservas. Reemplazar los valores DEMO antes de usar precios recomendados.</p></div></div>
+        <div class="step"><div><strong>Actualizar las ventas</strong><p class="subtitle">Presionar <strong>Actualizar ventas</strong>. No volver a cargar manualmente una venta que ya existe en el Dashboard comercial.</p></div></div>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="visual-card">
+          <div class="visual-head"><span>Circuito de una venta</span><span class="tag teal">Automático</span></div>
+          <div class="fake-form">
+            <p><strong>Señado:</strong> aparece en Cobranzas. La seña cuenta como cobrada y el resto queda pendiente.</p>
+            <p><strong>Pagado completo:</strong> el saldo queda cerrado.</p>
+            <p><strong>Realizado:</strong> además de Cobranzas, pasa a Eventos realizados y entra en el cálculo de Rentabilidad.</p>
+            <div class="callout"><strong>Importante:</strong> una seña es entrada de caja, pero la venta no forma parte del resultado hasta que el evento esté realizado.</div>
+          </div>
+        </div>
+        <div class="visual-card">
+          <div class="visual-head"><span>Estados de cobranza</span><span class="tag gold">Seguimiento</span></div>
+          <table class="fake-table">
+            <thead><tr><th>Estado</th><th>Qué significa</th><th>Acción</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag gold">Pendiente</span></td><td>Evento futuro con saldo.</td><td>Confirmar fecha acordada de pago.</td></tr>
+              <tr><td><span class="tag red">Vencido</span></td><td>Pasó el evento y queda saldo.</td><td>Revisar y gestionar el cobro.</td></tr>
+              <tr><td><span class="tag green">Cobrado</span></td><td>No queda saldo informado.</td><td>Conservar comprobante.</td></tr>
+              <tr><td><span class="tag">Revisar datos</span></td><td>Falta monto o detalle del cobro.</td><td>Completar la venta y actualizar.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:18px">
+        <div class="map-card"><strong>Ingresos y gastos</strong><span>Registrar cada cobro o pago cuando ocurre. Usar una fila por movimiento, con fecha, concepto, categoría e importe.</span></div>
+        <div class="map-card"><strong>Rentabilidad</strong><span>Comparar venta y costos de eventos realizados. Verde alcanza el objetivo; Revisar queda entre mínimo y objetivo; rojo no alcanza el mínimo.</span></div>
+        <div class="map-card"><strong>Punto de equilibrio</strong><span>Costos fijos ÷ margen de contribución promedio. Indica la facturación realizada necesaria para terminar el mes sin pérdida.</span></div>
+      </div>
+
+      <div class="callout" style="margin-top:18px">
+        <strong>Orden para decidir retiros:</strong> resultado operativo → impuestos → reposición → emergencia → reinversión → utilidad distribuible. El saldo de la cuenta, por sí solo, no indica cuánto puede retirarse.
+      </div>
+
+      <h3 style="margin-top:18px">Rutina financiera recomendada</h3>
+      <div class="checklist">
+        <label class="check-item"><input type="checkbox"> Al confirmar una venta, completar monto, seña, saldo, fecha y etapa en el Dashboard comercial.</label>
+        <label class="check-item"><input type="checkbox"> Al cobrar o pagar, registrar el movimiento ese mismo día.</label>
+        <label class="check-item"><input type="checkbox"> Después del evento, marcarlo Realizado y completar costos, horas, extras y roturas.</label>
+        <label class="check-item"><input type="checkbox"> Una vez por semana, revisar Cobranzas, vencidos y movimientos faltantes.</label>
+        <label class="check-item"><input type="checkbox"> Al cerrar el mes, revisar equilibrio, rentabilidad, reservas y utilidad distribuible.</label>
+      </div>
+    </section>
+
     <section class="section panel" id="rutina">
-      <div class="eyebrow">6. Rutina sugerida</div>
+      <div class="eyebrow">7. Rutina sugerida</div>
       <h2>Cómo usarlo sin que se vuelva una carga más</h2>
       <div class="checklist">
         <label class="check-item"><input type="checkbox"> Al entrar una consulta, Cati o quien atienda carga el registro en Dashboard.</label>
