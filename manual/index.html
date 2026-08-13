@@ -159,6 +159,12 @@
       margin-top: 16px;
     }
 
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
     .map-card {
       padding: 14px;
       border: 1px solid var(--line);
@@ -169,6 +175,29 @@
 
     .map-card strong { display: block; margin-bottom: 8px; }
     .map-card span { color: var(--muted); font-size: 14px; line-height: 1.35; }
+
+    .module-card {
+      display: grid;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .module-card .module-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .module-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
 
     .role-tabs,
     .manual-nav {
@@ -409,6 +438,7 @@
       }
 
       .quick-map,
+      .module-grid,
       .grid-3 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -424,6 +454,7 @@
       .brand { align-items: flex-start; flex-direction: column; }
       .brand img { width: 136px; height: 80px; }
       .quick-map,
+      .module-grid,
       .grid-3 {
         grid-template-columns: 1fr;
       }
@@ -452,8 +483,11 @@
       </div>
       <nav class="actions" aria-label="Accesos principales">
         <a class="btn" href="../">Dashboard</a>
+        <a class="btn" href="../panel-control/">Panel de control</a>
+        <a class="btn" href="../crm/">CRM</a>
         <a class="btn" href="../proceso/">Proceso</a>
         <a class="btn" href="../produccion/">Producción</a>
+        <a class="btn" href="../finanzas/">Finanzas</a>
       </nav>
     </header>
 
@@ -461,7 +495,7 @@
       <div class="panel">
         <div class="eyebrow">Mapa rápido</div>
         <h2>La lógica del sistema</h2>
-        <p class="subtitle">El Dashboard concentra la información comercial. Proceso ordena lo operativo. Producción muestra sólo lo necesario para preparar y montar.</p>
+        <p class="subtitle">El Dashboard concentra la información comercial. Panel de control resume la operación. CRM ordena reuniones. Proceso organiza lo operativo. Producción muestra sólo lo necesario para preparar y montar. Finanzas revisa rentabilidad.</p>
         <div class="quick-map">
           <div class="map-card">
             <strong>Dashboard</strong>
@@ -496,12 +530,70 @@
 
     <nav class="panel manual-nav" aria-label="Secciones del manual">
       <a class="ghost" href="#dashboard">Dashboard</a>
+      <a class="ghost" href="#modulos">Módulos</a>
       <a class="ghost" href="#proceso">Proceso</a>
       <a class="ghost" href="#produccion">Producción</a>
       <a class="ghost" href="#agenda">Agenda</a>
       <a class="ghost" href="#trabado">Trabados</a>
+      <a class="ghost" href="#finanzas">Finanzas desde cero</a>
+      <a class="ghost" href="#problemas">Si algo no aparece</a>
       <a class="ghost" href="#rutina">Rutina sugerida</a>
     </nav>
+
+    <section class="section panel" id="modulos">
+      <div class="eyebrow">Vista completa</div>
+      <h2>Qué hace cada solapa o módulo</h2>
+      <div class="module-grid">
+        <article class="module-card">
+          <div class="module-top"><h3>Dashboard</h3><span class="tag teal">Gestión</span></div>
+          <ul>
+            <li>Cargar consultas, presupuestos y eventos confirmados.</li>
+            <li>Cambiar etapa comercial, operativo, responsable y facturación.</li>
+            <li>Agendar eventos y controlar si quedaron sin agendar.</li>
+          </ul>
+        </article>
+        <article class="module-card">
+          <div class="module-top"><h3>Panel de control</h3><span class="tag green">Resumen</span></div>
+          <ul>
+            <li>Ver KPIs generales y próximos eventos.</li>
+            <li>Entrar al detalle de alertas y pendientes.</li>
+            <li>Revisar estado general sin abrir registro por registro.</li>
+          </ul>
+        </article>
+        <article class="module-card">
+          <div class="module-top"><h3>CRM</h3><span class="tag gold">Reuniones</span></div>
+          <ul>
+            <li>Cargar reuniones con clientas.</li>
+            <li>Indicar modalidad, horario, temática y estado del presupuesto.</li>
+            <li>Agendar reuniones sin compartir detalles operativos con Juli.</li>
+          </ul>
+        </article>
+        <article class="module-card">
+          <div class="module-top"><h3>Proceso</h3><span class="tag teal">Operativo</span></div>
+          <ul>
+            <li>Completar checks por etapa.</li>
+            <li>Cargar boceto y materiales de a uno.</li>
+            <li>Detectar trabas antes de producción o montaje.</li>
+          </ul>
+        </article>
+        <article class="module-card">
+          <div class="module-top"><h3>Producción</h3><span class="tag green">Preparación</span></div>
+          <ul>
+            <li>Usar una ficha limpia por evento.</li>
+            <li>Marcar materiales preparados.</li>
+            <li>Imprimir sólo la ficha necesaria.</li>
+          </ul>
+        </article>
+        <article class="module-card">
+          <div class="module-top"><h3>Finanzas</h3><span class="tag rose">Rentabilidad</span></div>
+          <ul>
+            <li>Revisar ventas, costos, resultado y margen.</li>
+            <li>Controlar cobranzas y eventos realizados.</li>
+            <li>Detectar propuestas que necesitan ajuste de precio.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
 
     <section class="section panel" id="dashboard">
       <div class="eyebrow">1. Dashboard</div>
@@ -685,14 +777,86 @@
       </div>
     </section>
 
+    <section class="section panel" id="finanzas">
+      <div class="eyebrow">6. Finanzas</div>
+      <h2>Cómo usar el módulo financiero desde cero</h2>
+      <p class="subtitle">Finanzas toma las ventas confirmadas del Dashboard comercial y las combina con costos, gastos y movimientos de dinero. Conviene completar la base en este orden.</p>
+
+      <div class="step-list" style="margin-top:16px">
+        <div class="step"><div><strong>Cargar los precios base</strong><p class="subtitle">En <strong>Ítems y precios</strong>, registrar cada material, servicio, hora, viaje o impresión con una unidad clara y su precio vigente.</p></div></div>
+        <div class="step"><div><strong>Registrar personal y mobiliario</strong><p class="subtitle">Cargar el valor hora de todas las personas, incluidas las socias. En Mobiliario, informar valor de reposición, vida útil y usos acumulados.</p></div></div>
+        <div class="step"><div><strong>Armar las propuestas</strong><p class="subtitle">Crear cada propuesta con su precio de venta y horas previstas. En <strong>Gestionar componentes</strong>, agregar cada elemento con cantidad y costo unitario.</p></div></div>
+        <div class="step"><div><strong>Revisar la configuración</strong><p class="subtitle">Validar costos fijos, márgenes, impuestos, kilómetros y reservas. Reemplazar los valores DEMO antes de usar precios recomendados.</p></div></div>
+        <div class="step"><div><strong>Actualizar las ventas</strong><p class="subtitle">Presionar <strong>Actualizar ventas</strong>. No volver a cargar manualmente una venta que ya existe en el Dashboard comercial.</p></div></div>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="visual-card">
+          <div class="visual-head"><span>Circuito de una venta</span><span class="tag teal">Automático</span></div>
+          <div class="fake-form">
+            <p><strong>Señado:</strong> aparece en Cobranzas. La seña cuenta como cobrada y el resto queda pendiente.</p>
+            <p><strong>Pagado completo:</strong> el saldo queda cerrado.</p>
+            <p><strong>Realizado:</strong> además de Cobranzas, pasa a Eventos realizados y entra en el cálculo de Rentabilidad.</p>
+            <div class="callout"><strong>Importante:</strong> una seña es entrada de caja, pero la venta no forma parte del resultado hasta que el evento esté realizado.</div>
+          </div>
+        </div>
+        <div class="visual-card">
+          <div class="visual-head"><span>Estados de cobranza</span><span class="tag gold">Seguimiento</span></div>
+          <table class="fake-table">
+            <thead><tr><th>Estado</th><th>Qué significa</th><th>Acción</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag gold">Pendiente</span></td><td>Evento futuro con saldo.</td><td>Confirmar fecha acordada de pago.</td></tr>
+              <tr><td><span class="tag red">Vencido</span></td><td>Pasó el evento y queda saldo.</td><td>Revisar y gestionar el cobro.</td></tr>
+              <tr><td><span class="tag green">Cobrado</span></td><td>No queda saldo informado.</td><td>Conservar comprobante.</td></tr>
+              <tr><td><span class="tag">Revisar datos</span></td><td>Falta monto o detalle del cobro.</td><td>Completar la venta y actualizar.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:18px">
+        <div class="map-card"><strong>Ingresos y gastos</strong><span>Registrar cada cobro o pago cuando ocurre. Usar una fila por movimiento, con fecha, concepto, categoría e importe.</span></div>
+        <div class="map-card"><strong>Rentabilidad</strong><span>Comparar venta y costos de eventos realizados. Verde alcanza el objetivo; Revisar queda entre mínimo y objetivo; rojo no alcanza el mínimo.</span></div>
+        <div class="map-card"><strong>Punto de equilibrio</strong><span>Costos fijos ÷ margen de contribución promedio. Indica la facturación realizada necesaria para terminar el mes sin pérdida.</span></div>
+      </div>
+
+      <div class="callout" style="margin-top:18px">
+        <strong>Orden para decidir retiros:</strong> resultado operativo → impuestos → reposición → emergencia → reinversión → utilidad distribuible. El saldo de la cuenta, por sí solo, no indica cuánto puede retirarse.
+      </div>
+
+      <h3 style="margin-top:18px">Rutina financiera recomendada</h3>
+      <div class="checklist">
+        <label class="check-item"><input type="checkbox"> Al confirmar una venta, completar monto, seña, saldo, fecha y etapa en el Dashboard comercial.</label>
+        <label class="check-item"><input type="checkbox"> Al cobrar o pagar, registrar el movimiento ese mismo día.</label>
+        <label class="check-item"><input type="checkbox"> Después del evento, marcarlo Realizado y completar costos, horas, extras y roturas.</label>
+        <label class="check-item"><input type="checkbox"> Una vez por semana, revisar Cobranzas, vencidos y movimientos faltantes.</label>
+        <label class="check-item"><input type="checkbox"> Al cerrar el mes, revisar equilibrio, rentabilidad, reservas y utilidad distribuible.</label>
+      </div>
+    </section>
+
+    <section class="section panel" id="problemas">
+      <div class="eyebrow">7. Solución rápida</div>
+      <h2>Qué revisar si algo no aparece o no se sincroniza</h2>
+      <div class="grid-3">
+        <div class="map-card"><strong>No aparece en Producción</strong><span>Revisar que el operativo sea Listo para producir o que el evento tenga materiales/boceto cargados en Proceso. Si está Finalizado, se oculta.</span></div>
+        <div class="map-card"><strong>No se ve en otra computadora</strong><span>Tocar Actualizar datos. Si sigue igual, revisar conexión y que el guardado haya mostrado sincronización correcta.</span></div>
+        <div class="map-card"><strong>No se agendó</strong><span>El estado sólo debe quedar Agendado si Google Calendar confirmó la creación del evento.</span></div>
+        <div class="map-card"><strong>Figura Trabado</strong><span>Entrar a Proceso y leer la alerta. Normalmente falta fecha, lugar, seña, traspaso o producción completa.</span></div>
+        <div class="map-card"><strong>Materiales no aparecen</strong><span>Cargar cada material en su casilla y tocar Guardar materiales. Producción toma sólo materiales guardados.</span></div>
+        <div class="map-card"><strong>Datos sensibles</strong><span>Montos, señas, saldos y facturación se revisan en Dashboard o Finanzas, no en Producción.</span></div>
+      </div>
+    </section>
+
     <section class="section panel" id="rutina">
-      <div class="eyebrow">6. Rutina sugerida</div>
+      <div class="eyebrow">8. Rutina sugerida</div>
       <h2>Cómo usarlo sin que se vuelva una carga más</h2>
       <div class="checklist">
         <label class="check-item"><input type="checkbox"> Al entrar una consulta, Cati o quien atienda carga el registro en Dashboard.</label>
         <label class="check-item"><input type="checkbox"> Al señar, se actualiza etapa comercial y se revisa si debe pasar a Proceso.</label>
         <label class="check-item"><input type="checkbox"> Antes de producir, Xime revisa Proceso: boceto, materiales, imprenta y faltantes.</label>
         <label class="check-item"><input type="checkbox"> Juli usa Producción para preparar materiales y marcar checklist.</label>
+        <label class="check-item"><input type="checkbox"> Gestión revisa Panel de control para próximos eventos, trabados y pendientes.</label>
+        <label class="check-item"><input type="checkbox"> Gestión revisa Finanzas para controlar margen, cobranzas y utilidad distribuible.</label>
         <label class="check-item"><input type="checkbox"> Después del evento, se cambia a Decorado o Finalizado según corresponda.</label>
       </div>
     </section>
@@ -717,6 +881,7 @@
       ],
       nahuel: [
         ["Control", "Mirar Panel de control, trabados, próximos eventos y pendientes."],
+        ["Finanzas", "Revisar margen, cobranzas, equilibrio y eventos que requieran ajuste de precio."],
         ["Mejora", "Detectar cuellos de botella y ajustar procesos con el equipo."],
         ["Soporte", "Revisar si Dashboard, Proceso, Producción y Calendar están sincronizando."]
       ]
