@@ -1793,7 +1793,7 @@
     }
 
     function sanitizeRecords(items) {
-      return Array.isArray(items) ? items.filter(record => record && record.id && !isSeedRecord(record)) : [];
+      return Array.isArray(items) ? items.filter(record => record && record.id && record?.module !== "crm" && record?.module !== "finance" && !isSeedRecord(record)) : [];
     }
 
     function saveRecords() {
@@ -2638,7 +2638,7 @@
         }
         const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`);
         if (!Array.isArray(rows)) return;
-        records = sanitizeRecords(rows.map(row => row.data).filter(data => data?.module !== "crm"));
+        records = sanitizeRecords(rows.map(row => row.data).filter(data => data?.module !== "crm" && data?.module !== "finance"));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
         render();
         els.cloudBtn.textContent = "Nube activa";
