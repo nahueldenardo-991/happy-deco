@@ -298,6 +298,50 @@
       align-items: start;
     }
 
+    .quick-access {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 18px;
+    }
+
+    .quick-access-card {
+      min-height: 94px;
+      display: grid;
+      gap: 6px;
+      align-content: center;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      text-decoration: none;
+      box-shadow: 0 14px 30px rgba(72, 52, 35, .08);
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .quick-access-card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(126, 219, 223, .62);
+      box-shadow: 0 18px 42px rgba(72, 52, 35, .12);
+    }
+
+    .quick-access-card strong {
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    .quick-access-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .quick-access-card.finance {
+      border-color: rgba(126, 219, 223, .62);
+      background: linear-gradient(135deg, rgba(126, 219, 223, .22), #fff);
+    }
+
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -1061,6 +1105,10 @@
         grid-template-columns: 1fr;
       }
 
+      .quick-access {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .form-panel {
         position: static;
       }
@@ -1145,6 +1193,7 @@
       }
 
       .metrics,
+      .quick-access,
       .quick-kpis,
       .control-summary,
       .filters,
@@ -1280,6 +1329,25 @@
         <button class="btn secondary" id="logoutBtn" type="button">Salir</button>
       </div>
     </header>
+
+    <nav class="quick-access" aria-label="Accesos rapidos">
+      <a class="quick-access-card finance" href="finanzas/">
+        <strong>Dashboard de Finanzas</strong>
+        <span>Rentabilidad, costos, cobranzas y margen.</span>
+      </a>
+      <a class="quick-access-card" href="panel-control/">
+        <strong>Panel de control</strong>
+        <span>KPIs, proximos eventos y alertas.</span>
+      </a>
+      <a class="quick-access-card" href="proceso/">
+        <strong>Proceso</strong>
+        <span>Bocetos, materiales y checks operativos.</span>
+      </a>
+      <a class="quick-access-card" href="produccion/">
+        <strong>Produccion</strong>
+        <span>Ficha limpia para preparar eventos.</span>
+      </a>
+    </nav>
 
     <div class="layout">
       <aside class="panel form-panel">
