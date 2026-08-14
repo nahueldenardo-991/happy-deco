@@ -11,6 +11,34 @@
   const fields = dialog.querySelector('#stockFields');
   dialog.querySelectorAll('[data-stock-close]').forEach(button => button.onclick = () => dialog.close());
 
+  async function loadStaticInventory() {
+    try {
+      const response = await fetch(`inventario.json?v=${Date.now()}`, {cache:'no-store'});
+      if (!response.ok) throw new Error(`Inventario ${response.status}`);
+      const inventory = await response.json();
+      const normalize = value => String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
+      const existing = new Map(state.costItems.map(item => [normalize(item.name), item]));
+      state.stockChecks = (state.stockChecks||[]).filter(x => x.notes !== 'Control inicial según inventario Happy Deco');
+      inventory.items.forEach(imported => {
+        const current = existing.get(normalize(imported.name));
+        if (current) Object.assign(current, imported);
+        else { state.costItems.push(imported); existing.set(normalize(imported.name), imported); }
+      });
+      const controlled = new Set(state.stockChecks.map(x=>x.itemId));
+      inventory.items.forEach(imported => {
+        if (controlled.has(imported.id)) return;
+        state.stockChecks.push({id:`initial-${imported.id}`,itemId:imported.id,itemName:imported.name,controlDate:'2025-12-15',previousStock:Number(imported.stock)||0,counted:Number(imported.stock)||0,difference:0,notes:'Control inicial según inventario Happy Deco'});
+      });
+      state.inventoryVersion = inventory.version;
+      localStorage.setItem('happyDecoFinanceV1', JSON.stringify(state));
+      render(); renderStock();
+      return true;
+    } catch (error) {
+      console.error('No se pudo cargar el inventario incluido en el sitio', error);
+      return false;
+    }
+  }
+
   function itemOptions(selected = '') {
     return state.costItems.slice().sort((a,b) => String(a.category).localeCompare(String(b.category)) || a.name.localeCompare(b.name)).map(item => `<option value="${item.id}" ${item.id===selected?'selected':''}>${item.category || 'Sin clasificar'} · ${item.name}</option>`).join('');
   }
@@ -55,4 +83,5 @@
   }
   const originalRender = render; render = function(){ originalRender(); renderStock(); };
   renderStock();
+  loadStaticInventory();
 })();
