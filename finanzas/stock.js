@@ -28,9 +28,12 @@
 
   async function loadStaticInventory() {
     try {
-      const response = await fetch(`inventario.json?v=${Date.now()}`, {cache:'no-store'});
-      if (!response.ok) throw new Error(`Inventario ${response.status}`);
-      const inventory = await response.json();
+      let inventory = window.HAPPY_DECO_INVENTORY;
+      if (!inventory?.items?.length) {
+        const response = await fetch(`inventario.json?v=${Date.now()}`, {cache:'no-store'});
+        if (!response.ok) throw new Error(`Inventario ${response.status}`);
+        inventory = await response.json();
+      }
       const normalize = value => String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
       const existing = new Map(state.costItems.map(item => [normalize(item.name), item]));
       state.stockChecks = (state.stockChecks||[]).filter(x => x.notes !== 'Control inicial según inventario Happy Deco');
@@ -111,7 +114,7 @@
         document.querySelector('.top').insertAdjacentElement('afterend', notice);
       }
       notice.innerHTML = inventoryReady
-        ? '<strong>El inventario está actualizado.</strong> Ventas, cobranzas y datos compartidos no respondieron en este intento. Podés seguir trabajando con el stock y volver a intentar más tarde.'
+        ? '<strong>Inventario disponible.</strong> El catálogo y los controles están cargados. Ventas y cobranzas conservarán la última información disponible.'
         : '<strong>No se pudo establecer conexión.</strong> Los datos guardados en este dispositivo siguen disponibles.';
     } else if (!remoteFailed) {
       document.getElementById('syncNotice')?.remove();
