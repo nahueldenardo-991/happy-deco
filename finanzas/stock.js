@@ -3,6 +3,21 @@
   const stockSection = document.getElementById('stock');
   if (!stockSection) return;
 
+  const nativeStorageSetItem = Storage.prototype.setItem;
+  Storage.prototype.setItem = function(key, value) {
+    try { return nativeStorageSetItem.call(this, key, value); }
+    catch (error) {
+      if (key !== 'happyDecoFinanceV1' || error?.name !== 'QuotaExceededError') throw error;
+      const compact = JSON.parse(value);
+      compact.costItems = (compact.costItems||[]).filter(item=>item.source!=='Inventario Happydeco.xlsx'||Number(item.unitCost)>0||item.lastStockControl).map(item=>({id:item.id,name:item.name,category:item.category,unit:item.unit,unitCost:item.unitCost||0,updated:item.updated||'',stock:item.stock||0,location:item.location||'',source:item.source||''}));
+      compact.stockChecks = (compact.stockChecks||[]).filter(check=>check.notes!=='Control inicial según inventario Happy Deco');
+      compact.inventoryVersion = 0;
+      this.removeItem(key);
+      try { return nativeStorageSetItem.call(this, key, JSON.stringify(compact)); }
+      catch { return undefined; }
+    }
+  };
+
   const dialog = document.createElement('dialog');
   dialog.innerHTML = '<form class="modal" id="stockForm"><div class="modal-head"><div><h2 id="stockDialogTitle"></h2><p class="modal-intro" id="stockDialogIntro"></p></div><button class="close" type="button" data-stock-close aria-label="Cerrar">×</button></div><div class="form-grid" id="stockFields"></div><div class="footer-actions"><button class="btn" type="button" data-stock-close>Cancelar</button><button class="btn primary" type="submit">Guardar</button></div></form>';
   document.body.appendChild(dialog);
@@ -30,8 +45,8 @@
         state.stockChecks.push({id:`initial-${imported.id}`,itemId:imported.id,itemName:imported.name,controlDate:'2025-12-15',previousStock:Number(imported.stock)||0,counted:Number(imported.stock)||0,difference:0,notes:'Control inicial según inventario Happy Deco'});
       });
       state.inventoryVersion = inventory.version;
-      localStorage.setItem('happyDecoFinanceV1', JSON.stringify(state));
       render(); renderStock();
+      localStorage.setItem('happyDecoFinanceV1', JSON.stringify(state));
       return true;
     } catch (error) {
       console.error('No se pudo cargar el inventario incluido en el sitio', error);
