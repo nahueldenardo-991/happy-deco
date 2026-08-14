@@ -82,6 +82,26 @@
     stockSection.querySelectorAll('[data-control-item]').forEach(button => button.onclick = () => openControl(button.dataset.controlItem));
   }
   const originalRender = render; render = function(){ originalRender(); renderStock(); };
+  const originalSync = syncDashboardEvents;
+  syncDashboardEvents = async function(manual=false) {
+    const inventoryReady = await loadStaticInventory();
+    await originalSync(false);
+    const button = document.getElementById('syncEventsBtn');
+    const remoteFailed = button?.textContent === 'No se pudo actualizar';
+    if (manual && remoteFailed) {
+      button.textContent = inventoryReady ? 'Inventario actualizado · ventas sin conexión' : 'Sin conexión';
+      let notice = document.getElementById('syncNotice');
+      if (!notice) {
+        notice = document.createElement('div'); notice.id='syncNotice'; notice.className='note';
+        document.querySelector('.top').insertAdjacentElement('afterend', notice);
+      }
+      notice.innerHTML = inventoryReady
+        ? '<strong>El inventario está actualizado.</strong> Ventas, cobranzas y datos compartidos no respondieron en este intento. Podés seguir trabajando con el stock y volver a intentar más tarde.'
+        : '<strong>No se pudo establecer conexión.</strong> Los datos guardados en este dispositivo siguen disponibles.';
+    } else if (!remoteFailed) {
+      document.getElementById('syncNotice')?.remove();
+    }
+  };
   renderStock();
   loadStaticInventory();
 })();
