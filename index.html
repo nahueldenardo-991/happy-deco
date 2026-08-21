@@ -300,7 +300,7 @@
 
     .quick-access {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 12px;
       margin: 0 0 18px;
     }
@@ -1106,7 +1106,7 @@
       }
 
       .quick-access {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .form-panel {
@@ -1318,10 +1318,12 @@
       </div>
       <div class="actions">
         <a class="btn secondary" href="panel-control/">Panel de control</a>
+        <a class="btn secondary" href="crm/">CRM</a>
+        <a class="btn secondary" href="./">Dashboard</a>
+        <a class="btn secondary" href="proceso/">Proceso</a>
+        <a class="btn secondary" href="produccion/">Producción</a>
         <a class="btn secondary" href="finanzas/">Finanzas</a>
         <a class="btn secondary" href="manual/">Manual</a>
-        <a class="btn secondary" href="crm/">CRM</a>
-        <a class="btn secondary" href="proceso/">Proceso</a>
         <button class="btn secondary" id="cloudBtn" type="button">Configurar nube</button>
         <button class="btn secondary" id="refreshCloudBtn" type="button">Actualizar datos</button>
         <button class="btn secondary" id="exportBtn" type="button">Exportar CSV</button>
@@ -1331,21 +1333,29 @@
     </header>
 
     <nav class="quick-access" aria-label="Accesos rapidos">
-      <a class="quick-access-card finance" href="finanzas/">
-        <strong>Dashboard de Finanzas</strong>
-        <span>Rentabilidad, costos, cobranzas y margen.</span>
-      </a>
       <a class="quick-access-card" href="panel-control/">
         <strong>Panel de control</strong>
-        <span>KPIs, proximos eventos y alertas.</span>
+        <span>Vista general de próximos eventos, pendientes y alertas.</span>
+      </a>
+      <a class="quick-access-card" href="crm/">
+        <strong>CRM</strong>
+        <span>Para consultas, reuniones, presupuestos y seguimiento.</span>
+      </a>
+      <a class="quick-access-card" href="./">
+        <strong>Dashboard</strong>
+        <span>Para eventos que ya deben gestionarse operativamente.</span>
       </a>
       <a class="quick-access-card" href="proceso/">
         <strong>Proceso</strong>
-        <span>Bocetos, materiales y checks operativos.</span>
+        <span>Para avanzar con boceto, materiales y tareas.</span>
       </a>
       <a class="quick-access-card" href="produccion/">
-        <strong>Produccion</strong>
-        <span>Ficha limpia para preparar eventos.</span>
+        <strong>Producción</strong>
+        <span>Para preparar eventos listos para producir.</span>
+      </a>
+      <a class="quick-access-card finance" href="finanzas/">
+        <strong>Finanzas</strong>
+        <span>Para controlar cobros, costos y márgenes.</span>
       </a>
     </nav>
 
@@ -1354,7 +1364,7 @@
         <div class="panel-head">
           <div>
             <h2>Cargar registro</h2>
-            <div class="small-note">Usalo para consultas, presupuestos enviados, eventos señados o eventos realizados.</div>
+            <div class="small-note">Para eventos que ya deben gestionarse operativamente. Las consultas, reuniones y presupuestos iniciales se ordenan desde CRM.</div>
           </div>
         </div>
 
@@ -1431,12 +1441,12 @@
                 <option value="">Seleccionar</option>
                 <option>Consulta nueva</option>
                 <option>Datos incompletos</option>
-                <option>Presupuesto enviado</option>
                 <option>Seguimiento</option>
+                <option>Presupuesto enviado</option>
                 <option>Señado</option>
                 <option>Pagado completo</option>
-                <option>Cancelado</option>
                 <option>Realizado</option>
+                <option>Cancelado</option>
               </select>
             </div>
             <div class="field">
@@ -1688,12 +1698,12 @@
     const COMMERCIAL_STAGES = [
       "Consulta nueva",
       "Datos incompletos",
-      "Presupuesto enviado",
       "Seguimiento",
+      "Presupuesto enviado",
       "Señado",
       "Pagado completo",
-      "Cancelado",
-      "Realizado"
+      "Realizado",
+      "Cancelado"
     ];
     const RESPONSIBLE_OPTIONS = [
       "Cati",
@@ -2002,7 +2012,7 @@
         periodoTipo: els.filterPeriodoTipo.value,
         periodoValor: els.filterPeriodoValor.value
       };
-      setOptions(els.filterEtapa, unique(records.map(record => record.etapa)), "Todas");
+      setOptions(els.filterEtapa, orderedUnique([...COMMERCIAL_STAGES, ...records.map(record => record.etapa)]), "Todas");
       setOptions(els.filterOperativo, unique(records.map(record => record.estadoOperativo)), "Todos");
       setOptions(els.filterCanal, unique(records.map(record => record.canal)), "Todos");
       setOptions(els.filterResponsable, unique([...RESPONSIBLE_OPTIONS, ...records.map(record => record.responsable)]), "Todos");
@@ -2889,11 +2899,15 @@
     }
 
     function buildSelectOptions(baseOptions, currentValue) {
-      const options = unique([...baseOptions, currentValue]);
+      const options = orderedUnique([...baseOptions, currentValue]);
       return options.map(option => {
         const selected = option === currentValue ? " selected" : "";
         return `<option value="${escapeAttr(option)}"${selected}>${escapeHtml(option)}</option>`;
       }).join("");
+    }
+
+    function orderedUnique(values) {
+      return [...new Set(values.filter(Boolean))];
     }
 
     function unique(values) {
@@ -2984,9 +2998,9 @@
     }
 
     function tagTone(value) {
-      if (["Realizado", "Listo para montar"].includes(value)) return "green";
-      if (["Trabado", "Compras pendientes"].includes(value)) return "red";
-      if (["En producción", "Listo para producir"].includes(value)) return "gold";
+      if (["Señado", "Pagado completo", "Listo para montar"].includes(value)) return "green";
+      if (["Cancelado", "Trabado", "Compras pendientes"].includes(value)) return "red";
+      if (["Consulta nueva", "Datos incompletos", "Seguimiento", "Presupuesto enviado", "En producción", "Listo para producir"].includes(value)) return "gold";
       return "";
     }
 
