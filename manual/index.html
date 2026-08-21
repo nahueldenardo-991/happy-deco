@@ -482,12 +482,13 @@
         </div>
       </div>
       <nav class="actions" aria-label="Accesos principales">
-        <a class="btn" href="../">Dashboard</a>
         <a class="btn" href="../panel-control/">Panel de control</a>
         <a class="btn" href="../crm/">CRM</a>
+        <a class="btn" href="../">Dashboard</a>
         <a class="btn" href="../proceso/">Proceso</a>
         <a class="btn" href="../produccion/">Producción</a>
         <a class="btn" href="../finanzas/">Finanzas</a>
+        <a class="btn" href="./">Manual</a>
       </nav>
     </header>
 
@@ -495,15 +496,23 @@
       <div class="panel">
         <div class="eyebrow">Mapa rápido</div>
         <h2>La lógica del sistema</h2>
-        <p class="subtitle">El Dashboard concentra la información comercial. Panel de control resume la operación. CRM ordena reuniones. Proceso organiza lo operativo. Producción muestra sólo lo necesario para preparar y montar. Finanzas revisa rentabilidad.</p>
+        <p class="subtitle">Panel de control resume la operación. CRM ordena consultas, reuniones y presupuestos. Dashboard concentra los eventos que ya deben gestionarse operativamente. Proceso organiza boceto, materiales y tareas. Producción muestra sólo lo necesario para preparar y montar. Finanzas revisa rentabilidad.</p>
         <div class="quick-map">
           <div class="map-card">
+            <strong>Panel de control</strong>
+            <span>Vista general de próximos eventos, pendientes y alertas.</span>
+          </div>
+          <div class="map-card">
+            <strong>CRM</strong>
+            <span>Consultas, reuniones, presupuestos y seguimiento.</span>
+          </div>
+          <div class="map-card">
             <strong>Dashboard</strong>
-            <span>Carga comercial, fechas, responsable, estado, agenda y datos administrativos.</span>
+            <span>Eventos que ya deben gestionarse operativamente.</span>
           </div>
           <div class="map-card">
             <strong>Proceso</strong>
-            <span>Checks por etapa, boceto, materiales y preparación interna.</span>
+            <span>Checks por etapa, boceto, materiales y tareas.</span>
           </div>
           <div class="map-card">
             <strong>Producción</strong>
@@ -545,14 +554,6 @@
       <h2>Qué hace cada solapa o módulo</h2>
       <div class="module-grid">
         <article class="module-card">
-          <div class="module-top"><h3>Dashboard</h3><span class="tag teal">Gestión</span></div>
-          <ul>
-            <li>Cargar consultas, presupuestos y eventos confirmados.</li>
-            <li>Cambiar etapa comercial, operativo, responsable y facturación.</li>
-            <li>Agendar eventos y controlar si quedaron sin agendar.</li>
-          </ul>
-        </article>
-        <article class="module-card">
           <div class="module-top"><h3>Panel de control</h3><span class="tag green">Resumen</span></div>
           <ul>
             <li>Ver KPIs generales y próximos eventos.</li>
@@ -566,6 +567,14 @@
             <li>Cargar reuniones con clientas.</li>
             <li>Indicar modalidad, horario, temática y estado del presupuesto.</li>
             <li>Agendar reuniones sin compartir detalles operativos con Juli.</li>
+          </ul>
+        </article>
+        <article class="module-card">
+          <div class="module-top"><h3>Dashboard</h3><span class="tag teal">Gestión</span></div>
+          <ul>
+            <li>Cargar eventos que ya deben gestionarse operativamente.</li>
+            <li>Cambiar etapa comercial, operativo, responsable y facturación.</li>
+            <li>Agendar eventos y controlar si quedaron sin agendar.</li>
           </ul>
         </article>
         <article class="module-card">
@@ -787,7 +796,7 @@
         <div class="step"><div><strong>Registrar personal y mobiliario</strong><p class="subtitle">Cargar el valor hora de todas las personas, incluidas las socias. En Mobiliario, informar valor de reposición, vida útil y usos acumulados.</p></div></div>
         <div class="step"><div><strong>Armar las propuestas</strong><p class="subtitle">Crear cada propuesta con su precio de venta y horas previstas. En <strong>Gestionar componentes</strong>, agregar cada elemento con cantidad y costo unitario.</p></div></div>
         <div class="step"><div><strong>Revisar la configuración</strong><p class="subtitle">Validar costos fijos, márgenes, impuestos, kilómetros y reservas. Reemplazar los valores DEMO antes de usar precios recomendados.</p></div></div>
-        <div class="step"><div><strong>Actualizar las ventas</strong><p class="subtitle">Presionar <strong>Actualizar ventas</strong>. No volver a cargar manualmente una venta que ya existe en el Dashboard comercial.</p></div></div>
+        <div class="step"><div><strong>Sincronizar la información</strong><p class="subtitle">Presionar <strong>Actualizar todo</strong>. El botón trae las ventas y los datos financieros compartidos: gastos, tarjetas, inversiones, precios, propuestas, personal y mobiliario.</p></div></div>
       </div>
 
       <div class="grid-2" style="margin-top:18px">

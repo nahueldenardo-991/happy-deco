@@ -609,10 +609,14 @@
         </div>
       </div>
       <div class="actions">
-        <button class="btn" id="refreshBtn" type="button">Actualizar panel</button>
-        <a class="btn secondary" href="../">Dashboard</a>
+        <a class="btn secondary" href="./">Panel de control</a>
         <a class="btn secondary" href="../crm/">CRM</a>
+        <a class="btn secondary" href="../">Dashboard</a>
         <a class="btn secondary" href="../proceso/">Proceso</a>
+        <a class="btn secondary" href="../produccion/">Producción</a>
+        <a class="btn secondary" href="../finanzas/">Finanzas</a>
+        <a class="btn secondary" href="../manual/">Manual</a>
+        <button class="btn" id="refreshBtn" type="button">Actualizar panel</button>
       </div>
     </header>
 
@@ -783,7 +787,7 @@
 
     function sanitizeRecords(items) {
       return Array.isArray(items)
-        ? items.filter(record => record && record.id && record?.module !== "crm" && !isSeedRecord(record))
+        ? items.filter(record => record && record.id && record?.module !== "crm" && record?.module !== "finance" && !isSeedRecord(record))
         : [];
     }
 
@@ -819,7 +823,7 @@
         });
         if (!response.ok) throw new Error(await response.text());
         const rows = await response.json();
-        records = sanitizeRecords(rows.map(row => row.data));
+        records = sanitizeRecords(rows.map(row => row.data).filter(data => data?.module !== "finance"));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
         render(records);
         els.lastUpdate.textContent = `Actualizado: ${new Date().toLocaleString("es-AR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}`;
