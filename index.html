@@ -564,6 +564,38 @@
       font-size: 18px;
     }
 
+    .observation-modal {
+      width: min(620px, 100%);
+    }
+
+    .observation-text {
+      max-height: min(58vh, 420px);
+      overflow: auto;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff7fb;
+      color: var(--ink);
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .observation-cell {
+      min-width: 150px;
+      max-width: 190px;
+    }
+
+    .observation-preview {
+      display: -webkit-box;
+      max-width: 180px;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
     .date-edit-actions {
       display: flex;
       gap: 10px;
@@ -1840,6 +1872,8 @@
       if (calendarButton) scheduleRecordInGoogleCalendar(calendarButton.dataset.calendar);
       const dateButton = event.target.closest("[data-edit-date]");
       if (dateButton) openDateEditor(dateButton.dataset.editDate);
+      const observationButton = event.target.closest("[data-view-observation]");
+      if (observationButton) openObservationModal(observationButton.dataset.viewObservation);
     });
     els.tableContainer.addEventListener("change", event => {
       const select = event.target.closest("[data-update-field]");
@@ -2163,7 +2197,7 @@
             <span class="calendar-pill ${calendarPillClass(record)}">${calendarPillText(record)}</span><br>
             <button class="mini-action" type="button" data-calendar="${escapeAttr(record.id)}">${calendarButtonText(record)}</button>
           </td>
-          <td>${escapeHtml(record.observaciones || "-")}</td>
+          <td class="observation-cell">${renderObservationPreview(record)}</td>
           <td><button class="icon-btn" type="button" title="Eliminar registro admin" data-delete="${record.id}">&times;</button></td>
         </tr>
       `).join("");
@@ -2253,9 +2287,18 @@
           </div>
           <div class="record-card-field">
             <label>Observaciones</label>
-            <div>${escapeHtml(record.observaciones || "-")}</div>
+            ${renderObservationPreview(record)}
           </div>
         </article>
+      `;
+    }
+
+    function renderObservationPreview(record) {
+      const text = String(record.observaciones || "").trim();
+      if (!text) return `<span class="small-note">Sin observaciones</span>`;
+      return `
+        <div class="observation-preview">${escapeHtml(text)}</div>
+        <button class="mini-action" type="button" data-view-observation="${escapeAttr(record.id)}">Ver observación</button>
       `;
     }
 
@@ -2363,6 +2406,41 @@
       record.updatedAt = new Date().toISOString();
       saveRecords();
       render();
+    }
+
+    function openObservationModal(id) {
+      const record = records.find(item => item.id === id);
+      if (!record) return;
+      const overlay = document.createElement("div");
+      overlay.className = "date-edit-overlay";
+      overlay.innerHTML = `
+        <div class="date-edit-modal observation-modal" role="dialog" aria-modal="true" aria-labelledby="observationTitle">
+          <div>
+            <h3 id="observationTitle">Observaciones</h3>
+            <div class="small-note">${escapeHtml(record.cliente || "Registro")}${record.tematica ? " · " + escapeHtml(record.tematica) : ""}</div>
+          </div>
+          <div class="observation-text">${escapeHtml(record.observaciones || "Sin observaciones cargadas.")}</div>
+          <div class="date-edit-actions">
+            <button class="btn secondary" type="button" data-close-observation>Cerrar</button>
+          </div>
+        </div>
+      `;
+
+      function close() {
+        document.removeEventListener("keydown", handleKeydown);
+        overlay.remove();
+      }
+
+      function handleKeydown(event) {
+        if (event.key === "Escape") close();
+      }
+
+      overlay.addEventListener("click", event => {
+        if (event.target === overlay || event.target.closest("[data-close-observation]")) close();
+      });
+      document.addEventListener("keydown", handleKeydown);
+      document.body.appendChild(overlay);
+      overlay.querySelector("[data-close-observation]")?.focus();
     }
 
     function getCalendarConfig() {
