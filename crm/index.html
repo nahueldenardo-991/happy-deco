@@ -1369,7 +1369,7 @@
         const dashboardRecord = mergeDashboardRecord(existingDashboard, leadToDashboardRecord(lead, recordId));
         const processEvent = mergeProcessEvent(existingProcess, leadToProcessEvent(lead, recordId));
         await cloudUpsertRows(DATA_TABLE, [{ id: recordId, data: dashboardRecord, updated_at: dashboardRecord.updatedAt }]);
-        await cloudUpsertRows(PROCESS_TABLE, [{ id: recordId, data: processEvent, updated_at: processEvent.updatedAt }]);
+        await cloudUpsertProcessEvent(recordId, processEvent);
         lead.dashboardRecordId = recordId;
         lead.productionSentAt = lead.productionSentAt || new Date().toISOString();
         lead.updatedAt = new Date().toISOString();
@@ -1380,6 +1380,20 @@
       } catch (error) {
         console.error("No pude pasar al Dashboard", error);
         if (!options.silent) alert("No pude pasar al Dashboard. Revisá la conexión a Supabase.");
+      }
+    }
+
+    async function cloudUpsertProcessEvent(recordId, processEvent) {
+      const row = { id: recordId, data: processEvent, updated_at: processEvent.updatedAt || new Date().toISOString() };
+      try {
+        await cloudUpsertRows(PROCESS_TABLE, [row]);
+      } catch (firstError) {
+        console.warn("Reintento guardado de Proceso con método compatible", firstError);
+        await cloudRequest(PROCESS_TABLE, {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify([row])
+        });
       }
     }
 
