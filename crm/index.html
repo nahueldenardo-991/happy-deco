@@ -368,6 +368,77 @@
     }
 
     .mini.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .mini:disabled {
+      cursor: not-allowed;
+      opacity: .58;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .handoff-panel {
+      display: grid;
+      gap: .45rem;
+      padding: .7rem;
+      border: 1px solid rgba(34, 152, 147, .24);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .handoff-panel.blocked {
+      border-color: rgba(208, 134, 34, .32);
+      background: #fff9ed;
+    }
+
+    .handoff-panel.sent {
+      border-color: rgba(47, 155, 112, .34);
+      background: #effcf6;
+    }
+
+    .handoff-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .handoff-help {
+      margin: 0;
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.28;
+    }
+
+    .handoff-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+
+    .handoff-actions .mini { min-height: 2.15rem; }
+    .handoff-actions .mini.secondary {
+      background: #fff;
+      color: var(--teal);
+      border-color: rgba(34, 152, 147, .34);
+    }
+
+    .sync-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 1.65rem;
+      padding: .24rem .6rem;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 900;
+      white-space: nowrap;
+      background: #f1e8de;
+      color: var(--muted);
+    }
+
+    .sync-ready { background: #fff0cd; color: #8a5512; }
+    .sync-sent { background: #dff7ea; color: var(--ok); }
+    .sync-blocked { background: #ffe1e1; color: var(--danger); }
 
     .agenda-panel {
       padding: 1rem;
@@ -519,6 +590,8 @@
       .meeting-head { flex-direction: column; }
       .agenda-item { grid-template-columns: 1fr; }
       .filters .control { width: 100%; }
+      .handoff-line { align-items: stretch; }
+      .handoff-actions, .handoff-actions .mini { width: 100%; }
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
@@ -813,6 +886,7 @@
     const STAGES = ["Nueva consulta", "Contactado", "Propuesta enviada", "Seguimiento", "Seña pendiente", "Señado", "Pagado completo", "Cancelado"];
     const PIPELINE_STAGES = ["Nueva consulta", "Propuesta enviada", "Seguimiento", "Seña pendiente"];
     const RESPONSABLES = ["Cati", "Xime", "Cati + Xime", "Juli"];
+    const DASHBOARD_READY_STAGES = ["Señado", "Pagado completo"];
 
     const els = {
       form: document.querySelector("#leadForm"),
@@ -899,6 +973,8 @@
         if (action.dataset.action === "delete") deleteLead(lead.id);
         if (action.dataset.action === "advance") advanceLead(lead.id);
         if (action.dataset.action === "send") sendLeadToDashboard(lead.id);
+        if (action.dataset.action === "open-dashboard") window.location.href = "../";
+        if (action.dataset.action === "open-process") window.location.href = `../proceso/?evento=${encodeURIComponent(lead.dashboardRecordId || `event-${lead.id}`)}`;
       });
       document.body.addEventListener("change", event => {
         const field = event.target.closest("[data-field]");
@@ -966,9 +1042,8 @@
       const lead = sanitizeLeads([{ ...existing, ...data, id, updatedAt: new Date().toISOString() }])[0];
       leads = [lead, ...leads.filter(item => item.id !== id)];
       saveLeads();
-      if (["Señado", "Pagado completo"].includes(lead.etapa)) sendLeadToDashboard(lead.id, { silent: true });
       resetForm();
-      showToast("Consulta guardada");
+      showToast(DASHBOARD_READY_STAGES.includes(lead.etapa) ? "Consulta guardada. Ya podés pasarla al Dashboard." : "Consulta guardada");
     }
 
     function resetForm() {
@@ -1183,8 +1258,7 @@
       lead.proximaAccion = suggestNextAction(lead.etapa);
       lead.updatedAt = new Date().toISOString();
       saveLeads();
-      if (["Señado", "Pagado completo"].includes(lead.etapa)) sendLeadToDashboard(id, { silent: true });
-      showToast(`Etapa actualizada: ${lead.etapa}`);
+      showToast(DASHBOARD_READY_STAGES.includes(lead.etapa) ? `Etapa actualizada: ${lead.etapa}. Ya podés pasar al Dashboard.` : `Etapa actualizada: ${lead.etapa}`);
     }
 
     function updateLeadField(id, field, value) {
@@ -1193,7 +1267,7 @@
       lead[field] = ["monto", "edadCumpleanero"].includes(field) ? toNumber(value) : value;
       lead.updatedAt = new Date().toISOString();
       saveLeads();
-      if (field === "etapa" && ["Señado", "Pagado completo"].includes(value)) sendLeadToDashboard(id, { silent: true });
+      if (field === "etapa" && DASHBOARD_READY_STAGES.includes(value)) showToast("Estado confirmado. Usá Pasar al Dashboard para enviarlo a operación.");
     }
 
     function filteredLeads() {
@@ -1258,6 +1332,7 @@
     function renderLeadCard(lead) {
       const alert = alertState(lead);
       const sentClass = lead.dashboardRecordId ? "sent" : "";
+      const handoff = dashboardHandoffState(lead);
       return `
         <article class="lead-card ${alert.key} ${sentClass}">
           <div class="lead-title">
@@ -1267,10 +1342,10 @@
           <p>${escapeHtml(lead.tematica || "Temática pendiente")} · ${escapeHtml(lead.homenajeado || "Sin homenajeado")}</p>
           <p>${formatDate(lead.fechaEvento) || "Sin fecha de evento"} · ${escapeHtml(lead.responsable)}</p>
           <p><strong>${escapeHtml(lead.proximaAccion)}</strong> ${formatDate(lead.proximaAccionFecha) ? `· ${formatDate(lead.proximaAccionFecha)}` : ""}</p>
+          ${renderDashboardHandoff(lead, handoff)}
           <div class="card-actions">
             <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
             <button class="mini" type="button" data-action="advance" data-id="${lead.id}">Avanzar</button>
-            <button class="mini primary" type="button" data-action="send" data-id="${lead.id}">A producción</button>
             <button class="mini" type="button" data-action="delete" data-id="${lead.id}">Eliminar</button>
           </div>
         </article>
@@ -1331,10 +1406,9 @@
                 <td>${selectHtml("responsable", lead.id, RESPONSABLES, lead.responsable)}</td>
                 <td><input class="control" type="date" data-field="proximaAccionFecha" data-id="${lead.id}" value="${escapeHtml(lead.proximaAccionFecha)}"></td>
                 <td>${money(lead.monto)}</td>
-                <td>${lead.dashboardRecordId ? "Enviado" : "Pendiente"}</td>
+                <td>${renderDashboardHandoff(lead, dashboardHandoffState(lead), true)}</td>
                 <td>
                   <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
-                  <button class="mini primary" type="button" data-action="send" data-id="${lead.id}">Pasar</button>
                 </td>
               </tr>
             `).join("")}
@@ -1349,16 +1423,107 @@
       </select>`;
     }
 
+    function dashboardHandoffState(lead) {
+      const missing = dashboardMissingFields(lead);
+      if (lead.dashboardRecordId) {
+        return {
+          status: "sent",
+          pill: "En Dashboard",
+          className: "sent",
+          pillClass: "sync-sent",
+          button: "Actualizar Dashboard",
+          help: "Este registro ya está conectado con Dashboard y Proceso. Si cambiaste datos comerciales, podés actualizarlo."
+        };
+      }
+      if (!DASHBOARD_READY_STAGES.includes(lead.etapa)) {
+        return {
+          status: "blocked",
+          pill: "Solo CRM",
+          className: "blocked",
+          pillClass: "sync-blocked",
+          button: "Pasar al Dashboard",
+          disabled: true,
+          help: "Disponible cuando la etapa sea Señado o Pagado completo."
+        };
+      }
+      if (missing.length) {
+        return {
+          status: "missing",
+          pill: "Faltan datos",
+          className: "blocked",
+          pillClass: "sync-blocked",
+          button: "Pasar al Dashboard",
+          disabled: true,
+          help: `Antes de pasar a operación completá: ${missing.join(", ")}.`
+        };
+      }
+      return {
+        status: "ready",
+        pill: "Listo para enviar",
+        className: "",
+        pillClass: "sync-ready",
+        button: "Pasar al Dashboard",
+        help: "Al enviarlo, aparece en Dashboard operativo y queda disponible en Proceso."
+      };
+    }
+
+    function dashboardMissingFields(lead) {
+      const required = [
+        ["cliente", "cliente"],
+        ["fechaEvento", "fecha del evento"],
+        ["tematica", "temática"],
+        ["propuesta", "propuesta"],
+        ["responsable", "responsable"],
+        ["lugar", "lugar"]
+      ];
+      return required.filter(([key]) => !String(lead[key] ?? "").trim()).map(([, label]) => label);
+    }
+
+    function renderDashboardHandoff(lead, handoff, compact = false) {
+      const disabled = handoff.disabled ? "disabled" : "";
+      const title = handoff.disabled ? `title="${escapeHtml(handoff.help)}"` : "";
+      const links = lead.dashboardRecordId
+        ? `<button class="mini secondary" type="button" data-action="open-dashboard" data-id="${lead.id}">Ver Dashboard</button>
+           <button class="mini secondary" type="button" data-action="open-process" data-id="${lead.id}">Ver Proceso</button>`
+        : "";
+      return `
+        <div class="handoff-panel ${handoff.className}">
+          <div class="handoff-line">
+            <span class="sync-pill ${handoff.pillClass}">${escapeHtml(handoff.pill)}</span>
+            <div class="handoff-actions">
+              <button class="mini primary" type="button" data-action="send" data-id="${lead.id}" ${disabled} ${title}>${escapeHtml(handoff.button)}</button>
+              ${links}
+            </div>
+          </div>
+          ${compact ? "" : `<p class="handoff-help">${escapeHtml(handoff.help)}</p>`}
+        </div>
+      `;
+    }
+
     async function sendLeadToDashboard(id, options = {}) {
       const lead = leads.find(item => item.id === id);
       if (!lead) return;
-      if (!["Señado", "Pagado completo"].includes(lead.etapa)) {
+      if (!DASHBOARD_READY_STAGES.includes(lead.etapa)) {
         if (!options.silent) alert("Para pasar al Dashboard primero cambiá la etapa comercial a Señado o Pagado completo.");
         return;
       }
-      if (!lead.fechaEvento && !options.silent) {
-        alert("Para pasar al Dashboard primero cargá la fecha del evento.");
+      const missing = dashboardMissingFields(lead);
+      if (missing.length) {
+        if (!options.silent) alert(`Antes de pasar al Dashboard completá: ${missing.join(", ")}.`);
         return;
+      }
+      const wasLinked = Boolean(lead.dashboardRecordId);
+      if (!options.silent) {
+        const action = wasLinked ? "actualizar este evento en el Dashboard operativo" : "pasar este evento al Dashboard operativo";
+        const detail = wasLinked
+          ? "No se duplicará: se actualizará el registro ya vinculado."
+          : "También aparecerá en Proceso para avanzar con boceto, materiales y tareas.";
+        if (!confirm(`¿Querés ${action}?\n\n${detail}`)) return;
+      }
+      const button = Array.from(document.querySelectorAll('[data-action="send"]')).find(item => item.dataset.id === id);
+      if (button && !options.silent) {
+        button.disabled = true;
+        button.textContent = "Enviando...";
       }
       const recordId = lead.dashboardRecordId || `event-${lead.id}`;
       try {
@@ -1376,10 +1541,14 @@
         await cloudUpsertLeads([lead]);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
         render();
-        if (!options.silent) showToast("Evento enviado al Dashboard y Proceso");
+        if (!options.silent) showToast(wasLinked ? "Dashboard actualizado. El registro sigue vinculado a Proceso." : "Evento enviado al Dashboard y Proceso");
       } catch (error) {
         console.error("No pude pasar al Dashboard", error);
         if (!options.silent) alert("No pude pasar al Dashboard. Revisá la conexión a Supabase.");
+        if (button) {
+          button.disabled = false;
+          button.textContent = wasLinked ? "Actualizar Dashboard" : "Pasar al Dashboard";
+        }
       }
     }
 
@@ -1611,7 +1780,7 @@
     }
 
     function alertState(lead) {
-      if (lead.dashboardRecordId) return { key: "sent", label: "Dashboard", className: "status-ok" };
+      if (lead.dashboardRecordId) return { key: "sent", label: "En Dashboard", className: "status-ok" };
       if (!lead.proximaAccionFecha) return { key: "", label: "Sin fecha", className: "status-muted" };
       const diff = daysUntil(lead.proximaAccionFecha);
       if (diff < 0) return { key: "overdue", label: "Vencida", className: "status-overdue" };
