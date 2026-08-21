@@ -1318,7 +1318,7 @@
               <th>Responsable</th>
               <th>Próxima acción</th>
               <th>Monto</th>
-              <th>Producción</th>
+              <th>Dashboard</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -1334,7 +1334,7 @@
                 <td>${lead.dashboardRecordId ? "Enviado" : "Pendiente"}</td>
                 <td>
                   <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
-                  <button class="mini primary" type="button" data-action="send" data-id="${lead.id}">Enviar</button>
+                  <button class="mini primary" type="button" data-action="send" data-id="${lead.id}">Pasar</button>
                 </td>
               </tr>
             `).join("")}
@@ -1352,14 +1352,22 @@
     async function sendLeadToDashboard(id, options = {}) {
       const lead = leads.find(item => item.id === id);
       if (!lead) return;
+      if (!["Señado", "Pagado completo"].includes(lead.etapa)) {
+        if (!options.silent) alert("Para pasar al Dashboard primero cambiá la etapa comercial a Señado o Pagado completo.");
+        return;
+      }
       if (!lead.fechaEvento && !options.silent) {
-        alert("Para enviar a producción primero cargá la fecha del evento.");
+        alert("Para pasar al Dashboard primero cargá la fecha del evento.");
         return;
       }
       const recordId = lead.dashboardRecordId || `event-${lead.id}`;
-      const dashboardRecord = leadToDashboardRecord(lead, recordId);
-      const processEvent = leadToProcessEvent(lead, recordId);
       try {
+        const [existingDashboard, existingProcess] = await Promise.all([
+          fetchCloudRecord(DATA_TABLE, recordId),
+          fetchCloudRecord(PROCESS_TABLE, recordId)
+        ]);
+        const dashboardRecord = mergeDashboardRecord(existingDashboard, leadToDashboardRecord(lead, recordId));
+        const processEvent = mergeProcessEvent(existingProcess, leadToProcessEvent(lead, recordId));
         await cloudUpsertRows(DATA_TABLE, [{ id: recordId, data: dashboardRecord, updated_at: dashboardRecord.updatedAt }]);
         await cloudUpsertRows(PROCESS_TABLE, [{ id: recordId, data: processEvent, updated_at: processEvent.updatedAt }]);
         lead.dashboardRecordId = recordId;
@@ -1368,11 +1376,62 @@
         await cloudUpsertLeads([lead]);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
         render();
-        if (!options.silent) showToast("Evento enviado al dashboard y proceso");
+        if (!options.silent) showToast("Evento enviado al Dashboard y Proceso");
       } catch (error) {
-        console.error("No pude enviar a producción", error);
-        if (!options.silent) alert("No pude enviar a producción. Revisá la conexión a Supabase.");
+        console.error("No pude pasar al Dashboard", error);
+        if (!options.silent) alert("No pude pasar al Dashboard. Revisá la conexión a Supabase.");
       }
+    }
+
+    async function fetchCloudRecord(table, id) {
+      if (!getCloudConfig() || !id) return null;
+      try {
+        const rows = await cloudRequest(`${table}?id=eq.${encodeURIComponent(id)}&select=data&limit=1`);
+        return Array.isArray(rows) ? rows[0]?.data || null : null;
+      } catch (error) {
+        console.warn("No pude leer registro existente antes de sincronizar", table, id, error);
+        return null;
+      }
+    }
+
+    function mergeDashboardRecord(existing = {}, incoming = {}) {
+      if (!existing || !existing.id) return incoming;
+      return {
+        ...existing,
+        ...incoming,
+        costo: existing.costo ?? incoming.costo,
+        senia: existing.senia ?? incoming.senia,
+        saldo: existing.saldo ?? incoming.saldo,
+        facturacion: existing.facturacion || incoming.facturacion,
+        googleCalendarEventId: existing.googleCalendarEventId || incoming.googleCalendarEventId || "",
+        googleCalendarStatus: existing.googleCalendarStatus || incoming.googleCalendarStatus || "",
+        googleCalendarUpdatedAt: existing.googleCalendarUpdatedAt || incoming.googleCalendarUpdatedAt || "",
+        createdAt: existing.createdAt || incoming.createdAt,
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function mergeProcessEvent(existing = {}, incoming = {}) {
+      if (!existing || !existing.id) return incoming;
+      return {
+        ...existing,
+        ...incoming,
+        time: existing.time || incoming.time || "",
+        productionNotes: existing.productionNotes || incoming.productionNotes || "",
+        materials: Array.isArray(existing.materials) && existing.materials.length ? existing.materials : incoming.materials || [],
+        materialChecks: existing.materialChecks || incoming.materialChecks || {},
+        sketch: existing.sketch?.dataUrl ? existing.sketch : incoming.sketch || null,
+        checks: existing.checks || incoming.checks || {},
+        status: mergeProcessStatus(existing.status, incoming.status),
+        productionStatus: existing.productionStatus || incoming.productionStatus || "Listo para producir",
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function mergeProcessStatus(existingStatus = "", incomingStatus = "") {
+      const advanced = ["produccion", "montaje", "cerrado"];
+      if (advanced.includes(String(existingStatus).toLowerCase())) return existingStatus;
+      return incomingStatus || existingStatus || "consulta";
     }
 
     function leadToDashboardRecord(lead, recordId) {
@@ -1424,6 +1483,7 @@
         deposit: "Pendiente",
         balance: lead.monto ? money(lead.monto) : "Pendiente",
         billing: "Pendiente",
+        operativeStatus: ["Señado", "Pagado completo"].includes(lead.etapa) ? "Listo para producir" : "Diseño pendiente",
         status: "traspaso",
         notes: lead.observaciones || "",
         commercialNotes: [
@@ -1537,7 +1597,7 @@
     }
 
     function alertState(lead) {
-      if (lead.dashboardRecordId) return { key: "sent", label: "Producción", className: "status-ok" };
+      if (lead.dashboardRecordId) return { key: "sent", label: "Dashboard", className: "status-ok" };
       if (!lead.proximaAccionFecha) return { key: "", label: "Sin fecha", className: "status-muted" };
       const diff = daysUntil(lead.proximaAccionFecha);
       if (diff < 0) return { key: "overdue", label: "Vencida", className: "status-overdue" };
@@ -1562,8 +1622,8 @@
         "Propuesta enviada": "Hacer seguimiento",
         "Seguimiento": "Pedir seña",
         "Seña pendiente": "Confirmar datos",
-        "Señado": "Enviar a producción",
-        "Pagado completo": "Enviar a producción",
+        "Señado": "Pasar al Dashboard",
+        "Pagado completo": "Pasar al Dashboard",
         "Cancelado": "Cerrar consulta"
       }[stage] || "Hacer seguimiento";
     }
