@@ -1683,8 +1683,15 @@
     function getCloudConfig() {
       try {
         const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
-        return config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
+        const savedUrl = String(config.url || "");
+        const savedKey = String(config.anonKey || "");
+        const officialHost = new URL(DEFAULT_CLOUD_CONFIG.url).host;
+        const savedHost = savedUrl ? new URL(savedUrl).host : "";
+        if (savedHost === officialHost && savedKey === DEFAULT_CLOUD_CONFIG.anonKey) return config;
+        if (savedUrl || savedKey) localStorage.removeItem(CLOUD_CONFIG_KEY);
+        return DEFAULT_CLOUD_CONFIG;
       } catch {
+        localStorage.removeItem(CLOUD_CONFIG_KEY);
         return DEFAULT_CLOUD_CONFIG;
       }
     }
