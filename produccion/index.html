@@ -383,6 +383,7 @@
     };
 
     const ADMIN_PASSWORD = "happydeco2026";
+    const DASHBOARD_AUTH_SESSION_KEY = "happyDecoDashboardAuth";
     let records = [];
     let processEvents = [];
 
@@ -604,7 +605,17 @@
         alert("Contraseña incorrecta.");
         return;
       }
-      window.location.href = "../";
+      sessionStorage.setItem(DASHBOARD_AUTH_SESSION_KEY, "ok");
+      window.location.assign(getDashboardUrl());
+    }
+
+    function getDashboardUrl() {
+      const marker = "/happy-deco/";
+      const markerIndex = window.location.pathname.indexOf(marker);
+      if (markerIndex >= 0) {
+        return `${window.location.origin}${window.location.pathname.slice(0, markerIndex + marker.length)}`;
+      }
+      return new URL("../", window.location.href).href;
     }
 
     function printSingleSheet(eventId) {
