@@ -108,6 +108,66 @@
       background: var(--teal-dark);
     }
 
+    .production-manual {
+      display: grid;
+      grid-template-columns: minmax(220px, .75fr) minmax(0, 1.25fr);
+      gap: 14px;
+      margin: 0 0 16px;
+      padding: 16px;
+      border: 1px solid rgba(239, 211, 223, .82);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.94), rgba(255,250,253,.88)),
+        radial-gradient(circle at 100% 0, rgba(126, 219, 223, .2), transparent 44%);
+      box-shadow: 0 12px 28px rgba(72, 52, 35, .07);
+    }
+
+    .production-manual h2 {
+      margin: 4px 0 6px;
+      font-size: 22px;
+    }
+
+    .production-manual p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .manual-kicker {
+      color: var(--teal-dark);
+      font-weight: 900;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .manual-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .manual-grid article {
+      padding: 12px;
+      border: 1px solid rgba(239, 211, 223, .72);
+      border-radius: 10px;
+      background: rgba(255,255,255,.78);
+    }
+
+    .manual-grid strong,
+    .manual-grid span {
+      display: block;
+    }
+
+    .manual-grid strong {
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .manual-grid span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
     .toolbar {
       display: flex;
       align-items: center;
@@ -329,7 +389,8 @@
     }
 
     @media (max-width: 880px) {
-      .topbar, .toolbar, .sheet-head { grid-template-columns: 1fr; flex-direction: column; align-items: stretch; }
+      .topbar, .toolbar, .sheet-head, .production-manual { grid-template-columns: 1fr; flex-direction: column; align-items: stretch; }
+      .manual-grid { grid-template-columns: 1fr; }
       .actions { justify-content: stretch; }
       .actions .btn { flex: 1 1 150px; }
       .sheet-grid, .info-grid { grid-template-columns: 1fr; }
@@ -352,14 +413,49 @@
     </header>
 
     <nav class="module-switcher" aria-label="Pantallas principales">
-      <a class="module-card" href="../panel-control/"><strong>Panel de control</strong><span>Vista general de pr&oacute;ximos eventos, pendientes y alertas.</span></a>
-      <a class="module-card" href="../crm/"><strong>CRM</strong><span>Para consultas, reuniones, presupuestos y seguimiento.</span></a>
-      <a class="module-card" href="../"><strong>Dashboard</strong><span>Para eventos que ya deben gestionarse operativamente.</span></a>
-      <a class="module-card" href="../proceso/"><strong>Proceso</strong><span>Para avanzar con boceto, materiales y tareas.</span></a>
+      <a class="module-card" href="../panel-control/" data-admin-link><strong>Panel de control</strong><span>Vista general de pr&oacute;ximos eventos, pendientes y alertas.</span></a>
+      <a class="module-card" href="../crm/" data-admin-link><strong>CRM</strong><span>Para consultas, reuniones, presupuestos y seguimiento.</span></a>
+      <a class="module-card" href="../" data-admin-link><strong>Dashboard</strong><span>Para eventos que ya deben gestionarse operativamente.</span></a>
+      <a class="module-card" href="../proceso/" data-admin-link><strong>Proceso</strong><span>Para avanzar con boceto, materiales y tareas.</span></a>
       <a class="module-card active" aria-current="page" href="./"><strong>Producci&oacute;n</strong><span>Para preparar eventos listos para producir.</span></a>
-      <a class="module-card" href="../finanzas/"><strong>Finanzas</strong><span>Para controlar cobros, costos y m&aacute;rgenes.</span></a>
-      <a class="module-card" href="../manual/"><strong>Manual</strong><span>Gu&iacute;a simple para usar la herramienta completa.</span></a>
+      <a class="module-card" href="../finanzas/" data-admin-link><strong>Finanzas</strong><span>Para controlar cobros, costos y m&aacute;rgenes.</span></a>
+      <a class="module-card" href="#manual-produccion"><strong>Manual producción</strong><span>Guía específica para preparar eventos.</span></a>
     </nav>
+
+
+    <section class="production-manual" id="manual-produccion" aria-label="Manual de producción">
+      <div>
+        <span class="manual-kicker">Manual de producción</span>
+        <h2>Qué hacer en esta pantalla</h2>
+        <p>Esta vista es para preparar eventos sin acceder a información comercial, financiera o sensible.</p>
+      </div>
+      <div class="manual-grid">
+        <article>
+          <strong>1. Buscar el evento</strong>
+          <span>Usá el buscador para encontrar por clienta, temática, homenajeado o dirección.</span>
+        </article>
+        <article>
+          <strong>2. Revisar la ficha</strong>
+          <span>Mirar fecha, horario, dirección, temática, boceto, propuesta y observaciones operativas.</span>
+        </article>
+        <article>
+          <strong>3. Marcar materiales</strong>
+          <span>Cada ítem del listado funciona como check. Marcá solo lo que ya esté preparado.</span>
+        </article>
+        <article>
+          <strong>4. Actualizar estado</strong>
+          <span>Usá Decorado si debe seguir visible. Usá Finalizado solo cuando el evento ya no deba aparecer.</span>
+        </article>
+        <article>
+          <strong>5. Imprimir ficha</strong>
+          <span>El botón imprime únicamente el evento elegido, con nombre de clienta, temática y fecha.</span>
+        </article>
+        <article>
+          <strong>6. Datos sensibles</strong>
+          <span>CRM, Dashboard, Proceso, Finanzas y Panel de control requieren clave administrativa.</span>
+        </article>
+      </div>
+    </section>
 
     <section class="toolbar">
       <div>
@@ -399,6 +495,7 @@
 
     function init() {
       els.search.addEventListener("input", render);
+      bindProtectedNavigation();
       if (els.dashboardBtn) els.dashboardBtn.addEventListener("click", openDashboardWithPassword);
       loadProductionData();
     }
@@ -609,6 +706,26 @@
 
     function info(label, value, className = "") {
       return `<div class="info ${className}"><label>${escapeHtml(label)}</label><strong>${escapeHtml(value || "-")}</strong></div>`;
+    }
+
+    function bindProtectedNavigation() {
+      document.querySelectorAll("[data-admin-link]").forEach(link => {
+        link.addEventListener("click", event => {
+          event.preventDefault();
+          openProtectedUrl(link.href);
+        });
+      });
+    }
+
+    function openProtectedUrl(url) {
+      const password = prompt("Acceso administrativo requerido. Ingres? la contrase?a:");
+      if (password === null) return;
+      if (password !== ADMIN_PASSWORD) {
+        alert("Contrase?a incorrecta.");
+        return;
+      }
+      sessionStorage.setItem(DASHBOARD_AUTH_SESSION_KEY, "ok");
+      window.location.assign(url);
     }
 
     function openDashboardWithPassword() {
