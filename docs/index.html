@@ -1977,12 +1977,43 @@
       fields.forEach(field => {
         const input = els.form.elements[field];
         if (!input) return;
-        input.value = record[field] ?? "";
+        const value = normalizeFormValue(field, record[field] ?? "");
+        if (input.tagName === "SELECT") ensureSelectOption(input, value);
+        input.value = value;
       });
       updateFormMode();
       showMessage("Editando el registro seleccionado. Guardá cambios para actualizarlo sin duplicar.", "ok");
       document.querySelector(".form-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
       setTimeout(() => els.form.elements.cliente?.focus(), 250);
+    }
+
+    function normalizeFormValue(field, value) {
+      const text = String(value || "");
+      const normalizations = {
+        etapa: {
+          "Se?ado": "Señado",
+          "SeÃ±ado": "Señado"
+        },
+        estadoOperativo: {
+          "Dise?o pendiente": "Diseño pendiente",
+          "DiseÃ±o pendiente": "Diseño pendiente",
+          "En producci?n": "En producción",
+          "En producciÃ³n": "En producción"
+        },
+        tipoEvento: {
+          "Cumplea?os infantil": "Cumpleaños infantil",
+          "CumpleaÃ±os infantil": "Cumpleaños infantil",
+          "15 a?os": "15 años",
+          "15 aÃ±os": "15 años"
+        }
+      };
+      return normalizations[field]?.[text] || text;
+    }
+
+    function ensureSelectOption(select, value) {
+      if (!value) return;
+      const exists = Array.from(select.options).some(option => option.value === value);
+      if (!exists) select.append(new Option(value, value));
     }
     function validateForm(data) {
       const required = ["fechaCierre", "cliente", "tipoEvento", "tematica", "canal", "etapa", "estadoOperativo", "responsable"];
