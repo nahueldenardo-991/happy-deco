@@ -1323,6 +1323,7 @@
     }
   </style>
   <link rel="stylesheet" href="assets/ux-polish.css">
+  <link rel="stylesheet" href="lifeline.css">
 </head>
 <body class="module-dashboard auth-locked">
   <section class="login-screen" aria-label="Acceso de gestión">
@@ -1707,6 +1708,7 @@
     </div>
   </div>
 
+  <script src="lifeline.js"></script>
   <script>
     const STORAGE_KEY = "happyDecoDashboardRecords";
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
@@ -2180,6 +2182,7 @@
           <td>
             <strong>${escapeHtml(record.cliente)}</strong><br>
             <span class="small-note">${escapeHtml(record.homenajeado || "-")}${record.edadCumpleanero ? ` · ${record.edadCumpleanero} años` : ""}</span>
+            ${renderEventLifeline(record, true)}
           </td>
           <td>${escapeHtml(record.propuesta || "-")}</td>
           <td>${escapeHtml(record.tematica)}</td>
@@ -2249,6 +2252,7 @@
             </div>
             <button class="icon-btn" type="button" title="Eliminar registro admin" data-delete="${escapeAttr(record.id)}">&times;</button>
           </div>
+          ${renderEventLifeline(record)}
           <div class="record-card-grid">
             ${mobileField("Cierre", formatDate(getRecordCloseDate(record)))}
             ${mobileField("Evento", record.fechaEvento ? formatDate(record.fechaEvento) : "Sin fecha")}
@@ -2315,6 +2319,10 @@
           <strong>${escapeHtml(value || "-")}</strong>
         </div>
       `;
+    }
+
+    function renderEventLifeline(record, compact = false) {
+      return window.HappyDecoLifeline?.render(record, { compact }) || "";
     }
 
     function getDeepLinkedRecordId() {

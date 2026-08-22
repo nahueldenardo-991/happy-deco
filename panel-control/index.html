@@ -652,6 +652,7 @@
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
+  <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body class="module-control">
   <div class="shell">
@@ -836,6 +837,7 @@
     </section>
   </div>
 
+  <script src="../lifeline.js"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -1266,6 +1268,7 @@
             <strong>${escapeHtml([cleanText(record.cliente), cleanText(record.tematica)].filter(Boolean).join(" - ") || "Registro sin nombre")}</strong>
             <div class="event-meta">${escapeHtml(meta)}</div>
             <div class="event-meta">${escapeHtml([cleanText(record.homenajeado || "Sin homenajeado"), cleanText(record.propuesta || "Sin propuesta"), cleanText(record.etapa || "Sin etapa")].join(" · "))}</div>
+            ${renderEventLifeline(record, true)}
           </div>
           <div class="record-links">
             <a class="mini-link" href="../?registro=${encodeURIComponent(record.id)}">Dashboard</a>
@@ -1273,6 +1276,10 @@
           </div>
         </article>
       `;
+    }
+
+    function renderEventLifeline(record, compact = false) {
+      return window.HappyDecoLifeline?.render(record, { compact }) || "";
     }
 
     function getUpcoming(items) {

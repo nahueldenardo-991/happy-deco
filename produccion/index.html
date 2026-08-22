@@ -337,6 +337,7 @@
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
+  <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body>
   <main class="shell">
@@ -365,6 +366,7 @@
     <section class="production-list" id="productionList"></section>
   </main>
 
+  <script src="../lifeline.js"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -548,6 +550,7 @@
               </div>
             </div>
           </div>
+          ${renderEventLifeline(item)}
           <div class="sheet-grid">
             <div>
               <h3>Boceto</h3>
@@ -592,6 +595,10 @@
       if (sketch.type?.startsWith("image/")) return `<img src="${escapeAttr(sketch.dataUrl)}" alt="Boceto ${escapeAttr(sketch.name || "")}">`;
       if (sketch.type === "application/pdf") return `<iframe src="${escapeAttr(sketch.dataUrl)}" title="Boceto PDF"></iframe>`;
       return `<div><strong>${escapeHtml(sketch.name || "Archivo de boceto")}</strong><p class="muted">Archivo Word cargado en proceso.</p><a class="btn" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar boceto</a></div>`;
+    }
+
+    function renderEventLifeline(item, compact = false) {
+      return window.HappyDecoLifeline?.render(item, { compact }) || "";
     }
 
     function info(label, value, className = "") {

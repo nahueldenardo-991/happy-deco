@@ -1,0 +1,92 @@
+.event-lifeline {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  margin: 10px 0;
+}
+
+.event-lifeline-track {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(46px, 1fr));
+  gap: 6px;
+  align-items: start;
+}
+
+.event-life-step {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  justify-items: center;
+  color: #756873;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.event-life-dot {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #e9e3df;
+  border: 1px solid rgba(117, 104, 115, .12);
+}
+
+.event-life-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-life-step.pending .event-life-dot {
+  background: #e9e3df;
+}
+
+.event-life-step.current .event-life-dot {
+  background: #7edbdf;
+  box-shadow: 0 0 0 3px rgba(126, 219, 223, .18);
+}
+
+.event-life-step.done .event-life-dot {
+  background: #8bd6a3;
+}
+
+.event-life-step.warning .event-life-dot {
+  background: #ffd66f;
+  box-shadow: 0 0 0 3px rgba(255, 214, 111, .2);
+}
+
+.event-life-step.danger .event-life-dot {
+  background: #ff8fa8;
+  box-shadow: 0 0 0 3px rgba(255, 143, 168, .18);
+}
+
+.event-lifeline-compact {
+  margin: 7px 0 0;
+}
+
+.event-lifeline-compact .event-lifeline-track {
+  grid-template-columns: repeat(7, minmax(32px, 1fr));
+  gap: 4px;
+}
+
+.event-lifeline-compact .event-life-step {
+  font-size: 0;
+}
+
+.event-lifeline-compact .event-life-dot {
+  height: 7px;
+}
+
+@media (max-width: 760px) {
+  .event-lifeline-track {
+    grid-template-columns: repeat(7, minmax(38px, 1fr));
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .event-life-step {
+    font-size: 9px;
+  }
+}
