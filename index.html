@@ -2450,12 +2450,12 @@
         const officialUrl = savedUrl.includes("/macros/s/AKfycbwqqcdstHb6fWfZ9TTCosxjSm3fiWgh7YsqX8zkxey_Kek3TwwkCwUv6egzrJjIC0_2TQ/exec")
           ? savedUrl
           : DEFAULT_CALENDAR_WEB_APP_URL;
-        if (savedUrl && savedUrl !== officialUrl) {
+        if ((savedUrl && savedUrl !== officialUrl) || (saved.secret && saved.secret !== DEFAULT_CALENDAR_SECRET)) {
           localStorage.removeItem(CALENDAR_CONFIG_KEY);
         }
         return {
           webAppUrl: officialUrl,
-          secret: saved.secret || DEFAULT_CALENDAR_SECRET
+          secret: DEFAULT_CALENDAR_SECRET
         };
       } catch {
         localStorage.removeItem(CALENDAR_CONFIG_KEY);

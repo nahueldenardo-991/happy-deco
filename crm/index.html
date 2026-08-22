@@ -1148,12 +1148,12 @@
         const officialUrl = savedUrl.includes(DEFAULT_CALENDAR_WEB_APP_PATH)
           ? savedUrl
           : DEFAULT_CALENDAR_WEB_APP_URL;
-        if (savedUrl && savedUrl !== officialUrl) {
+        if ((savedUrl && savedUrl !== officialUrl) || (saved.secret && saved.secret !== DEFAULT_CALENDAR_SECRET)) {
           localStorage.removeItem(CALENDAR_CONFIG_KEY);
         }
         return {
           webAppUrl: officialUrl,
-          secret: saved.secret || DEFAULT_CALENDAR_SECRET
+          secret: DEFAULT_CALENDAR_SECRET
         };
       } catch {
         localStorage.removeItem(CALENDAR_CONFIG_KEY);
@@ -1168,7 +1168,7 @@
         const timer = window.setTimeout(() => {
           cleanup();
           reject(new Error("Tiempo de espera agotado con Google Calendar."));
-        }, 15000);
+        }, 30000);
 
         function cleanup() {
           window.clearTimeout(timer);
