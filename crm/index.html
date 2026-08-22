@@ -351,6 +351,78 @@
     .lead-title strong { font-size: 1rem; line-height: 1.05; }
     .lead-card p { margin: 0; color: var(--muted); font-size: .93rem; }
 
+    .stage-pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 1.65rem;
+      padding: .24rem .6rem;
+      border-radius: 999px;
+      background: #fff0cd;
+      color: #8a5512;
+      font-size: .78rem;
+      font-weight: 900;
+    }
+
+    .stage-pill.confirmed { background: #dff7ea; color: var(--ok); }
+    .stage-pill.closed { background: #f1e8de; color: var(--muted); }
+    .stage-pill.cancelled { background: #ffe1e1; color: var(--danger); }
+
+    .guided-panel {
+      display: grid;
+      gap: .55rem;
+      padding: .75rem;
+      border: 1px solid rgba(34, 152, 147, .24);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .78);
+    }
+
+    .guided-panel.needs-data {
+      border-color: rgba(208, 134, 34, .32);
+      background: #fff9ed;
+    }
+
+    .guided-panel.synced {
+      border-color: rgba(47, 155, 112, .34);
+      background: #effcf6;
+    }
+
+    .guided-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: .6rem;
+      flex-wrap: wrap;
+    }
+
+    .guided-kicker {
+      margin: 0 0 .15rem;
+      color: var(--muted);
+      font-size: .75rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .guided-title {
+      margin: 0;
+      color: var(--ink);
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .guided-missing {
+      margin: 0;
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.3;
+    }
+
+    .guided-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+
     .card-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -592,6 +664,8 @@
       .filters .control { width: 100%; }
       .handoff-line { align-items: stretch; }
       .handoff-actions, .handoff-actions .mini { width: 100%; }
+      .guided-head { align-items: stretch; }
+      .guided-actions, .guided-actions .mini { width: 100%; }
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
@@ -699,13 +773,13 @@
             <div class="field">
               <label for="etapa">Etapa comercial</label>
               <select class="control" id="etapa" name="etapa">
-                <option>Nueva consulta</option>
-                <option>Contactado</option>
-                <option>Propuesta enviada</option>
+                <option>Consulta nueva</option>
+                <option>Datos incompletos</option>
                 <option>Seguimiento</option>
-                <option>Seña pendiente</option>
+                <option>Presupuesto enviado</option>
                 <option>Señado</option>
                 <option>Pagado completo</option>
+                <option>Realizado</option>
                 <option>Cancelado</option>
               </select>
             </div>
@@ -726,12 +800,13 @@
               <label for="proximaAccion">Tarea</label>
               <select class="control" id="proximaAccion" name="proximaAccion">
                 <option>Responder consulta</option>
-                <option>Enviar propuesta</option>
+                <option>Completar datos</option>
+                <option>Enviar presupuesto</option>
                 <option>Hacer seguimiento</option>
                 <option>Pedir seña</option>
                 <option>Confirmar datos</option>
                 <option>Coordinar llamada</option>
-                <option>Enviar a producción</option>
+                <option>Pasar al Dashboard</option>
               </select>
             </div>
             <div class="field full">
@@ -883,10 +958,16 @@
     ];
     const DATA_TABLE = "happy_deco_dashboard_records";
     const PROCESS_TABLE = "happy_deco_process_events";
-    const STAGES = ["Nueva consulta", "Contactado", "Propuesta enviada", "Seguimiento", "Seña pendiente", "Señado", "Pagado completo", "Cancelado"];
-    const PIPELINE_STAGES = ["Nueva consulta", "Propuesta enviada", "Seguimiento", "Seña pendiente"];
+    const STAGES = ["Consulta nueva", "Datos incompletos", "Seguimiento", "Presupuesto enviado", "Señado", "Pagado completo", "Realizado", "Cancelado"];
+    const PIPELINE_STAGES = ["Consulta nueva", "Datos incompletos", "Seguimiento", "Presupuesto enviado"];
     const RESPONSABLES = ["Cati", "Xime", "Cati + Xime", "Juli"];
     const DASHBOARD_READY_STAGES = ["Señado", "Pagado completo"];
+    const LEGACY_STAGE_MAP = {
+      "Nueva consulta": "Consulta nueva",
+      "Contactado": "Seguimiento",
+      "Propuesta enviada": "Presupuesto enviado",
+      "Seña pendiente": "Seguimiento"
+    };
 
     const els = {
       form: document.querySelector("#leadForm"),
@@ -972,6 +1053,7 @@
         if (action.dataset.action === "edit") editLead(lead);
         if (action.dataset.action === "delete") deleteLead(lead.id);
         if (action.dataset.action === "advance") advanceLead(lead.id);
+        if (action.dataset.action === "guided") executeGuidedAction(lead.id);
         if (action.dataset.action === "send") sendLeadToDashboard(lead.id);
         if (action.dataset.action === "open-dashboard") window.location.href = "../";
         if (action.dataset.action === "open-process") window.location.href = `../proceso/?evento=${encodeURIComponent(lead.dashboardRecordId || `event-${lead.id}`)}`;
@@ -1021,7 +1103,7 @@
         tematica: lead.tematica || "",
         propuesta: lead.propuesta || "Propuesta intermedia",
         monto: toNumber(lead.monto),
-        etapa: lead.etapa || "Nueva consulta",
+        etapa: normalizeStage(lead.etapa || "Consulta nueva"),
         responsable: lead.responsable || "Cati",
         proximaAccionFecha: lead.proximaAccionFecha || "",
         proximaAccion: lead.proximaAccion || "Hacer seguimiento",
@@ -1031,6 +1113,10 @@
         productionSentAt: lead.productionSentAt || "",
         updatedAt: lead.updatedAt || new Date().toISOString()
       })).sort((a, b) => String(a.proximaAccionFecha || "9999").localeCompare(String(b.proximaAccionFecha || "9999")));
+    }
+
+    function normalizeStage(stage) {
+      return LEGACY_STAGE_MAP[stage] || (STAGES.includes(stage) ? stage : "Consulta nueva");
     }
 
     function handleSubmit(event) {
@@ -1252,7 +1338,7 @@
     function advanceLead(id) {
       const lead = leads.find(item => item.id === id);
       if (!lead) return;
-      const index = STAGES.indexOf(lead.etapa);
+      const index = Math.max(0, STAGES.indexOf(normalizeStage(lead.etapa)));
       lead.etapa = STAGES[Math.min(index + 1, STAGES.length - 1)] || "Seguimiento";
       lead.proximaAccionFecha = suggestNextActionDate(lead);
       lead.proximaAccion = suggestNextAction(lead.etapa);
@@ -1264,10 +1350,11 @@
     function updateLeadField(id, field, value) {
       const lead = leads.find(item => item.id === id);
       if (!lead) return;
-      lead[field] = ["monto", "edadCumpleanero"].includes(field) ? toNumber(value) : value;
+      lead[field] = ["monto", "edadCumpleanero"].includes(field) ? toNumber(value) : field === "etapa" ? normalizeStage(value) : value;
+      if (field === "etapa") lead.proximaAccion = suggestNextAction(lead.etapa);
       lead.updatedAt = new Date().toISOString();
       saveLeads();
-      if (field === "etapa" && DASHBOARD_READY_STAGES.includes(value)) showToast("Estado confirmado. Usá Pasar al Dashboard para enviarlo a operación.");
+      if (field === "etapa" && DASHBOARD_READY_STAGES.includes(lead.etapa)) showToast("Estado confirmado. Usá Pasar al Dashboard para enviarlo a operación.");
     }
 
     function filteredLeads() {
@@ -1295,7 +1382,7 @@
     }
 
     function renderSummary(items) {
-      const open = items.filter(lead => !["Señado", "Pagado completo", "Cancelado"].includes(lead.etapa));
+      const open = items.filter(lead => !["Señado", "Pagado completo", "Realizado", "Cancelado"].includes(lead.etapa));
       const overdue = items.filter(lead => alertState(lead).key === "overdue");
       const week = items.filter(lead => daysUntil(lead.proximaAccionFecha) >= 0 && daysUntil(lead.proximaAccionFecha) <= 7);
       const sent = items.filter(lead => lead.dashboardRecordId);
@@ -1314,9 +1401,9 @@
     }
 
     function renderPipeline(items) {
-      const columns = [...PIPELINE_STAGES, "Señado"];
+      const columns = [...PIPELINE_STAGES, "Señado", "Pagado completo"];
       els.pipeline.innerHTML = columns.map(stage => {
-        const stageItems = items.filter(lead => stage === "Señado" ? ["Señado", "Pagado completo"].includes(lead.etapa) : lead.etapa === stage);
+        const stageItems = items.filter(lead => lead.etapa === stage);
         return `
           <section class="pipeline-column">
             <div class="column-head">
@@ -1332,17 +1419,17 @@
     function renderLeadCard(lead) {
       const alert = alertState(lead);
       const sentClass = lead.dashboardRecordId ? "sent" : "";
-      const handoff = dashboardHandoffState(lead);
+      const guide = salesGuideState(lead);
       return `
         <article class="lead-card ${alert.key} ${sentClass}">
           <div class="lead-title">
             <strong>${escapeHtml(lead.cliente || "Sin cliente")}</strong>
-            <span class="badge ${alert.className}">${alert.label}</span>
+            <span class="stage-pill ${stageClass(lead.etapa)}">${escapeHtml(lead.etapa)}</span>
           </div>
           <p>${escapeHtml(lead.tematica || "Temática pendiente")} · ${escapeHtml(lead.homenajeado || "Sin homenajeado")}</p>
           <p>${formatDate(lead.fechaEvento) || "Sin fecha de evento"} · ${escapeHtml(lead.responsable)}</p>
-          <p><strong>${escapeHtml(lead.proximaAccion)}</strong> ${formatDate(lead.proximaAccionFecha) ? `· ${formatDate(lead.proximaAccionFecha)}` : ""}</p>
-          ${renderDashboardHandoff(lead, handoff)}
+          <p><strong>Seguimiento:</strong> ${escapeHtml(lead.proximaAccion || "Sin tarea")} ${formatDate(lead.proximaAccionFecha) ? `· ${formatDate(lead.proximaAccionFecha)}` : ""}</p>
+          ${renderSalesGuide(lead, guide)}
           <div class="card-actions">
             <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
             <button class="mini" type="button" data-action="advance" data-id="${lead.id}">Avanzar</button>
@@ -1393,7 +1480,7 @@
               <th>Responsable</th>
               <th>Próxima acción</th>
               <th>Monto</th>
-              <th>Dashboard</th>
+              <th>Siguiente paso</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -1406,7 +1493,7 @@
                 <td>${selectHtml("responsable", lead.id, RESPONSABLES, lead.responsable)}</td>
                 <td><input class="control" type="date" data-field="proximaAccionFecha" data-id="${lead.id}" value="${escapeHtml(lead.proximaAccionFecha)}"></td>
                 <td>${money(lead.monto)}</td>
-                <td>${renderDashboardHandoff(lead, dashboardHandoffState(lead), true)}</td>
+                <td>${renderSalesGuide(lead, salesGuideState(lead), true)}</td>
                 <td>
                   <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
                 </td>
@@ -1421,6 +1508,181 @@
       return `<select class="control" data-field="${field}" data-id="${id}">
         ${options.map(option => `<option ${option === value ? "selected" : ""}>${escapeHtml(option)}</option>`).join("")}
       </select>`;
+    }
+
+    function stageClass(stage) {
+      if (["Señado", "Pagado completo"].includes(stage)) return "confirmed";
+      if (stage === "Realizado") return "closed";
+      if (stage === "Cancelado") return "cancelled";
+      return "";
+    }
+
+    function salesGuideState(lead) {
+      const missing = dashboardMissingFields(lead);
+      if (lead.dashboardRecordId) {
+        return {
+          key: "synced",
+          title: "Actualizar Dashboard",
+          action: "dashboard",
+          button: "Actualizar Dashboard",
+          missing,
+          help: "Ya está vinculado con Dashboard y Proceso. Si cambió algo comercial, actualizá el registro operativo."
+        };
+      }
+      if (lead.etapa === "Cancelado") {
+        return {
+          key: "closed",
+          title: "Consulta cancelada",
+          action: "edit",
+          button: "Editar",
+          missing: [],
+          help: "No requiere avance comercial. Editar solo si hay que corregir información."
+        };
+      }
+      if (lead.etapa === "Realizado") {
+        return {
+          key: "closed",
+          title: "Evento realizado",
+          action: "edit",
+          button: "Editar",
+          missing: [],
+          help: "El circuito comercial ya está cerrado. Revisar operación y finanzas si corresponde."
+        };
+      }
+      if (missing.length) {
+        return {
+          key: "needs-data",
+          title: "Completar datos",
+          action: "edit",
+          button: "Completar datos",
+          missing,
+          help: "Faltan datos mínimos antes de pasar este evento a operación."
+        };
+      }
+      if (lead.etapa === "Consulta nueva") {
+        return {
+          key: "ready",
+          title: "Enviar presupuesto",
+          action: "send-budget",
+          button: "Enviar presupuesto",
+          missing,
+          help: "No envía mensajes reales: solo marca la consulta como Presupuesto enviado."
+        };
+      }
+      if (lead.etapa === "Datos incompletos") {
+        return {
+          key: "needs-data",
+          title: "Completar datos",
+          action: "edit",
+          button: "Completar datos",
+          missing,
+          help: "Actualizar la ficha antes de seguir el circuito comercial."
+        };
+      }
+      if (lead.etapa === "Seguimiento") {
+        return {
+          key: "ready",
+          title: "Hacer seguimiento",
+          action: "follow-up",
+          button: "Hacer seguimiento",
+          missing,
+          help: "Abrir la consulta para actualizar tarea, fecha de seguimiento o respuesta de la clienta."
+        };
+      }
+      if (lead.etapa === "Presupuesto enviado") {
+        return {
+          key: "ready",
+          title: "Marcar como señado",
+          action: "mark-signed",
+          button: "Marcar como señado",
+          missing,
+          help: "Usar solo cuando la clienta confirmó con seña."
+        };
+      }
+      if (DASHBOARD_READY_STAGES.includes(lead.etapa)) {
+        return {
+          key: "ready",
+          title: "Pasar al Dashboard",
+          action: "dashboard",
+          button: "Pasar al Dashboard",
+          missing,
+          help: "Crea o actualiza el evento operativo en Dashboard y Proceso."
+        };
+      }
+      return {
+        key: "ready",
+        title: "Hacer seguimiento",
+        action: "follow-up",
+        button: "Hacer seguimiento",
+        missing,
+        help: "Revisar la consulta y definir el próximo movimiento."
+      };
+    }
+
+    function renderSalesGuide(lead, guide, compact = false) {
+      const missingText = guide.missing.length ? `Falta: ${guide.missing.join(", ")}.` : "Datos mínimos completos.";
+      const links = lead.dashboardRecordId
+        ? `<button class="mini secondary" type="button" data-action="open-dashboard" data-id="${lead.id}">Ver Dashboard</button>
+           <button class="mini secondary" type="button" data-action="open-process" data-id="${lead.id}">Ver Proceso</button>`
+        : "";
+      return `
+        <div class="guided-panel ${guide.key}">
+          <div class="guided-head">
+            <div>
+              <p class="guided-kicker">Siguiente paso</p>
+              <p class="guided-title">${escapeHtml(guide.title)}</p>
+            </div>
+            <div class="guided-actions">
+              <button class="mini primary" type="button" data-action="guided" data-id="${lead.id}">${escapeHtml(guide.button)}</button>
+              ${links}
+            </div>
+          </div>
+          ${compact ? "" : `<p class="guided-missing">${escapeHtml(missingText)}</p><p class="guided-missing">${escapeHtml(guide.help)}</p>`}
+        </div>
+      `;
+    }
+
+    function executeGuidedAction(id) {
+      const lead = leads.find(item => item.id === id);
+      if (!lead) return;
+      const guide = salesGuideState(lead);
+      if (guide.action === "edit") {
+        editLead(lead);
+        showToast(guide.title);
+        return;
+      }
+      if (guide.action === "send-budget") {
+        if (!confirm("¿Marcar esta consulta como Presupuesto enviado?\n\nEsto no envía ningún mensaje real a la clienta.")) return;
+        updateLeadStage(lead, "Presupuesto enviado", "Hacer seguimiento");
+        showToast("Consulta marcada como Presupuesto enviado");
+        return;
+      }
+      if (guide.action === "follow-up") {
+        lead.proximaAccion = "Hacer seguimiento";
+        lead.proximaAccionFecha = lead.proximaAccionFecha || suggestNextActionDate(lead);
+        lead.updatedAt = new Date().toISOString();
+        saveLeads();
+        editLead(lead);
+        showToast("Abrí la consulta para registrar el seguimiento");
+        return;
+      }
+      if (guide.action === "mark-signed") {
+        if (!confirm("¿Confirmás que este evento está señado?")) return;
+        updateLeadStage(lead, "Señado", "Pasar al Dashboard");
+        showToast("Evento marcado como Señado. Ya podés pasarlo al Dashboard.");
+        return;
+      }
+      if (guide.action === "dashboard") {
+        sendLeadToDashboard(id);
+      }
+    }
+
+    function updateLeadStage(lead, stage, nextAction = "") {
+      lead.etapa = stage;
+      lead.proximaAccion = nextAction || suggestNextAction(stage);
+      lead.proximaAccionFecha = suggestNextActionDate(lead);
+      lead.updatedAt = new Date().toISOString();
+      saveLeads();
     }
 
     function dashboardHandoffState(lead) {
@@ -1809,23 +2071,23 @@
 
     function suggestNextActionDate(lead) {
       const base = new Date();
-      if (lead.etapa === "Propuesta enviada") base.setDate(base.getDate() + 2);
+      if (lead.etapa === "Presupuesto enviado") base.setDate(base.getDate() + 2);
       else if (lead.etapa === "Seguimiento") base.setDate(base.getDate() + 2);
-      else if (lead.etapa === "Seña pendiente") base.setDate(base.getDate() + 1);
+      else if (DASHBOARD_READY_STAGES.includes(lead.etapa)) base.setDate(base.getDate() + 1);
       else base.setDate(base.getDate() + 1);
       return isoDate(base);
     }
 
     function suggestNextAction(stage) {
       return {
-        "Nueva consulta": "Responder consulta",
-        "Contactado": "Enviar propuesta",
-        "Propuesta enviada": "Hacer seguimiento",
-        "Seguimiento": "Pedir seña",
-        "Seña pendiente": "Confirmar datos",
+        "Consulta nueva": "Enviar presupuesto",
+        "Datos incompletos": "Completar datos",
+        "Seguimiento": "Hacer seguimiento",
+        "Presupuesto enviado": "Marcar como señado",
         "Señado": "Pasar al Dashboard",
         "Pagado completo": "Pasar al Dashboard",
-        "Cancelado": "Cerrar consulta"
+        "Realizado": "Evento realizado",
+        "Cancelado": "Consulta cancelada"
       }[stage] || "Hacer seguimiento";
     }
 
