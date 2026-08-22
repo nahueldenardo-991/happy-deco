@@ -718,9 +718,9 @@
         <div class="detail" id="conversionMetric">0% conversión</div>
       </button>
       <article class="metric rose">
-        <div class="label">Ingresos vendidos</div>
+        <div class="label">Ventas proyectadas</div>
         <div class="value" id="revenueMetric">$0</div>
-        <div class="detail">Eventos señados o realizados</div>
+        <div class="detail">Señados o pagados completos</div>
       </article>
       <article class="metric gold">
         <div class="label">Saldo pendiente</div>
@@ -730,7 +730,7 @@
       <article class="metric teal">
         <div class="label">Margen estimado</div>
         <div class="value" id="marginMetric">$0</div>
-        <div class="detail">Monto vendido menos costo</div>
+        <div class="detail">Solo realizados con costo</div>
       </article>
       <button class="metric metric-action rose" type="button" data-detail="next7">
         <div class="label">Próximos 7 días</div>
@@ -957,9 +957,12 @@
     function render(items) {
       const clean = sanitizeRecords(items);
       const confirmed = clean.filter(isConfirmed);
-      const revenue = sum(confirmed, "monto");
+      const projectedFinancial = clean.filter(isProjectedFinancial);
+      const realizedFinancial = clean.filter(isRealizedFinancial);
+      const realizedWithCost = realizedFinancial.filter(record => toNumber(record.costo) > 0);
+      const revenue = sum(projectedFinancial, "monto");
       const balance = sum(clean.filter(record => isConfirmed(record) || isPaidOrDone(record)), "saldo");
-      const margin = revenue - sum(confirmed, "costo");
+      const margin = sum(realizedWithCost, "monto") - sum(realizedWithCost, "costo");
       const conversion = clean.length ? Math.round((confirmed.length / clean.length) * 100) : 0;
       const upcoming = getUpcoming(clean);
       const next7 = upcoming.filter(record => daysUntil(record.fechaEvento) <= 7);
@@ -1311,6 +1314,15 @@
     function isConfirmed(record) {
       const stage = cleanText(record.etapa);
       return ["Senado", "Señado", "Pagado completo", "Realizado"].includes(stage);
+    }
+
+    function isProjectedFinancial(record) {
+      const stage = cleanText(record.etapa);
+      return ["Senado", "Señado", "Pagado completo"].includes(stage) && !isRealizedFinancial(record);
+    }
+
+    function isRealizedFinancial(record) {
+      return cleanText(record.etapa) === "Realizado" || cleanText(record.estadoOperativo) === "Realizado";
     }
 
     function isPaidOrDone(record) {
