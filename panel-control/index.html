@@ -327,6 +327,60 @@
       gap: 18px;
     }
 
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .analytics-wide {
+      grid-column: 1 / -1;
+    }
+
+    .chart-grid,
+    .ranking-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .month-row {
+      display: grid;
+      gap: 8px;
+      padding: 11px;
+      border: 1px solid rgba(255, 150, 191, .24);
+      border-radius: var(--radius);
+      background: #fff8fb;
+    }
+
+    .row-top,
+    .rank-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+    }
+
+    .row-title,
+    .rank-title {
+      font-weight: 950;
+      color: var(--ink);
+      overflow-wrap: anywhere;
+    }
+
+    .row-count,
+    .rank-count {
+      color: var(--teal);
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .rank-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
     .panel-section {
       padding: 16px;
     }
@@ -552,6 +606,10 @@
         grid-template-columns: 1fr;
       }
 
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+
       .metrics {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -724,6 +782,58 @@
         <div class="list" id="quickList"></div>
       </aside>
     </main>
+
+    <section class="analytics-grid" aria-label="Lectura gerencial">
+      <article class="panel panel-section analytics-wide">
+        <div class="panel-head">
+          <div>
+            <h2>Volumen por mes</h2>
+            <div class="small-note">Registros agrupados por fecha de cierre.</div>
+          </div>
+        </div>
+        <div class="chart-grid" id="monthChart"></div>
+      </article>
+
+      <article class="panel panel-section">
+        <div class="panel-head">
+          <div>
+            <h2>Alertas rápidas</h2>
+            <div class="small-note">Señales para revisar antes de coordinar con el equipo.</div>
+          </div>
+        </div>
+        <div class="ranking-list" id="alertsList"></div>
+      </article>
+
+      <article class="panel panel-section">
+        <div class="panel-head">
+          <div>
+            <h2>Resumen general por estado</h2>
+            <div class="small-note">Distribución actual de las etapas comerciales.</div>
+          </div>
+        </div>
+        <div class="ranking-list" id="stageRanking"></div>
+      </article>
+
+      <article class="panel panel-section">
+        <div class="panel-head">
+          <div>
+            <h2>Propuestas más elegidas</h2>
+            <div class="small-note">Qué tipo de propuesta aparece con mayor frecuencia.</div>
+          </div>
+        </div>
+        <div class="ranking-list" id="proposalRanking"></div>
+      </article>
+
+      <article class="panel panel-section">
+        <div class="panel-head">
+          <div>
+            <h2>Temáticas más pedidas</h2>
+            <div class="small-note">Temáticas con más movimiento en los registros.</div>
+          </div>
+        </div>
+        <div class="ranking-list" id="themeRanking"></div>
+      </article>
+    </section>
   </div>
 
   <script>
@@ -759,7 +869,12 @@
       detailList: document.getElementById("detailList"),
       clearDetailBtn: document.getElementById("clearDetailBtn"),
       upcomingList: document.getElementById("upcomingList"),
-      quickList: document.getElementById("quickList")
+      quickList: document.getElementById("quickList"),
+      monthChart: document.getElementById("monthChart"),
+      alertsList: document.getElementById("alertsList"),
+      stageRanking: document.getElementById("stageRanking"),
+      proposalRanking: document.getElementById("proposalRanking"),
+      themeRanking: document.getElementById("themeRanking")
     };
 
     let records = loadLocalRecords();
@@ -887,6 +1002,7 @@
 
       renderUpcoming(upcoming);
       renderQuickList(clean, { confirmed, upcoming, next7, unscheduled, blocked, pendingBilling, topOwner, topProposal });
+      renderAnalytics(clean, { confirmed, upcoming, next7, unscheduled, blocked, pendingBilling });
     }
 
     function buildHeroTitle(items, upcoming, blocked) {
@@ -988,6 +1104,118 @@
             <div class="muted">${escapeHtml(item.meta)}</div>
             <div class="bar ${item.tone === "rose" ? "rose" : item.tone === "gold" ? "gold" : ""}"><span style="width:${width}%"></span></div>
           </button>
+        `;
+      }).join("");
+    }
+
+    function renderAnalytics(items, groups) {
+      renderMonthChart(items);
+      renderAlerts(items, groups);
+      renderRanking(els.stageRanking, groupRecords(items, record => cleanText(record.etapa || "Sin etapa"), () => "Etapa comercial"), "teal");
+      renderRanking(els.proposalRanking, groupRecords(items, record => cleanText(record.propuesta || "Sin definir"), () => "Propuesta ofrecida"), "gold");
+      renderRanking(els.themeRanking, groupRecords(items, record => cleanText(record.tematica || "Sin temática"), record => cleanText(record.tipoEvento || "Tipo de evento")), "rose");
+    }
+
+    function renderMonthChart(items) {
+      const grouped = groupRecords(items, getRecordMonth, () => "");
+      if (!grouped.length) {
+        els.monthChart.innerHTML = `<div class="empty">Sin datos para mostrar.</div>`;
+        return;
+      }
+
+      const max = Math.max(1, ...grouped.map(item => item.count));
+      els.monthChart.innerHTML = grouped
+        .sort((a, b) => a.key.localeCompare(b.key, "es"))
+        .slice(-8)
+        .map(item => {
+          const percentage = Math.max(8, Math.round((item.count / max) * 100));
+          const monthRecords = items.filter(record => getRecordMonth(record) === item.key);
+          const revenue = sum(monthRecords.filter(isConfirmed), "monto");
+          return `
+            <div class="month-row">
+              <div class="row-top">
+                <div class="row-title">${escapeHtml(formatMonth(item.key))}</div>
+                <div class="row-count">${item.count} · ${money(revenue)}</div>
+              </div>
+              <div class="bar"><span style="width:${percentage}%"></span></div>
+            </div>
+          `;
+        }).join("");
+    }
+
+    function renderAlerts(items, groups) {
+      const alerts = [
+        {
+          title: "Eventos en los próximos 7 días",
+          count: groups.next7.length,
+          meta: "Revisar materiales, montaje, responsables y detalles finales.",
+          tone: "gold"
+        },
+        {
+          title: "Eventos futuros sin agendar",
+          count: groups.unscheduled.length,
+          meta: "Tienen fecha futura y todavía no figuran como agendados.",
+          tone: "rose"
+        },
+        {
+          title: "Eventos trabados",
+          count: groups.blocked.length,
+          meta: "Necesitan una decisión o dato pendiente para avanzar.",
+          tone: "rose"
+        },
+        {
+          title: "Facturación pendiente",
+          count: groups.pendingBilling.length,
+          meta: "Registros a revisar administrativamente.",
+          tone: "gold"
+        },
+        {
+          title: "Eventos confirmados sin fecha",
+          count: items.filter(record => isConfirmed(record) && !record.fechaEvento).length,
+          meta: "No deberían avanzar incompletos a producción.",
+          tone: "rose"
+        }
+      ].filter(alert => alert.count > 0);
+
+      if (!alerts.length) {
+        els.alertsList.innerHTML = `<div class="empty">No hay alertas activas.</div>`;
+        return;
+      }
+
+      const max = Math.max(1, ...alerts.map(alert => alert.count));
+      els.alertsList.innerHTML = alerts.map(alert => {
+        const percentage = Math.max(8, Math.round((alert.count / max) * 100));
+        return `
+          <div class="rank-item">
+            <div class="rank-top">
+              <div class="rank-title">${escapeHtml(alert.title)}</div>
+              <div class="rank-count">${alert.count}</div>
+            </div>
+            <div class="rank-meta">${escapeHtml(alert.meta)}</div>
+            <div class="bar ${alert.tone === "rose" ? "rose" : alert.tone === "gold" ? "gold" : ""}"><span style="width:${percentage}%"></span></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderRanking(container, ranking, tone) {
+      if (!ranking.length) {
+        container.innerHTML = `<div class="empty">Sin datos para mostrar.</div>`;
+        return;
+      }
+
+      const max = Math.max(1, ranking[0].count);
+      container.innerHTML = ranking.slice(0, 8).map(item => {
+        const percentage = Math.max(8, Math.round((item.count / max) * 100));
+        return `
+          <div class="rank-item">
+            <div class="rank-top">
+              <div class="rank-title">${escapeHtml(item.key)}</div>
+              <div class="rank-count">${item.count}</div>
+            </div>
+            <div class="rank-meta">${escapeHtml(item.meta || "Total")}</div>
+            <div class="bar ${tone === "rose" ? "rose" : tone === "gold" ? "gold" : ""}"><span style="width:${percentage}%"></span></div>
+          </div>
         `;
       }).join("");
     }
@@ -1098,6 +1326,32 @@
 
     function topResponsible(items) {
       return topBy(items, record => cleanText(record.responsable || "Sin responsable"));
+    }
+
+    function groupRecords(items, keyFn, metaFn) {
+      const map = new Map();
+      items.forEach(item => {
+        const key = keyFn(item);
+        if (!key) return;
+        const current = map.get(key) || { key, count: 0, meta: metaFn(item) || "" };
+        current.count += 1;
+        if (!current.meta) current.meta = metaFn(item) || "";
+        map.set(key, current);
+      });
+      return [...map.values()].sort((a, b) => b.count - a.count || a.key.localeCompare(b.key, "es"));
+    }
+
+    function getRecordMonth(record) {
+      const value = record.fechaCierre || record.fechaConsulta || record.fechaEvento || "";
+      return value ? value.slice(0, 7) : "";
+    }
+
+    function formatMonth(value) {
+      if (!value) return "Sin fecha";
+      const [year, month] = value.split("-");
+      const date = new Date(Number(year), Number(month) - 1, 1);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString("es-AR", { month: "long", year: "numeric" });
     }
 
     function topBy(items, keyFn) {
