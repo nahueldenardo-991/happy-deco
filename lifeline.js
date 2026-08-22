@@ -1,12 +1,12 @@
 (function () {
   const steps = [
-    ["consulta", "Consulta"],
-    ["presupuesto", "Presupuesto"],
-    ["confirmado", "Confirmado"],
-    ["proceso", "Proceso"],
-    ["produccion", "Producción"],
-    ["realizado", "Realizado"],
-    ["finanzas", "Finanzas"]
+    ["consulta", "Consulta", "Consulta"],
+    ["presupuesto", "Presupuesto", "Presup."],
+    ["confirmado", "Confirmado", "Conf."],
+    ["proceso", "Proceso", "Proc."],
+    ["produccion", "Producción", "Prod."],
+    ["realizado", "Realizado", "Real."],
+    ["finanzas", "Finanzas", "Fin."]
   ];
 
   function text(value) {
@@ -149,20 +149,36 @@
   }
 
   function render(record, options = {}) {
-    const compact = options.compact ? " event-lifeline-compact" : "";
+    const isCompact = Boolean(options.compact);
+    const compact = isCompact ? " event-lifeline-compact" : "";
     const aria = options.label || "Línea de vida del evento";
     return `
       <div class="event-lifeline${compact}" role="group" aria-label="${escapeHtml(aria)}">
+        <div class="event-lifeline-title">${escapeHtml(options.title || "Línea de vida del evento")}</div>
         <div class="event-lifeline-track">
           ${calculate(record).map(step => `
             <div class="event-life-step ${escapeHtml(step.state)}" title="${escapeHtml(`${step.label}: ${step.note}`)}">
               <span class="event-life-dot" aria-hidden="true"></span>
-              <span class="event-life-label">${escapeHtml(step.label)}</span>
+              <span class="event-life-label">${escapeHtml(isCompact ? compactLabel(step.id) : step.label)}</span>
             </div>
           `).join("")}
         </div>
+        ${isCompact ? "" : `
+          <div class="event-lifeline-legend" aria-label="Referencias de color">
+            <span class="event-life-legend-item"><span class="event-life-legend-dot"></span>Pendiente</span>
+            <span class="event-life-legend-item"><span class="event-life-legend-dot current"></span>En curso</span>
+            <span class="event-life-legend-item"><span class="event-life-legend-dot done"></span>Completo</span>
+            <span class="event-life-legend-item"><span class="event-life-legend-dot warning"></span>Atención</span>
+            <span class="event-life-legend-item"><span class="event-life-legend-dot danger"></span>Problema</span>
+          </div>
+        `}
       </div>
     `;
+  }
+
+  function compactLabel(id) {
+    const found = steps.find(step => step[0] === id);
+    return found?.[2] || id;
   }
 
   window.HappyDecoLifeline = { calculate, render };
