@@ -540,7 +540,7 @@
         </article>
       </div>
       <div class="callout" style="margin-top:16px">
-        <strong>Regla para no duplicar:</strong> si algo todavía es consulta o presupuesto, va en CRM. Si ya está señado o pagado completo, debe pasar al Dashboard y desde ahí alimentar Proceso.
+        <strong>Regla para no duplicar:</strong> si algo todavía es consulta, presupuesto o seguimiento, queda en CRM. Si ya está señado o pagado completo, se usa el botón <strong>Pasar al Dashboard</strong>. Ese pase crea o actualiza el mismo evento operativo y desde ahí alimenta Proceso.
       </div>
     </section>
 
@@ -552,7 +552,7 @@
           <div class="step"><div><strong>Crear la consulta</strong><p class="subtitle">Entrar a CRM y usar Nueva consulta. Completar clienta, teléfono, fecha de consulta, posible fecha del evento, temática, propuesta y responsable.</p></div></div>
           <div class="step"><div><strong>Registrar reuniones</strong><p class="subtitle">Usar el sector de reuniones para cargar tema, fecha, horario, modalidad, clienta, presupuesto, temática propuesta y detalles.</p></div></div>
           <div class="step"><div><strong>Actualizar la etapa</strong><p class="subtitle">Mantener la etapa comercial al día. Mientras no esté señado o pagado completo, el registro vive principalmente en CRM.</p></div></div>
-          <div class="step"><div><strong>Pasar al Dashboard</strong><p class="subtitle">Cuando la etapa sea Señado o Pagado completo, el sistema crea o actualiza el evento en Dashboard y Proceso. No debería duplicarlo.</p></div></div>
+          <div class="step"><div><strong>Pasar al Dashboard</strong><p class="subtitle">Cuando la etapa sea Señado o Pagado completo, tocar el botón Pasar al Dashboard. El sistema pide confirmación, valida datos mínimos y crea o actualiza el evento en Dashboard y Proceso sin duplicarlo.</p></div></div>
         </div>
         <div class="example-card">
           <h3>Estados del CRM</h3>
@@ -566,9 +566,17 @@
             <span class="tag red">Cancelado</span>
           </div>
           <div class="callout" style="margin-top:14px">
-            Si tocás Pasar y el registro no está en Señado o Pagado completo, el sistema debe pedir que primero cambies la etapa.
+            Si el registro no está en Señado o Pagado completo, el botón aparece bloqueado como <strong>Solo CRM</strong>. Al cambiarlo a una etapa confirmada, el botón queda disponible como <strong>Pasar al Dashboard</strong>.
           </div>
         </div>
+      </div>
+      <div class="grid-3" style="margin-top:16px">
+        <div class="map-card"><strong>Solo CRM</strong><span>Todavía es consulta, seguimiento o presupuesto. No debe pasar a operación.</span></div>
+        <div class="map-card"><strong>Listo para enviar</strong><span>Está señado o pagado completo y tiene los datos mínimos. Ya puede pasar al Dashboard.</span></div>
+        <div class="map-card"><strong>En Dashboard</strong><span>Ya está vinculado. Si se corrige algún dato comercial, usar Actualizar Dashboard.</span></div>
+      </div>
+      <div class="callout" style="margin-top:16px">
+        <strong>Datos mínimos para pasar:</strong> cliente, fecha del evento, temática, propuesta, responsable y lugar. Si falta algo, el sistema lo indica antes de enviar.
       </div>
     </section>
 
@@ -631,7 +639,7 @@
         <div>
           <h3>Cuándo aparece en Proceso</h3>
           <div class="callout">
-            Aparece cuando el registro ya fue creado como evento operativo. Hoy eso pasa cuando desde CRM se confirma como <strong>Señado</strong> o <strong>Pagado completo</strong>, o cuando el evento existe en Dashboard y se sincroniza con Proceso.
+            Aparece cuando el registro ya fue creado como evento operativo. En el flujo normal, esto pasa cuando desde CRM se toca <strong>Pasar al Dashboard</strong> sobre una consulta en <strong>Señado</strong> o <strong>Pagado completo</strong>. Si el evento ya estaba vinculado, el botón cambia a <strong>Actualizar Dashboard</strong> y conserva el mismo registro.
           </div>
           <div class="do-dont" style="margin-top:14px">
             <div class="example-card">
@@ -739,11 +747,12 @@
       <div class="eyebrow">8. Si algo no aparece</div>
       <h2>Checklist de solución rápida</h2>
       <div class="grid-3">
-        <div class="map-card"><strong>No aparece en Dashboard</strong><span>Revisar que en CRM esté en Señado o Pagado completo y que tenga fecha si se quiere pasar manualmente.</span></div>
-        <div class="map-card"><strong>No aparece en Proceso</strong><span>Actualizar la página. Si viene de CRM, verificar que tenga vínculo con Dashboard y que el pase haya sincronizado.</span></div>
+        <div class="map-card"><strong>No aparece en Dashboard</strong><span>En CRM debe decir En Dashboard después del pase. Si dice Solo CRM o Faltan datos, todavía no fue enviado.</span></div>
+        <div class="map-card"><strong>No aparece en Proceso</strong><span>Actualizar la página. Si viene de CRM, verificar que tenga vínculo En Dashboard y que el pase haya sincronizado.</span></div>
         <div class="map-card"><strong>No aparece en Producción</strong><span>Debe estar Listo para producir o tener boceto/materiales cargados. Si está Finalizado, se oculta.</span></div>
         <div class="map-card"><strong>No se ve en otra compu</strong><span>Tocar Actualizar datos y esperar. Si sigue igual, revisar conexión.</span></div>
         <div class="map-card"><strong>No carga el boceto</strong><span>Probar con una imagen más liviana. Esperar la barra de guardado antes de cerrar.</span></div>
+        <div class="map-card"><strong>Error de nube</strong><span>Cerrar la pestaña, volver a entrar al link oficial y forzar recarga. El sistema descarta configuraciones viejas de Supabase.</span></div>
         <div class="map-card"><strong>Observaciones largas</strong><span>En Dashboard se ve un resumen. Tocar Ver observación para leer completo.</span></div>
       </div>
     </section>
@@ -754,7 +763,7 @@
       <div class="checklist">
         <label class="check-item"><input type="checkbox"> Cada consulta nueva se carga en CRM.</label>
         <label class="check-item"><input type="checkbox"> Cada reunión comercial se agenda desde CRM.</label>
-        <label class="check-item"><input type="checkbox"> Cuando se confirma con seña o pago completo, se pasa al Dashboard.</label>
+        <label class="check-item"><input type="checkbox"> Cuando se confirma con seña o pago completo, tocar Pasar al Dashboard y confirmar el envío.</label>
         <label class="check-item"><input type="checkbox"> Antes de producir, Xime revisa Proceso: checks, boceto, materiales e imprenta.</label>
         <label class="check-item"><input type="checkbox"> Juli usa Producción para preparar materiales y marcar checklist.</label>
         <label class="check-item"><input type="checkbox"> Gestión revisa Panel de control para próximos eventos, trabados y pendientes.</label>
@@ -768,7 +777,7 @@
     const roleContent = {
       cati: [
         ["CRM", "Cargar consultas, reuniones, presupuestos y seguimientos."],
-        ["Confirmación", "Cuando el evento esté Señado o Pagado completo, pasarlo al Dashboard."],
+        ["Confirmación", "Cuando el evento esté Señado o Pagado completo, tocar Pasar al Dashboard. Si ya fue enviado, usar Actualizar Dashboard."],
         ["Diseño", "Cargar o avisar cuando haya boceto, temática y propuesta definida."]
       ],
       xime: [
