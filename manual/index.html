@@ -8,56 +8,60 @@
     :root {
       --bg: #fff9f1;
       --panel: #ffffff;
-      --ink: #3a2d35;
-      --muted: #82717a;
-      --line: #f2dce7;
+      --ink: #382b34;
+      --muted: #7f7078;
+      --line: #f1dbe5;
       --rose: #ff96bf;
-      --rose-dark: #cc5f8b;
+      --rose-dark: #be5b84;
       --teal: #7edbdf;
-      --teal-dark: #2c9791;
+      --teal-dark: #288f8a;
       --gold: #ffd67a;
       --green: #8ce1ce;
       --red: #d96666;
-      --shadow: 0 20px 50px rgba(148, 96, 126, .13);
+      --shadow: 0 18px 42px rgba(148, 96, 126, .14);
       --radius: 8px;
     }
 
     * { box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
-
     body {
       margin: 0;
       color: var(--ink);
       background:
-        linear-gradient(135deg, rgba(255, 150, 191, .12) 0 14%, transparent 14% 100%),
-        linear-gradient(45deg, transparent 0 78%, rgba(126, 219, 223, .16) 78% 100%),
+        linear-gradient(135deg, rgba(255,150,191,.12) 0 16%, transparent 16%),
+        linear-gradient(45deg, transparent 0 76%, rgba(126,219,223,.18) 76%),
         linear-gradient(180deg, #fff 0, var(--bg) 360px),
         var(--bg);
       font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
-      text-rendering: geometricPrecision;
     }
 
-    button, input, select { font: inherit; }
-    button { border: 0; cursor: pointer; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 8px; font-size: clamp(30px, 5vw, 52px); line-height: .98; }
+    h2 { margin-bottom: 10px; font-size: clamp(23px, 3vw, 34px); line-height: 1.1; }
+    h3 { margin-bottom: 8px; font-size: 18px; }
+    ul, ol { margin: 0; padding-left: 20px; color: var(--muted); line-height: 1.5; }
+    li + li { margin-top: 5px; }
 
     .shell {
       width: min(1280px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 24px 0 44px;
+      padding: 22px 0 48px;
     }
 
     .topbar {
       position: sticky;
-      top: 12px;
-      z-index: 5;
+      top: 10px;
+      z-index: 10;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 18px;
-      padding: 18px;
-      border: 2px solid rgba(255, 150, 191, .24);
+      gap: 16px;
+      padding: 16px;
+      border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,245,250,.96));
+      background: rgba(255,255,255,.96);
       box-shadow: var(--shadow);
       backdrop-filter: blur(14px);
     }
@@ -70,44 +74,25 @@
     }
 
     .brand img {
-      width: 150px;
-      height: 88px;
+      width: 136px;
+      height: 80px;
       object-fit: contain;
       padding: 6px;
-      background: #fff;
-      border: 4px solid #fff;
       border-radius: 18px;
-      box-shadow: 0 14px 30px rgba(126, 219, 223, .28);
-    }
-
-    .eyebrow {
-      margin-bottom: 6px;
-      color: var(--rose-dark);
-      font-size: 13px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    h1, h2, h3, p { margin-top: 0; }
-    h1 { margin-bottom: 6px; font-size: clamp(28px, 4vw, 46px); line-height: 1; }
-    h2 { margin-bottom: 10px; font-size: clamp(22px, 2.4vw, 32px); line-height: 1.12; }
-    h3 { margin-bottom: 8px; font-size: 18px; }
-
-    .subtitle {
-      color: var(--muted);
-      line-height: 1.48;
-      margin-bottom: 0;
+      background: #fff;
+      box-shadow: 0 12px 28px rgba(126,219,223,.24);
     }
 
     .actions,
-    .manual-nav,
-    .role-tabs {
+    .quick-nav,
+    .tabs,
+    .pill-row {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
 
-    .actions { justify-content: flex-end; align-items: center; }
+    .actions { justify-content: flex-end; }
 
     .btn,
     .ghost,
@@ -116,7 +101,6 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
       padding: 0 14px;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -124,98 +108,86 @@
       background: #fff;
       font-weight: 900;
       text-decoration: none;
-      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
     }
 
-    .btn:hover,
-    .ghost:hover,
-    .tab:hover {
-      transform: translateY(-1px);
-      border-color: rgba(126, 219, 223, .55);
-      box-shadow: 0 12px 26px rgba(58,45,53,.08);
-    }
-
-    .tab.active,
-    .primary {
+    .btn.primary,
+    .tab.active {
       color: #fff;
-      background: var(--teal-dark);
       border-color: var(--teal-dark);
+      background: var(--teal-dark);
     }
 
-    .hero {
-      margin: 18px 0;
+    .hero,
+    .grid-2 {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr);
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
       gap: 18px;
       align-items: stretch;
     }
 
-    .panel {
+    .hero { margin: 18px 0; }
+
+    .panel,
+    .card,
+    .step,
+    .role-card,
+    .flow-card {
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(255,255,255,.94);
-      box-shadow: 0 16px 36px rgba(72,52,35,.08);
-      padding: 18px;
+      background: rgba(255,255,255,.95);
+      box-shadow: 0 14px 32px rgba(72,52,35,.08);
     }
 
-    .section {
-      scroll-margin-top: 128px;
-      margin-top: 18px;
-    }
+    .panel { padding: 18px; }
+    .card, .role-card, .flow-card { padding: 14px; }
+    .section { margin-top: 18px; scroll-margin-top: 130px; }
 
-    .manual-nav {
+    .quick-nav {
       position: sticky;
-      top: 142px;
-      z-index: 4;
+      top: 126px;
+      z-index: 9;
       margin: 18px 0;
-      background: rgba(255,255,255,.94);
+      padding: 14px;
+      background: rgba(255,255,255,.96);
       backdrop-filter: blur(12px);
+    }
+
+    .eyebrow {
+      margin-bottom: 7px;
+      color: var(--rose-dark);
+      font-size: 13px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .subtitle,
+    .muted {
+      color: var(--muted);
+      line-height: 1.48;
+      margin-bottom: 0;
     }
 
     .flow-line {
       display: grid;
-      grid-template-columns: repeat(5, minmax(160px, 1fr));
+      grid-template-columns: repeat(7, minmax(150px, 1fr));
       gap: 10px;
-      margin-top: 16px;
       overflow-x: auto;
       padding-bottom: 4px;
-    }
-
-    .flow-card,
-    .module-card,
-    .map-card,
-    .role-card,
-    .example-card,
-    .check-item {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
+      margin-top: 16px;
     }
 
     .flow-card {
-      min-height: 170px;
-      padding: 14px;
+      min-height: 132px;
       border-top: 6px solid var(--teal);
     }
 
-    .flow-card strong,
-    .map-card strong {
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    .flow-card span,
-    .map-card span {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.4;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-    }
+    .flow-card:nth-child(1),
+    .flow-card:nth-child(2) { border-top-color: var(--gold); }
+    .flow-card:nth-child(3),
+    .flow-card:nth-child(4),
+    .flow-card:nth-child(5) { border-top-color: var(--teal); }
+    .flow-card:nth-child(6) { border-top-color: var(--green); }
+    .flow-card:nth-child(7) { border-top-color: var(--rose); }
 
     .grid-3,
     .module-grid {
@@ -223,29 +195,6 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
-
-    .module-card,
-    .map-card,
-    .example-card {
-      padding: 14px;
-    }
-
-    .module-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    ul,
-    ol {
-      margin: 0;
-      padding-left: 20px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    li + li { margin-top: 5px; }
 
     .step-list {
       display: grid;
@@ -258,9 +207,6 @@
       grid-template-columns: 42px minmax(0, 1fr);
       gap: 12px;
       align-items: start;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
       padding: 12px;
     }
 
@@ -290,24 +236,65 @@
       white-space: nowrap;
     }
 
-    .tag.green { background: rgba(140,225,206,.24); color: #247f78; }
-    .tag.red { background: rgba(217,102,102,.15); color: #b04444; }
     .tag.gold { background: rgba(255,214,122,.28); color: #8b6500; }
-    .tag.teal { background: rgba(126,219,223,.24); color: #247f78; }
+    .tag.teal { background: rgba(126,219,223,.25); color: #247f78; }
+    .tag.green { background: rgba(140,225,206,.28); color: #247f78; }
+    .tag.red { background: rgba(217,102,102,.13); color: #b04444; }
+    .tag.gray { background: #f2eff1; color: var(--muted); }
 
     .callout {
+      margin-top: 14px;
       padding: 14px;
-      border: 1px solid rgba(255,214,122,.8);
+      border: 1px solid rgba(255,214,122,.75);
       border-left: 6px solid var(--gold);
       border-radius: 8px;
       background: rgba(255,214,122,.18);
       line-height: 1.45;
     }
 
-    .warning {
-      border-color: rgba(217,102,102,.35);
+    .callout.warning {
+      border-color: rgba(217,102,102,.34);
       border-left-color: var(--red);
       background: rgba(217,102,102,.08);
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      color: var(--muted);
+      background: #fff8fb;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .role-output {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .role-card {
+      border-left: 6px solid var(--teal);
     }
 
     .checklist {
@@ -320,6 +307,9 @@
       gap: 10px;
       align-items: flex-start;
       padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
     }
 
     .check-item input {
@@ -329,97 +319,20 @@
       accent-color: var(--teal-dark);
     }
 
-    .role-tabs { margin: 10px 0 16px; }
-
-    .role-output {
-      display: grid;
-      gap: 10px;
-    }
-
-    .role-card {
-      border-left: 6px solid var(--teal);
-      padding: 14px;
-    }
-
-    .small {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.4;
-    }
-
-    .fake-table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-    }
-
-    .fake-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 720px;
-      font-size: 14px;
-    }
-
-    .fake-table th,
-    .fake-table td {
-      padding: 10px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      vertical-align: top;
-    }
-
-    .fake-table th {
-      background: #fff8fb;
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-
-    .do-dont {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .do-dont .example-card:first-child { border-left: 6px solid var(--green); }
-    .do-dont .example-card:last-child { border-left: 6px solid var(--red); }
-
     @media (max-width: 1020px) {
-      .hero,
-      .grid-2,
-      .do-dont {
-        grid-template-columns: 1fr;
-      }
-
-      .grid-3,
-      .module-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .topbar {
-        position: static;
-        flex-direction: column;
-      }
-
-      .manual-nav {
-        position: static;
-      }
+      .topbar { position: static; flex-direction: column; align-items: stretch; }
+      .hero, .grid-2 { grid-template-columns: 1fr; }
+      .grid-3, .module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .quick-nav { position: static; }
     }
 
     @media (max-width: 680px) {
       .shell { width: min(100% - 20px, 1280px); padding-top: 10px; }
       .brand { align-items: flex-start; flex-direction: column; }
-      .brand img { width: 136px; height: 80px; }
-      .grid-3,
-      .module-grid {
-        grid-template-columns: 1fr;
-      }
-      .actions a,
-      .role-tabs button,
-      .manual-nav a {
-        width: 100%;
-      }
+      .brand img { width: 130px; height: 76px; }
+      .grid-3, .module-grid { grid-template-columns: 1fr; }
+      .actions a, .quick-nav a, .tabs button { width: 100%; }
+      .panel { padding: 14px; }
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
@@ -431,8 +344,8 @@
         <img src="../assets/happy-deco-logo.png" alt="Happy Deco">
         <div>
           <div class="eyebrow">Manual actualizado</div>
-          <h1>Cómo usar Happy Deco</h1>
-          <p class="subtitle">Guía simple para cargar consultas, confirmar eventos, preparar producción, agendar y revisar finanzas sin duplicar datos.</p>
+          <h1>Como usar Happy Deco</h1>
+          <p class="subtitle">Guia simple para cargar consultas, confirmar eventos, preparar produccion, agendar, controlar finanzas y evitar datos duplicados.</p>
         </div>
       </div>
       <nav class="actions" aria-label="Accesos principales">
@@ -440,7 +353,7 @@
         <a class="btn" href="../crm/">CRM</a>
         <a class="btn" href="../">Dashboard</a>
         <a class="btn" href="../proceso/">Proceso</a>
-        <a class="btn" href="../produccion/">Producción</a>
+        <a class="btn" href="../produccion/">Produccion</a>
         <a class="btn" href="../finanzas/">Finanzas</a>
         <a class="btn primary" href="./">Manual</a>
       </nav>
@@ -448,21 +361,26 @@
 
     <section class="hero">
       <div class="panel">
-        <div class="eyebrow">La regla principal</div>
-        <h2>Una venta avanza por etapas, no se carga varias veces</h2>
-        <p class="subtitle">El sistema está pensado para que cada oportunidad empiece en CRM y, cuando se confirma, viaje al resto de las pantallas con el mismo registro. La idea es evitar mensajes sueltos, tareas invisibles y eventos duplicados.</p>
+        <div class="eyebrow">Regla principal</div>
+        <h2>Un registro avanza; no se vuelve a cargar en cada pantalla</h2>
+        <p class="subtitle">La consulta empieza en CRM. Cuando se confirma, se pasa al Dashboard. Desde ahi el mismo evento alimenta Proceso, Produccion, Panel de control y Finanzas segun corresponda.</p>
         <div class="flow-line">
-          <div class="flow-card"><strong>1. CRM</strong><span>Entran consultas, reuniones, presupuestos y seguimientos.</span></div>
-          <div class="flow-card"><strong>2. Dashboard</strong><span>Aparecen eventos confirmados o que ya deben gestionarse operativamente.</span></div>
-          <div class="flow-card"><strong>3. Proceso</strong><span>Se completan checks, boceto, materiales y tareas internas.</span></div>
-          <div class="flow-card"><strong>4. Producción</strong><span>Se prepara la ficha limpia para Xime y Juli.</span></div>
-          <div class="flow-card"><strong>5. Finanzas</strong><span>Se revisan cobros, costos, márgenes y resultado.</span></div>
+          <div class="flow-card"><strong>Consulta</strong><p class="muted">Nace en CRM.</p></div>
+          <div class="flow-card"><strong>Presupuesto</strong><p class="muted">Se sigue en CRM.</p></div>
+          <div class="flow-card"><strong>Confirmado</strong><p class="muted">Senado o Pagado completo.</p></div>
+          <div class="flow-card"><strong>Dashboard</strong><p class="muted">Gestion operativa.</p></div>
+          <div class="flow-card"><strong>Proceso</strong><p class="muted">Boceto, checks y materiales.</p></div>
+          <div class="flow-card"><strong>Produccion</strong><p class="muted">Ficha limpia para preparar.</p></div>
+          <div class="flow-card"><strong>Finanzas</strong><p class="muted">Cobros, costos y margen.</p></div>
+        </div>
+        <div class="callout">
+          <strong>Importante:</strong> si una consulta todavia no esta senada ni pagada completa, no debe pasar al Dashboard. Sigue siendo trabajo comercial del CRM.
         </div>
       </div>
       <aside class="panel">
-        <div class="eyebrow">Por rol</div>
-        <h2>Qué mira cada persona</h2>
-        <div class="role-tabs" role="tablist">
+        <div class="eyebrow">Por persona</div>
+        <h2>Que deberia mirar cada una</h2>
+        <div class="tabs" role="tablist">
           <button class="tab active" data-role="cati" type="button">Cati</button>
           <button class="tab" data-role="xime" type="button">Xime</button>
           <button class="tab" data-role="juli" type="button">Juli</button>
@@ -472,12 +390,12 @@
       </aside>
     </section>
 
-    <nav class="panel manual-nav" aria-label="Secciones del manual">
-      <a class="ghost" href="#inicio">Inicio rápido</a>
+    <nav class="quick-nav panel" aria-label="Secciones del manual">
+      <a class="ghost" href="#inicio">Inicio rapido</a>
       <a class="ghost" href="#crm">CRM</a>
       <a class="ghost" href="#dashboard">Dashboard</a>
       <a class="ghost" href="#proceso">Proceso</a>
-      <a class="ghost" href="#produccion">Producción</a>
+      <a class="ghost" href="#produccion">Produccion</a>
       <a class="ghost" href="#panel">Panel</a>
       <a class="ghost" href="#finanzas">Finanzas</a>
       <a class="ghost" href="#agenda">Agenda</a>
@@ -486,289 +404,286 @@
     </nav>
 
     <section class="section panel" id="inicio">
-      <div class="eyebrow">Inicio rápido</div>
-      <h2>Qué cargar en cada lugar</h2>
+      <div class="eyebrow">Inicio rapido</div>
+      <h2>Que se carga en cada pantalla</h2>
       <div class="module-grid">
-        <article class="module-card">
-          <div class="module-top"><h3>CRM</h3><span class="tag gold">Antes de vender</span></div>
+        <article class="card">
+          <h3>CRM</h3>
+          <span class="tag gold">Comercial</span>
           <ul>
-            <li>Consulta nueva.</li>
-            <li>Reunión con clienta.</li>
-            <li>Presupuesto armado, no armado o enviado.</li>
-            <li>Seguimiento comercial.</li>
+            <li>Consultas nuevas.</li>
+            <li>Reuniones con clientas.</li>
+            <li>Presupuestos armados, no armados o enviados.</li>
+            <li>Seguimientos hasta confirmar o cancelar.</li>
           </ul>
         </article>
-        <article class="module-card">
-          <div class="module-top"><h3>Dashboard</h3><span class="tag teal">Evento operativo</span></div>
+        <article class="card">
+          <h3>Dashboard</h3>
+          <span class="tag teal">Operacion</span>
           <ul>
-            <li>Eventos señados o pagados.</li>
-            <li>Fecha, cliente, temática, propuesta y responsable.</li>
-            <li>Estado comercial, estado operativo, facturación y calendario.</li>
+            <li>Eventos senados o pagados.</li>
+            <li>Edicion de datos operativos.</li>
+            <li>Estado comercial, responsable, agenda y facturacion.</li>
+            <li>Exportar, importar y actualizar datos.</li>
           </ul>
         </article>
-        <article class="module-card">
-          <div class="module-top"><h3>Proceso</h3><span class="tag teal">Preparación interna</span></div>
+        <article class="card">
+          <h3>Proceso</h3>
+          <span class="tag teal">Preparacion</span>
           <ul>
-            <li>Checks por etapa.</li>
+            <li>Checklist por etapa.</li>
             <li>Boceto del evento.</li>
-            <li>Listado de materiales, cargado de a un ítem por vez.</li>
+            <li>Listado de materiales cargado item por item.</li>
+            <li>Observaciones internas.</li>
           </ul>
         </article>
-        <article class="module-card">
-          <div class="module-top"><h3>Producción</h3><span class="tag green">Ficha limpia</span></div>
+        <article class="card">
+          <h3>Produccion</h3>
+          <span class="tag green">Ficha limpia</span>
           <ul>
-            <li>Solo eventos listos para preparar.</li>
-            <li>Datos importantes sin montos sensibles.</li>
-            <li>Checklist de materiales para Xime y Juli.</li>
+            <li>Solo eventos listos para producir o con materiales/boceto.</li>
+            <li>Checklist para Xime y Juli.</li>
+            <li>No muestra montos, sena, saldo ni facturacion.</li>
           </ul>
         </article>
-        <article class="module-card">
-          <div class="module-top"><h3>Panel de control</h3><span class="tag green">Resumen</span></div>
+        <article class="card">
+          <h3>Panel de control</h3>
+          <span class="tag green">Lectura general</span>
           <ul>
-            <li>Próximos eventos.</li>
-            <li>Registros trabados.</li>
-            <li>Pendientes, alertas y estado general.</li>
+            <li>Volumen por mes.</li>
+            <li>Alertas rapidas.</li>
+            <li>Propuestas y tematicas mas pedidas.</li>
+            <li>Proximos eventos, trabados y sin agendar futuros.</li>
           </ul>
         </article>
-        <article class="module-card">
-          <div class="module-top"><h3>Finanzas</h3><span class="tag">Números</span></div>
+        <article class="card">
+          <h3>Finanzas</h3>
+          <span class="tag">Economia</span>
           <ul>
-            <li>Cobranzas.</li>
-            <li>Costos y gastos.</li>
-            <li>Rentabilidad, margen y punto de equilibrio.</li>
+            <li>Ventas proyectadas cuando estan Senado o Pagado completo.</li>
+            <li>Cierre economico cuando estan Realizado.</li>
+            <li>Costos, margen y punto de equilibrio.</li>
           </ul>
         </article>
-      </div>
-      <div class="callout" style="margin-top:16px">
-        <strong>Regla para no duplicar:</strong> si algo todavía es consulta, presupuesto o seguimiento, queda en CRM. Si ya está señado o pagado completo, se usa el botón <strong>Pasar al Dashboard</strong>. Ese pase crea o actualiza el mismo evento operativo y desde ahí alimenta Proceso.
       </div>
     </section>
 
     <section class="section panel" id="crm">
       <div class="eyebrow">1. CRM</div>
-      <h2>Cómo cargar una consulta o reunión</h2>
+      <h2>Como manejar una consulta hasta que se confirme</h2>
       <div class="grid-2">
         <div class="step-list">
-          <div class="step"><div><strong>Crear la consulta</strong><p class="subtitle">Entrar a CRM y usar Nueva consulta. Completar clienta, teléfono, fecha de consulta, posible fecha del evento, temática, propuesta y responsable.</p></div></div>
-          <div class="step"><div><strong>Registrar reuniones</strong><p class="subtitle">Usar el sector de reuniones para cargar tema, fecha, horario, modalidad, clienta, presupuesto, temática propuesta y detalles.</p></div></div>
-          <div class="step"><div><strong>Actualizar la etapa</strong><p class="subtitle">Mantener la etapa comercial al día. Mientras no esté señado o pagado completo, el registro vive principalmente en CRM.</p></div></div>
-          <div class="step"><div><strong>Pasar al Dashboard</strong><p class="subtitle">Cuando la etapa sea Señado o Pagado completo, tocar el botón Pasar al Dashboard. El sistema pide confirmación, valida datos mínimos y crea o actualiza el evento en Dashboard y Proceso sin duplicarlo.</p></div></div>
+          <div class="step"><div><strong>Cargar la consulta</strong><p class="subtitle">Usar Nueva consulta. Completar clienta, telefono, fecha de consulta, fecha tentativa del evento, homenajeado/a, edad, tipo, canal, tematica, propuesta, responsable y observaciones.</p></div></div>
+          <div class="step"><div><strong>Mirar la accion sugerida</strong><p class="subtitle">Cada tarjeta indica que sigue: Completar datos, Enviar presupuesto, Hacer seguimiento, Marcar como senado, Pasar al Dashboard o Actualizar Dashboard.</p></div></div>
+          <div class="step"><div><strong>Revisar datos faltantes</strong><p class="subtitle">Si faltan datos minimos, el CRM los muestra para evitar pasar registros incompletos a operacion.</p></div></div>
+          <div class="step"><div><strong>Usar la ficha lateral</strong><p class="subtitle">Al abrir un registro se ven datos principales, historial breve, proxima accion y estado de sincronizacion con CRM, Dashboard y Proceso.</p></div></div>
+          <div class="step"><div><strong>Pasar al Dashboard</strong><p class="subtitle">Solo cuando el estado sea Senado o Pagado completo. El sistema valida datos, pide confirmacion y crea o actualiza el mismo evento sin duplicarlo.</p></div></div>
         </div>
-        <div class="example-card">
-          <h3>Estados del CRM</h3>
-          <p class="subtitle">El CRM puede tener etapas propias de seguimiento comercial. Lo importante es que el pase operativo ocurre cuando el registro está confirmado.</p>
-          <div class="grid-2" style="margin-top:12px">
-            <span class="tag gold">Nueva consulta</span>
-            <span class="tag gold">Propuesta enviada</span>
+        <div>
+          <h3>Estados comerciales, en orden de uso</h3>
+          <div class="pill-row">
+            <span class="tag gold">Consulta nueva</span>
+            <span class="tag gold">Datos incompletos</span>
             <span class="tag gold">Seguimiento</span>
-            <span class="tag green">Señado</span>
+            <span class="tag teal">Presupuesto enviado</span>
+            <span class="tag green">Senado</span>
             <span class="tag green">Pagado completo</span>
+            <span class="tag gray">Realizado</span>
             <span class="tag red">Cancelado</span>
           </div>
-          <div class="callout" style="margin-top:14px">
-            Si el registro no está en Señado o Pagado completo, el botón aparece bloqueado como <strong>Solo CRM</strong>. Al cambiarlo a una etapa confirmada, el botón queda disponible como <strong>Pasar al Dashboard</strong>.
+          <div class="callout">
+            <strong>Enviar presupuesto no envia mensajes automaticos.</strong> Por ahora guia la accion o cambia el estado. El contacto real con la clienta lo hace el equipo.
+          </div>
+          <div class="callout warning">
+            <strong>Si aparece error al pasar al Dashboard:</strong> tocar Actualizar, volver a intentar y mandar captura si se repite. El sistema ahora muestra detalle tecnico para detectar si fue conexion, Supabase o navegador.
           </div>
         </div>
-      </div>
-      <div class="grid-3" style="margin-top:16px">
-        <div class="map-card"><strong>Solo CRM</strong><span>Todavía es consulta, seguimiento o presupuesto. No debe pasar a operación.</span></div>
-        <div class="map-card"><strong>Listo para enviar</strong><span>Está señado o pagado completo y tiene los datos mínimos. Ya puede pasar al Dashboard.</span></div>
-        <div class="map-card"><strong>En Dashboard</strong><span>Ya está vinculado. Si se corrige algún dato comercial, usar Actualizar Dashboard.</span></div>
-      </div>
-      <div class="callout" style="margin-top:16px">
-        <strong>Datos mínimos para pasar:</strong> cliente, fecha del evento, temática, propuesta, responsable y lugar. Si falta algo, el sistema lo indica antes de enviar.
       </div>
     </section>
 
     <section class="section panel" id="dashboard">
       <div class="eyebrow">2. Dashboard</div>
-      <h2>Cómo controlar eventos confirmados</h2>
+      <h2>Donde se opera el evento confirmado</h2>
       <div class="grid-2">
         <div>
-          <h3>Qué se revisa acá</h3>
+          <h3>Para que sirve</h3>
           <ul>
-            <li>Fecha de cierre y fecha del evento.</li>
-            <li>Cliente, homenajeado/a, edad, tipo de evento y temática.</li>
-            <li>Propuesta elegida.</li>
-            <li>Etapa comercial.</li>
-            <li>Estado operativo.</li>
-            <li>Responsable.</li>
-            <li>Facturación, seña, saldo y observaciones.</li>
-            <li>Si está agendado o sin agendar.</li>
+            <li>Cargar o corregir datos de eventos operativos.</li>
+            <li>Cambiar etapa comercial y estado operativo.</li>
+            <li>Editar responsable desde desplegable.</li>
+            <li>Editar fecha del evento.</li>
+            <li>Controlar facturacion, sena y saldo.</li>
+            <li>Agendar el evento en Google Calendar.</li>
+            <li>Exportar o importar datos cuando haga falta.</li>
           </ul>
         </div>
         <div>
-          <h3>Orden correcto de etapas comerciales</h3>
-          <div class="step-list">
-            <div class="step"><div><strong>Consulta nueva</strong><p class="subtitle">Registro recién creado o recién detectado.</p></div></div>
-            <div class="step"><div><strong>Datos incompletos</strong><p class="subtitle">Falta información importante para avanzar.</p></div></div>
-            <div class="step"><div><strong>Seguimiento</strong><p class="subtitle">Hay que contactar o pedir definición.</p></div></div>
-            <div class="step"><div><strong>Presupuesto enviado</strong><p class="subtitle">La clienta recibió propuesta y falta confirmación.</p></div></div>
-            <div class="step"><div><strong>Señado / Pagado completo</strong><p class="subtitle">Evento confirmado. Debe mirarse operativamente.</p></div></div>
-            <div class="step"><div><strong>Realizado / Cancelado</strong><p class="subtitle">Cierre del circuito.</p></div></div>
-          </div>
+          <h3>Que no deberia vivir aca</h3>
+          <ul>
+            <li>Consultas iniciales sin confirmar.</li>
+            <li>Seguimientos comerciales que todavia no son evento.</li>
+            <li>Reuniones con clientas: eso va en CRM.</li>
+            <li>Analisis general: eso va en Panel de control.</li>
+          </ul>
         </div>
       </div>
-      <div class="fake-table-wrap" style="margin-top:16px">
-        <table class="fake-table">
-          <thead>
-            <tr><th>Cliente</th><th>Etapa</th><th>Operativo</th><th>Agenda</th><th>Qué hacer</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><strong>Familia ejemplo</strong></td><td><span class="tag gold">Presupuesto enviado</span></td><td>Diseño pendiente</td><td><span class="tag red">Sin agendar</span></td><td>Seguir desde CRM o actualizar si confirma.</td></tr>
-            <tr><td><strong>Evento confirmado</strong></td><td><span class="tag green">Señado</span></td><td>Listo para producir</td><td><span class="tag green">Agendado</span></td><td>Entrar a Proceso y preparar boceto/materiales.</td></tr>
-            <tr><td><strong>Evento terminado</strong></td><td><span class="tag">Realizado</span></td><td>Realizado</td><td><span class="tag green">Agendado</span></td><td>Revisar Finanzas y cerrar pendientes.</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="callout" style="margin-top:16px">
-        Las observaciones largas se ven resumidas. Para leerlas completas hay que tocar <strong>Ver observación</strong>.
+      <div class="callout">
+        <strong>Agendado:</strong> el estado cambia a verde solo cuando Google Calendar confirma que el evento fue creado. Si no confirma, debe quedar como Sin agendar.
       </div>
     </section>
 
     <section class="section panel" id="proceso">
       <div class="eyebrow">3. Proceso</div>
-      <h2>Cómo preparar el evento por dentro</h2>
+      <h2>Como preparar boceto, checks y materiales</h2>
       <div class="grid-2">
         <div class="step-list">
-          <div class="step"><div><strong>Seleccionar el evento</strong><p class="subtitle">Entrar a Proceso y elegir el evento de la lista. Si viene desde CRM/Dashboard, debería aparecer con el mismo nombre.</p></div></div>
-          <div class="step"><div><strong>Completar checks</strong><p class="subtitle">Marcar avances de consulta, diseño y venta, traspaso, producción, montaje y cierre.</p></div></div>
-          <div class="step"><div><strong>Cargar boceto</strong><p class="subtitle">Subir JPG, PNG, PDF, DOC o DOCX. En imágenes, el sistema intenta comprimir para que sincronice mejor.</p></div></div>
-          <div class="step"><div><strong>Cargar materiales</strong><p class="subtitle">Agregar cada material en una casilla distinta y tocar Guardar materiales. Producción toma solo lo guardado.</p></div></div>
+          <div class="step"><div><strong>Elegir el evento</strong><p class="subtitle">Debe aparecer si ya fue pasado al Dashboard o creado como evento operativo.</p></div></div>
+          <div class="step"><div><strong>Marcar avances</strong><p class="subtitle">Consulta, diseno y venta, traspaso a produccion, produccion, montaje y cierre.</p></div></div>
+          <div class="step"><div><strong>Subir boceto</strong><p class="subtitle">Permite JPG, PNG, PDF, DOC y DOCX. Esperar la barra/mensaje de guardado antes de salir.</p></div></div>
+          <div class="step"><div><strong>Cargar materiales</strong><p class="subtitle">Agregar un material por casilla. Tocar Agregar item para sumar otra casilla y Guardar materiales para sincronizar.</p></div></div>
         </div>
         <div>
-          <h3>Cuándo aparece en Proceso</h3>
+          <h3>Cuidados importantes</h3>
+          <ul>
+            <li>No pegar toda la lista en una sola casilla si Juli debe marcar item por item.</li>
+            <li>No cerrar la pantalla mientras indica que esta guardando.</li>
+            <li>Si algo no se refleja, tocar Actualizar datos antes de volver a cargarlo.</li>
+            <li>Si hay observaciones largas, usarlas para detalle operativo, no para montos sensibles.</li>
+          </ul>
           <div class="callout">
-            Aparece cuando el registro ya fue creado como evento operativo. En el flujo normal, esto pasa cuando desde CRM se toca <strong>Pasar al Dashboard</strong> sobre una consulta en <strong>Señado</strong> o <strong>Pagado completo</strong>. Si el evento ya estaba vinculado, el botón cambia a <strong>Actualizar Dashboard</strong> y conserva el mismo registro.
-          </div>
-          <div class="do-dont" style="margin-top:14px">
-            <div class="example-card">
-              <h3>Correcto</h3>
-              <ul>
-                <li>Un material por casilla.</li>
-                <li>Guardar después de cargar.</li>
-                <li>Esperar el mensaje de sincronización.</li>
-              </ul>
-            </div>
-            <div class="example-card">
-              <h3>Evitar</h3>
-              <ul>
-                <li>Pegar todos los materiales en un solo bloque.</li>
-                <li>Cerrar la pantalla mientras guarda.</li>
-                <li>Marcar Finalizado si todavía debe verse en Producción.</li>
-              </ul>
-            </div>
+            <strong>Cuando aparece en Proceso:</strong> normalmente despues de tocar Pasar al Dashboard desde CRM en una consulta Senada o Pagada completa.
           </div>
         </div>
       </div>
     </section>
 
     <section class="section panel" id="produccion">
-      <div class="eyebrow">4. Producción</div>
-      <h2>Cómo usar la ficha operativa</h2>
+      <div class="eyebrow">4. Produccion</div>
+      <h2>Ficha para preparar el evento</h2>
       <div class="grid-2">
         <div>
-          <h3>Qué ve Producción</h3>
+          <h3>Que muestra</h3>
           <ul>
-            <li>Fecha, horario y dirección.</li>
-            <li>Nombre de clienta.</li>
-            <li>Homenajeado/a, edad y temática.</li>
+            <li>Boceto del evento.</li>
+            <li>Fecha, horario y direccion.</li>
+            <li>Clienta, homenajeado/a, edad y tematica.</li>
             <li>Propuesta correspondiente.</li>
-            <li>Boceto cargado en Proceso.</li>
             <li>Checklist de materiales.</li>
-            <li>Observaciones operativas.</li>
+            <li>Observaciones operativas debajo del boceto.</li>
           </ul>
         </div>
         <div>
-          <h3>Qué NO ve Producción</h3>
-          <ul>
-            <li>Facturación.</li>
-            <li>Monto total.</li>
-            <li>Seña.</li>
-            <li>Saldo.</li>
-            <li>Información financiera sensible.</li>
-          </ul>
+          <h3>Estados de produccion</h3>
+          <div class="pill-row">
+            <span class="tag teal">Listo para producir</span>
+            <span class="tag gold">En preparacion</span>
+            <span class="tag green">Materiales listos</span>
+            <span class="tag green">Decorado</span>
+            <span class="tag gray">Finalizado</span>
+          </div>
+          <div class="callout warning">
+            <strong>Finalizado oculta el evento de Produccion.</strong> El sistema debe pedir confirmacion porque desaparece de esa vista. Si todavia quieren verlo, usar Decorado.
+          </div>
         </div>
       </div>
-      <div class="grid-3" style="margin-top:16px">
-        <div class="map-card"><strong>Listo para producir</strong><span>Se puede empezar a preparar.</span></div>
-        <div class="map-card"><strong>Decorado</strong><span>Ya está armado/decorado, pero debe seguir visible.</span></div>
-        <div class="map-card"><strong>Finalizado</strong><span>Se oculta de Producción. Usarlo solo cuando ya no debe ocupar lugar.</span></div>
+      <div class="callout">
+        <strong>Para imprimir o guardar PDF:</strong> elegir el evento que se quiere imprimir. El archivo debe nombrarse con clienta, tematica y fecha del evento.
       </div>
     </section>
 
     <section class="section panel" id="panel">
       <div class="eyebrow">5. Panel de control</div>
-      <h2>Cómo leer el estado general</h2>
+      <h2>Vista general para decidir rapido</h2>
       <div class="grid-3">
-        <div class="map-card"><strong>Próximos eventos</strong><span>Muestra qué fiestas vienen y cuántos días faltan.</span></div>
-        <div class="map-card"><strong>Trabados</strong><span>Indica eventos que necesitan revisión antes de avanzar.</span></div>
-        <div class="map-card"><strong>Sin agendar</strong><span>Cuenta solo eventos futuros que todavía deberían ir a calendario.</span></div>
-        <div class="map-card"><strong>Facturación pendiente</strong><span>Registros que requieren revisión administrativa.</span></div>
-        <div class="map-card"><strong>Detalle</strong><span>Cada medición puede llevar al listado de registros que la componen.</span></div>
-        <div class="map-card"><strong>Resumen rápido</strong><span>Sirve para empezar una reunión de control sin abrir registro por registro.</span></div>
+        <div class="card"><strong>Volumen por mes</strong><p class="muted">Cantidad y volumen de registros por periodo.</p></div>
+        <div class="card"><strong>Alertas rapidas</strong><p class="muted">Senales de faltantes o cuellos de botella.</p></div>
+        <div class="card"><strong>Propuestas elegidas</strong><p class="muted">Ayuda a entender que paquetes se venden mas.</p></div>
+        <div class="card"><strong>Tematicas pedidas</strong><p class="muted">Muestra tendencias y temas frecuentes.</p></div>
+        <div class="card"><strong>Proximos eventos</strong><p class="muted">Lista eventos futuros y dias restantes.</p></div>
+        <div class="card"><strong>Eventos trabados</strong><p class="muted">Muestra registros que necesitan accion.</p></div>
+        <div class="card"><strong>Sin agendar futuros</strong><p class="muted">No cuenta eventos viejos que ya pasaron.</p></div>
+        <div class="card"><strong>Facturacion pendiente</strong><p class="muted">Sirve para seguimiento administrativo.</p></div>
+        <div class="card"><strong>Resumen por estado</strong><p class="muted">Permite ver donde se concentra el trabajo.</p></div>
+      </div>
+      <div class="callout">
+        Muchas tarjetas tienen <strong>Ver detalle</strong>. Usarlo para ver que registros componen el numero sin mostrar importes sensibles fuera de Finanzas.
       </div>
     </section>
 
     <section class="section panel" id="finanzas">
       <div class="eyebrow">6. Finanzas</div>
-      <h2>Cómo usar Finanzas sin duplicar ventas</h2>
-      <div class="grid-2">
-        <div class="step-list">
-          <div class="step"><div><strong>Actualizar ventas</strong><p class="subtitle">Usar Actualizar todo para traer ventas desde el Dashboard. No volver a cargar manualmente una venta que ya existe.</p></div></div>
-          <div class="step"><div><strong>Completar costos</strong><p class="subtitle">Registrar materiales, personal, mobiliario, extras, viajes, gastos y roturas.</p></div></div>
-          <div class="step"><div><strong>Revisar cobranzas</strong><p class="subtitle">Controlar seña, saldo, vencidos y pagos completos.</p></div></div>
-          <div class="step"><div><strong>Mirar rentabilidad</strong><p class="subtitle">Comparar venta, costo, resultado y margen para detectar propuestas que necesitan ajuste.</p></div></div>
-        </div>
-        <div class="example-card">
-          <h3>Regla financiera simple</h3>
-          <p class="subtitle">La seña mejora la caja, pero el resultado real del evento se analiza cuando el evento está realizado y sus costos están completos.</p>
-          <div class="callout" style="margin-top:14px">
-            Para decidir retiros: resultado operativo → impuestos → reposición → emergencia → reinversión → utilidad distribuible.
-          </div>
-        </div>
+      <h2>Cuando una venta impacta en numeros</h2>
+      <div class="table-wrap">
+        <table class="mini-table">
+          <thead>
+            <tr><th>Estado</th><th>Como se lee en Finanzas</th><th>Impacto</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Consulta nueva, Datos incompletos, Seguimiento, Presupuesto enviado</td><td>Comercial todavia no financiero</td><td>No suma ingresos ni margen.</td></tr>
+            <tr><td>Senado o Pagado completo</td><td>Venta proyectada</td><td>Puede mostrar cobros, saldo y facturacion pendiente.</td></tr>
+            <tr><td>Realizado</td><td>Cierre economico</td><td>Permite cargar costos, calcular margen y revisar punto de equilibrio.</td></tr>
+            <tr><td>Cancelado</td><td>Descartado o historico</td><td>No impacta ingresos reales ni margen.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <strong>No duplicar ventas:</strong> si una venta ya viene del Dashboard, actualizar Finanzas en lugar de volver a cargarla manualmente.
       </div>
     </section>
 
     <section class="section panel" id="agenda">
       <div class="eyebrow">7. Agenda</div>
-      <h2>Cómo usar Google Calendar</h2>
-      <div class="grid-3">
-        <div class="map-card"><strong>Eventos</strong><span>Se agendan desde Dashboard con el botón de calendario.</span></div>
-        <div class="map-card"><strong>Reuniones</strong><span>Se agendan desde CRM y no deben compartir detalle sensible con Juli.</span></div>
-        <div class="map-card"><strong>Estado verde</strong><span>Debe aparecer solo si Google Calendar confirmó que el evento fue creado.</span></div>
+      <h2>Eventos y reuniones en Google Calendar</h2>
+      <div class="grid-2">
+        <div>
+          <h3>Eventos</h3>
+          <ul>
+            <li>Se agendan desde Dashboard.</li>
+            <li>Se comparten con el calendario de Happy Deco.</li>
+            <li>El sistema debe avisar 15 dias antes, 7 dias antes, 3 dias antes y el mismo dia cuando esas fechas tengan sentido.</li>
+            <li>Si el evento esta muy cerca, se usan recordatorios posibles y utiles.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Reuniones</h3>
+          <ul>
+            <li>Se agendan desde CRM.</li>
+            <li>Incluyen tema, fecha, horario, clienta, modalidad, presupuesto, tematica y detalles.</li>
+            <li>No deben compartir detalle sensible con Juli.</li>
+            <li>Se pueden elegir recordatorios manuales cuando haga falta.</li>
+          </ul>
+        </div>
       </div>
-      <div class="callout" style="margin-top:16px">
-        Si una persona no ve el calendario, revisar que esté usando la cuenta correcta y que tenga acceso al calendario compartido de Happy Deco.
+      <div class="callout warning">
+        Si alguien no ve el calendario, revisar que haya aceptado el calendario compartido y que este usando la cuenta correcta en su telefono.
       </div>
     </section>
 
     <section class="section panel" id="problemas">
-      <div class="eyebrow">8. Si algo no aparece</div>
-      <h2>Checklist de solución rápida</h2>
+      <div class="eyebrow">8. Si algo falla</div>
+      <h2>Soluciones rapidas antes de cargar de nuevo</h2>
       <div class="grid-3">
-        <div class="map-card"><strong>No aparece en Dashboard</strong><span>En CRM debe decir En Dashboard después del pase. Si dice Solo CRM o Faltan datos, todavía no fue enviado.</span></div>
-        <div class="map-card"><strong>No aparece en Proceso</strong><span>Actualizar la página. Si viene de CRM, verificar que tenga vínculo En Dashboard y que el pase haya sincronizado.</span></div>
-        <div class="map-card"><strong>No aparece en Producción</strong><span>Debe estar Listo para producir o tener boceto/materiales cargados. Si está Finalizado, se oculta.</span></div>
-        <div class="map-card"><strong>No se ve en otra compu</strong><span>Tocar Actualizar datos y esperar. Si sigue igual, revisar conexión.</span></div>
-        <div class="map-card"><strong>No carga el boceto</strong><span>Probar con una imagen más liviana. Esperar la barra de guardado antes de cerrar.</span></div>
-        <div class="map-card"><strong>Error de nube</strong><span>Cerrar la pestaña, volver a entrar al link oficial y forzar recarga. El sistema descarta configuraciones viejas de Supabase.</span></div>
-        <div class="map-card"><strong>Observaciones largas</strong><span>En Dashboard se ve un resumen. Tocar Ver observación para leer completo.</span></div>
+        <div class="card"><strong>No aparece en Dashboard</strong><p class="muted">En CRM debe decir En Dashboard. Si dice Solo CRM o Faltan datos, todavia no fue enviado.</p></div>
+        <div class="card"><strong>No aparece en Proceso</strong><p class="muted">Actualizar datos. Si viene de CRM, confirmar que el pase al Dashboard fue exitoso.</p></div>
+        <div class="card"><strong>No aparece en Produccion</strong><p class="muted">Debe estar Listo para producir o tener boceto/materiales. Si esta Finalizado, se oculta.</p></div>
+        <div class="card"><strong>No se ve en otro dispositivo</strong><p class="muted">Entrar al link oficial, tocar Actualizar datos y evitar usar pestañas viejas abiertas.</p></div>
+        <div class="card"><strong>No carga boceto</strong><p class="muted">Probar archivo mas liviano y esperar la barra/mensaje de guardado.</p></div>
+        <div class="card"><strong>Error de Supabase</strong><p class="muted">Reintentar con Actualizar. Si vuelve a pasar, mandar captura con el detalle tecnico.</p></div>
       </div>
     </section>
 
     <section class="section panel" id="rutina">
       <div class="eyebrow">9. Rutina recomendada</div>
-      <h2>Cómo usarlo sin que se vuelva pesado</h2>
+      <h2>Como usarlo sin hacerlo pesado</h2>
       <div class="checklist">
-        <label class="check-item"><input type="checkbox"> Cada consulta nueva se carga en CRM.</label>
-        <label class="check-item"><input type="checkbox"> Cada reunión comercial se agenda desde CRM.</label>
-        <label class="check-item"><input type="checkbox"> Cuando se confirma con seña o pago completo, tocar Pasar al Dashboard y confirmar el envío.</label>
-        <label class="check-item"><input type="checkbox"> Antes de producir, Xime revisa Proceso: checks, boceto, materiales e imprenta.</label>
-        <label class="check-item"><input type="checkbox"> Juli usa Producción para preparar materiales y marcar checklist.</label>
-        <label class="check-item"><input type="checkbox"> Gestión revisa Panel de control para próximos eventos, trabados y pendientes.</label>
-        <label class="check-item"><input type="checkbox"> Finanzas se revisa al menos una vez por semana para cobranzas, costos y margen.</label>
-        <label class="check-item"><input type="checkbox"> Después del evento, se cambia a Decorado o Finalizado según corresponda.</label>
+        <label class="check-item"><input type="checkbox"> Cargar toda consulta nueva en CRM.</label>
+        <label class="check-item"><input type="checkbox"> Registrar reuniones comerciales desde CRM.</label>
+        <label class="check-item"><input type="checkbox"> Mantener actualizado el estado comercial.</label>
+        <label class="check-item"><input type="checkbox"> Cuando se confirma, tocar Pasar al Dashboard y verificar mensaje de exito.</label>
+        <label class="check-item"><input type="checkbox"> Revisar Proceso para boceto, checks y materiales.</label>
+        <label class="check-item"><input type="checkbox"> Usar Produccion para preparar y marcar checklist.</label>
+        <label class="check-item"><input type="checkbox"> Mirar Panel de control para proximos eventos, trabados y alertas.</label>
+        <label class="check-item"><input type="checkbox"> Revisar Finanzas para cobros, costos, facturacion y margen.</label>
       </div>
     </section>
   </main>
@@ -777,23 +692,23 @@
     const roleContent = {
       cati: [
         ["CRM", "Cargar consultas, reuniones, presupuestos y seguimientos."],
-        ["Confirmación", "Cuando el evento esté Señado o Pagado completo, tocar Pasar al Dashboard. Si ya fue enviado, usar Actualizar Dashboard."],
-        ["Diseño", "Cargar o avisar cuando haya boceto, temática y propuesta definida."]
+        ["Confirmacion", "Cuando este Senado o Pagado completo, usar Pasar al Dashboard o Actualizar Dashboard."],
+        ["Diseno", "Definir propuesta, tematica, boceto y datos necesarios para produccion."]
       ],
       xime: [
-        ["Dashboard", "Revisar eventos confirmados, fecha, responsable, estado operativo y agenda."],
-        ["Proceso", "Validar traspaso, materiales, imprenta, boceto y faltantes."],
-        ["Producción", "Usar la ficha para preparar y controlar el avance operativo."]
+        ["Dashboard", "Revisar eventos confirmados, responsable, agenda y estado operativo."],
+        ["Proceso", "Validar traspaso, imprenta, boceto, materiales y faltantes."],
+        ["Produccion", "Usar la ficha para preparar y controlar avance operativo."]
       ],
       juli: [
-        ["Producción", "Entrar a la ficha del evento y preparar según boceto y materiales."],
-        ["Checklist", "Marcar cada material cuando esté preparado."],
-        ["Estado", "Usar En preparación, Materiales listos, Decorado o Finalizado según corresponda."]
+        ["Produccion", "Preparar materiales segun boceto y checklist."],
+        ["Checklist", "Marcar item por item cuando este listo."],
+        ["Estado", "Usar Decorado si debe seguir visible; Finalizado solo cuando ya no debe ocupar lugar."]
       ],
       nahuel: [
-        ["Panel de control", "Mirar próximos eventos, trabados, sin agendar y pendientes."],
-        ["Finanzas", "Revisar cobranzas, costos, rentabilidad y margen."],
-        ["Soporte", "Detectar si CRM, Dashboard, Proceso, Producción o Calendar no están sincronizando."]
+        ["Panel de control", "Mirar estado general, eventos trabados y proximos eventos."],
+        ["Finanzas", "Revisar cobros, costos, facturacion, margen y punto de equilibrio."],
+        ["Soporte", "Validar que CRM, Dashboard, Proceso, Produccion, Finanzas y Calendar sigan sincronizados."]
       ]
     };
 
