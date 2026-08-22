@@ -1,8 +1,16 @@
 .event-lifeline {
   display: grid;
-  gap: 7px;
+  gap: 8px;
   min-width: 0;
   margin: 10px 0;
+}
+
+.event-lifeline-title {
+  color: #756873;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .event-lifeline-track {
@@ -39,6 +47,28 @@
   text-overflow: ellipsis;
 }
 
+.event-lifeline-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #756873;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.event-life-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.event-life-legend-dot {
+  width: 12px;
+  height: 7px;
+  border-radius: 999px;
+  background: #e9e3df;
+}
+
 .event-life-step.pending .event-life-dot {
   background: #e9e3df;
 }
@@ -62,21 +92,46 @@
   box-shadow: 0 0 0 3px rgba(255, 143, 168, .18);
 }
 
+.event-life-legend-dot.current {
+  background: #7edbdf;
+}
+
+.event-life-legend-dot.done {
+  background: #8bd6a3;
+}
+
+.event-life-legend-dot.warning {
+  background: #ffd66f;
+}
+
+.event-life-legend-dot.danger {
+  background: #ff8fa8;
+}
+
 .event-lifeline-compact {
-  margin: 7px 0 0;
+  margin: 8px 0 0;
+  gap: 5px;
 }
 
 .event-lifeline-compact .event-lifeline-track {
-  grid-template-columns: repeat(7, minmax(32px, 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(7, minmax(42px, 1fr));
+  gap: 5px;
 }
 
 .event-lifeline-compact .event-life-step {
-  font-size: 0;
+  font-size: 9px;
 }
 
 .event-lifeline-compact .event-life-dot {
-  height: 7px;
+  height: 8px;
+}
+
+.event-lifeline-compact .event-lifeline-title {
+  font-size: 10px;
+}
+
+.event-lifeline-compact .event-lifeline-legend {
+  display: none;
 }
 
 @media (max-width: 760px) {
