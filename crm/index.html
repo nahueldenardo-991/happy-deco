@@ -289,9 +289,46 @@
     .view { display: none; }
     .view.active { display: block; }
 
+    .zone-overview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: .75rem;
+      margin-bottom: .9rem;
+    }
+
+    .zone-card {
+      padding: .9rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .86);
+      box-shadow: 0 10px 30px rgba(72, 52, 35, .08);
+    }
+
+    .zone-card strong {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+      margin-bottom: .3rem;
+      font-family: "Baloo 2", cursive;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .zone-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.32;
+    }
+
+    .zone-card.comercial { border-top: .35rem solid var(--gold); }
+    .zone-card.confirmado { border-top: .35rem solid var(--teal); }
+    .zone-card.cerrado { border-top: .35rem solid var(--muted); }
+
     .pipeline {
       display: grid;
-      grid-template-columns: repeat(4, minmax(14rem, 1fr));
+      grid-template-columns: repeat(8, minmax(14rem, 1fr));
       gap: .8rem;
       overflow-x: auto;
       padding-bottom: .5rem;
@@ -300,7 +337,11 @@
     .pipeline-column {
       min-height: 20rem;
       padding: .8rem;
+      border-top: .35rem solid var(--gold);
     }
+
+    .pipeline-column.zone-confirmado { border-top-color: var(--teal); }
+    .pipeline-column.zone-cerrado { border-top-color: var(--muted); }
 
     .column-head {
       display: flex;
@@ -368,6 +409,22 @@
     .stage-pill.closed { background: #f1e8de; color: var(--muted); }
     .stage-pill.cancelled { background: #ffe1e1; color: var(--danger); }
 
+    .zone-pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 1.55rem;
+      padding: .18rem .55rem;
+      border-radius: 999px;
+      background: #fff0cd;
+      color: #8a5512;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .zone-pill.confirmado { background: #dff7ea; color: var(--ok); }
+    .zone-pill.cerrado { background: #f1e8de; color: var(--muted); }
+
     .guided-panel {
       display: grid;
       gap: .55rem;
@@ -421,6 +478,17 @@
       display: flex;
       flex-wrap: wrap;
       gap: .4rem;
+    }
+
+    .lead-card {
+      cursor: pointer;
+    }
+
+    .lead-card .mini,
+    .lead-card select,
+    .lead-card input,
+    .lead-card button {
+      cursor: pointer;
     }
 
     .card-actions {
@@ -511,6 +579,119 @@
     .sync-ready { background: #fff0cd; color: #8a5512; }
     .sync-sent { background: #dff7ea; color: var(--ok); }
     .sync-blocked { background: #ffe1e1; color: var(--danger); }
+
+    .detail-drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      background: rgba(47, 38, 48, .38);
+    }
+
+    .detail-drawer.open { display: block; }
+
+    .drawer-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      width: min(34rem, 100%);
+      height: 100%;
+      background: #fffdf9;
+      border-left: 1px solid var(--line);
+      box-shadow: -18px 0 50px rgba(72, 52, 35, .18);
+    }
+
+    .drawer-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 1rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 250, 244, .94);
+    }
+
+    .drawer-head h3 {
+      margin: .2rem 0 .25rem;
+      font-family: "Baloo 2", cursive;
+      font-size: 1.7rem;
+      line-height: .92;
+    }
+
+    .drawer-body {
+      display: grid;
+      gap: .85rem;
+      padding: 1rem;
+      overflow: auto;
+    }
+
+    .drawer-section {
+      display: grid;
+      gap: .65rem;
+      padding: .85rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .drawer-section h4 {
+      margin: 0;
+      font-family: "Baloo 2", cursive;
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .55rem;
+    }
+
+    .detail-item {
+      display: grid;
+      gap: .12rem;
+      min-width: 0;
+    }
+
+    .detail-item span {
+      color: var(--muted);
+      font-size: .74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .detail-item strong,
+    .detail-item p {
+      margin: 0;
+      color: var(--ink);
+      overflow-wrap: anywhere;
+    }
+
+    .detail-item.full { grid-column: 1 / -1; }
+
+    .sync-list {
+      display: grid;
+      gap: .45rem;
+    }
+
+    .sync-row {
+      display: flex;
+      justify-content: space-between;
+      gap: .75rem;
+      align-items: center;
+      padding: .55rem .65rem;
+      border: 1px solid #f0e3d8;
+      border-radius: var(--radius);
+      background: #fffdf9;
+    }
+
+    .drawer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+    }
 
     .agenda-panel {
       padding: 1rem;
@@ -650,7 +831,8 @@
     @media (max-width: 1100px) {
       .hero, .layout { grid-template-columns: 1fr; }
       .form-panel { position: static; }
-      .pipeline { grid-template-columns: repeat(4, 17rem); }
+      .pipeline { grid-template-columns: repeat(8, 17rem); }
+      .zone-overview { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 720px) {
@@ -666,6 +848,17 @@
       .handoff-actions, .handoff-actions .mini { width: 100%; }
       .guided-head { align-items: stretch; }
       .guided-actions, .guided-actions .mini { width: 100%; }
+      .drawer-panel {
+        top: auto;
+        bottom: 0;
+        width: 100%;
+        height: min(92vh, 46rem);
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        border-radius: 12px 12px 0 0;
+      }
+      .detail-grid { grid-template-columns: 1fr; }
+      .drawer-actions .mini, .drawer-actions .btn { flex: 1 1 100%; }
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
@@ -851,6 +1044,7 @@
         </div>
 
         <section class="view active" id="view-pipeline">
+          <div class="zone-overview" id="zoneOverview"></div>
           <div class="pipeline" id="pipeline"></div>
         </section>
 
@@ -938,6 +1132,7 @@
   </main>
 
   <div class="toast" id="toast"></div>
+  <div class="detail-drawer" id="detailDrawer" aria-hidden="true"></div>
 
   <script>
     const STORAGE_KEY = "happyDecoCrmLeads";
@@ -962,6 +1157,11 @@
     const PIPELINE_STAGES = ["Consulta nueva", "Datos incompletos", "Seguimiento", "Presupuesto enviado"];
     const RESPONSABLES = ["Cati", "Xime", "Cati + Xime", "Juli"];
     const DASHBOARD_READY_STAGES = ["Señado", "Pagado completo"];
+    const ZONES = [
+      { key: "comercial", label: "Comercial", stages: ["Consulta nueva", "Datos incompletos", "Seguimiento", "Presupuesto enviado"], help: "Consultas, presupuestos y seguimientos en gestión." },
+      { key: "confirmado", label: "Confirmado", stages: ["Señado", "Pagado completo"], help: "Eventos convertidos que deben pasar o actualizar operación." },
+      { key: "cerrado", label: "Cerrado", stages: ["Realizado", "Cancelado"], help: "Registros cerrados sin avance comercial normal." }
+    ];
     const LEGACY_STAGE_MAP = {
       "Nueva consulta": "Consulta nueva",
       "Contactado": "Seguimiento",
@@ -998,9 +1198,11 @@
       filterResponsable: document.querySelector("#filterResponsable"),
       filterAlerta: document.querySelector("#filterAlerta"),
       summaryGrid: document.querySelector("#summaryGrid"),
+      zoneOverview: document.querySelector("#zoneOverview"),
       pipeline: document.querySelector("#pipeline"),
       agendaList: document.querySelector("#agendaList"),
       tableWrap: document.querySelector("#tableWrap"),
+      detailDrawer: document.querySelector("#detailDrawer"),
       meetingForm: document.querySelector("#meetingForm"),
       meetingTopic: document.querySelector("#meetingTopic"),
       meetingDate: document.querySelector("#meetingDate"),
@@ -1018,6 +1220,7 @@
 
     let leads = loadLeads();
     let activeView = "pipeline";
+    let activeDetailId = "";
 
     init();
 
@@ -1048,9 +1251,14 @@
       document.body.addEventListener("click", event => {
         const action = event.target.closest("[data-action]");
         if (!action) return;
+        if (action.dataset.action === "close-detail") {
+          closeLeadDetail();
+          return;
+        }
         const lead = leads.find(item => item.id === action.dataset.id);
         if (!lead) return;
         if (action.dataset.action === "edit") editLead(lead);
+        if (action.dataset.action === "open-detail") openLeadDetail(lead.id);
         if (action.dataset.action === "delete") deleteLead(lead.id);
         if (action.dataset.action === "advance") advanceLead(lead.id);
         if (action.dataset.action === "guided") executeGuidedAction(lead.id);
@@ -1062,6 +1270,12 @@
         const field = event.target.closest("[data-field]");
         if (!field) return;
         updateLeadField(field.dataset.id, field.dataset.field, field.value);
+      });
+      els.detailDrawer.addEventListener("click", event => {
+        if (event.target === els.detailDrawer) closeLeadDetail();
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && activeDetailId) closeLeadDetail();
       });
     }
 
@@ -1375,9 +1589,11 @@
     function render() {
       const filtered = filteredLeads();
       renderSummary(filtered);
+      renderZoneOverview(filtered);
       renderPipeline(filtered);
       renderAgenda(filtered);
       renderTable(filtered);
+      if (activeDetailId) renderLeadDetail();
       setOptions(els.filterResponsable, unique([...RESPONSABLES, ...leads.map(lead => lead.responsable)]), "Todos los responsables", els.filterResponsable.value);
     }
 
@@ -1400,14 +1616,30 @@
       `).join("");
     }
 
+    function renderZoneOverview(items) {
+      els.zoneOverview.innerHTML = ZONES.map(zone => {
+        const count = items.filter(lead => stageZone(lead.etapa).key === zone.key).length;
+        return `
+          <article class="zone-card ${zone.key}">
+            <strong>${zone.label}<span class="count-pill">${count}</span></strong>
+            <p>${zone.help}</p>
+          </article>
+        `;
+      }).join("");
+    }
+
     function renderPipeline(items) {
-      const columns = [...PIPELINE_STAGES, "Señado", "Pagado completo"];
+      const columns = STAGES;
       els.pipeline.innerHTML = columns.map(stage => {
         const stageItems = items.filter(lead => lead.etapa === stage);
+        const zone = stageZone(stage);
         return `
-          <section class="pipeline-column">
+          <section class="pipeline-column zone-${zone.key}">
             <div class="column-head">
-              <strong>${stage}</strong>
+              <div>
+                <strong>${stage}</strong><br>
+                <span class="zone-pill ${zone.key}">${zone.label}</span>
+              </div>
               <span class="count-pill">${stageItems.length}</span>
             </div>
             ${stageItems.length ? stageItems.map(renderLeadCard).join("") : `<div class="empty">Sin consultas</div>`}
@@ -1420,12 +1652,14 @@
       const alert = alertState(lead);
       const sentClass = lead.dashboardRecordId ? "sent" : "";
       const guide = salesGuideState(lead);
+      const zone = stageZone(lead.etapa);
       return `
-        <article class="lead-card ${alert.key} ${sentClass}">
+        <article class="lead-card ${alert.key} ${sentClass}" data-action="open-detail" data-id="${lead.id}">
           <div class="lead-title">
             <strong>${escapeHtml(lead.cliente || "Sin cliente")}</strong>
             <span class="stage-pill ${stageClass(lead.etapa)}">${escapeHtml(lead.etapa)}</span>
           </div>
+          <span class="zone-pill ${zone.key}">${zone.label}</span>
           <p>${escapeHtml(lead.tematica || "Temática pendiente")} · ${escapeHtml(lead.homenajeado || "Sin homenajeado")}</p>
           <p>${formatDate(lead.fechaEvento) || "Sin fecha de evento"} · ${escapeHtml(lead.responsable)}</p>
           <p><strong>Seguimiento:</strong> ${escapeHtml(lead.proximaAccion || "Sin tarea")} ${formatDate(lead.proximaAccionFecha) ? `· ${formatDate(lead.proximaAccionFecha)}` : ""}</p>
@@ -1495,6 +1729,7 @@
                 <td>${money(lead.monto)}</td>
                 <td>${renderSalesGuide(lead, salesGuideState(lead), true)}</td>
                 <td>
+                  <button class="mini primary" type="button" data-action="open-detail" data-id="${lead.id}">Abrir ficha</button>
                   <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
                 </td>
               </tr>
@@ -1508,6 +1743,10 @@
       return `<select class="control" data-field="${field}" data-id="${id}">
         ${options.map(option => `<option ${option === value ? "selected" : ""}>${escapeHtml(option)}</option>`).join("")}
       </select>`;
+    }
+
+    function stageZone(stage) {
+      return ZONES.find(zone => zone.stages.includes(stage)) || ZONES[0];
     }
 
     function stageClass(stage) {
@@ -1640,6 +1879,112 @@
           ${compact ? "" : `<p class="guided-missing">${escapeHtml(missingText)}</p><p class="guided-missing">${escapeHtml(guide.help)}</p>`}
         </div>
       `;
+    }
+
+    function openLeadDetail(id) {
+      activeDetailId = id;
+      renderLeadDetail();
+      els.detailDrawer.classList.add("open");
+      els.detailDrawer.setAttribute("aria-hidden", "false");
+    }
+
+    function closeLeadDetail() {
+      activeDetailId = "";
+      els.detailDrawer.classList.remove("open");
+      els.detailDrawer.setAttribute("aria-hidden", "true");
+      els.detailDrawer.innerHTML = "";
+    }
+
+    function renderLeadDetail() {
+      if (!activeDetailId) return;
+      const lead = leads.find(item => item.id === activeDetailId);
+      if (!lead) {
+        closeLeadDetail();
+        return;
+      }
+      const zone = stageZone(lead.etapa);
+      const guide = salesGuideState(lead);
+      const sync = syncStateRows(lead);
+      const missingText = guide.missing.length ? guide.missing.join(", ") : "Sin faltantes para el siguiente paso.";
+      els.detailDrawer.innerHTML = `
+        <aside class="drawer-panel" role="dialog" aria-modal="true" aria-label="Ficha de ${escapeAttr(lead.cliente || "consulta")}">
+          <header class="drawer-head">
+            <div>
+              <span class="eyebrow">Ficha del registro</span>
+              <h3>${escapeHtml(lead.cliente || "Sin cliente")}</h3>
+              <span class="stage-pill ${stageClass(lead.etapa)}">${escapeHtml(lead.etapa)}</span>
+              <span class="zone-pill ${zone.key}">${zone.label}</span>
+            </div>
+            <button class="mini" type="button" data-action="close-detail">Cerrar</button>
+          </header>
+          <div class="drawer-body">
+            <section class="drawer-section">
+              <h4>Datos principales</h4>
+              <div class="detail-grid">
+                ${detailItem("Teléfono", lead.telefono || "-")}
+                ${detailItem("Fecha del evento", formatDate(lead.fechaEvento) || "Sin fecha")}
+                ${detailItem("Homenajeado/a", lead.homenajeado || "-")}
+                ${detailItem("Edad", lead.edadCumpleanero || "-")}
+                ${detailItem("Tipo de evento", lead.tipoEvento || "-")}
+                ${detailItem("Temática", lead.tematica || "-")}
+                ${detailItem("Propuesta", lead.propuesta || "-")}
+                ${detailItem("Responsable", lead.responsable || "-")}
+                ${detailItem("Lugar", lead.lugar || "-", true)}
+                ${detailItem("Observaciones comerciales", lead.observaciones || "Sin observaciones", true)}
+              </div>
+            </section>
+            <section class="drawer-section">
+              <h4>Próxima acción</h4>
+              <div class="guided-panel ${guide.key}">
+                <div class="guided-head">
+                  <div>
+                    <p class="guided-kicker">Siguiente paso</p>
+                    <p class="guided-title">${escapeHtml(guide.title)}</p>
+                  </div>
+                  <div class="drawer-actions">
+                    <button class="mini primary" type="button" data-action="guided" data-id="${lead.id}">${escapeHtml(guide.button)}</button>
+                    <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
+                  </div>
+                </div>
+                <p class="guided-missing">Fecha de próxima acción: ${formatDate(lead.proximaAccionFecha) || "Sin fecha"}</p>
+                <p class="guided-missing">Falta: ${escapeHtml(missingText)}</p>
+                <p class="guided-missing">${escapeHtml(guide.help)}</p>
+              </div>
+            </section>
+            <section class="drawer-section">
+              <h4>Sincronización</h4>
+              <div class="sync-list">
+                ${sync.map(item => `
+                  <div class="sync-row">
+                    <strong>${escapeHtml(item.label)}</strong>
+                    <span class="sync-pill ${item.className}">${escapeHtml(item.value)}</span>
+                  </div>
+                `).join("")}
+              </div>
+            </section>
+          </div>
+        </aside>
+      `;
+    }
+
+    function detailItem(label, value, full = false) {
+      return `
+        <div class="detail-item ${full ? "full" : ""}">
+          <span>${escapeHtml(label)}</span>
+          <p>${escapeHtml(String(value || "-"))}</p>
+        </div>
+      `;
+    }
+
+    function syncStateRows(lead) {
+      const hasDashboard = Boolean(lead.dashboardRecordId);
+      return [
+        { label: "CRM", value: "Activo", className: "sync-sent" },
+        { label: "Dashboard", value: hasDashboard ? "Activo" : "Pendiente", className: hasDashboard ? "sync-sent" : "sync-blocked" },
+        { label: "Proceso", value: hasDashboard ? "Activo" : "Pendiente", className: hasDashboard ? "sync-sent" : "sync-blocked" },
+        { label: "Producción", value: "Se valida en Producción", className: "status-muted" },
+        { label: "Finanzas", value: "Se valida en Finanzas", className: "status-muted" }
+      ];
     }
 
     function executeGuidedAction(id) {
@@ -2202,6 +2547,10 @@
         '"': "&quot;",
         "'": "&#039;"
       }[char]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value);
     }
 
     function showToast(message) {
