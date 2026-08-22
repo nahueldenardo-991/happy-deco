@@ -2153,16 +2153,26 @@
         const processEvent = mergeProcessEvent(existingProcess, leadToProcessEvent(lead, recordId));
         await cloudUpsertRows(DATA_TABLE, [{ id: recordId, data: dashboardRecord, updated_at: dashboardRecord.updatedAt }]);
         await cloudUpsertProcessEvent(recordId, processEvent);
+        const [savedDashboard, savedProcess] = await Promise.all([
+          fetchCloudRecord(DATA_TABLE, recordId),
+          fetchCloudRecord(PROCESS_TABLE, recordId)
+        ]);
+        if (!savedDashboard?.id) throw new Error("El Dashboard no confirmó el guardado del evento.");
+        if (!savedProcess?.id) throw new Error("Proceso no confirmó el guardado del evento.");
         lead.dashboardRecordId = recordId;
         lead.productionSentAt = lead.productionSentAt || new Date().toISOString();
         lead.updatedAt = new Date().toISOString();
-        await cloudUpsertLeads([lead]);
+        const leadSync = await cloudUpsertLeads([lead]);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
         render();
-        if (!options.silent) showToast(wasLinked ? "Dashboard actualizado. El registro sigue vinculado a Proceso." : "Evento enviado al Dashboard y Proceso");
+        if (!options.silent) {
+          showToast(leadSync?.ok === false
+            ? "Evento enviado. Si la ficha CRM no se actualiza en otro dispositivo, toca Actualizar."
+            : wasLinked ? "Dashboard actualizado. El registro sigue vinculado a Proceso." : "Evento enviado al Dashboard y Proceso");
+        }
       } catch (error) {
         console.error("No pude pasar al Dashboard", error);
-        if (!options.silent) alert(`No pude pasar al Dashboard. Cerrá esta pestaña, abrí nuevamente el link oficial y reintentá.\n\nDetalle técnico: ${readableError(error)}`);
+        if (!options.silent) alert(`No pude pasar al Dashboard.\n\nToca Actualizar y reintenta. Si vuelve a pasar, enviame captura de este detalle:\n${readableError(error)}`);
         if (button) {
           button.disabled = false;
           button.textContent = wasLinked ? "Actualizar Dashboard" : "Pasar al Dashboard";
@@ -2176,7 +2186,7 @@
         await cloudUpsertRows(PROCESS_TABLE, [row]);
       } catch (firstError) {
         console.warn("Reintento guardado de Proceso con método compatible", firstError);
-        await cloudRequest(PROCESS_TABLE, {
+        await cloudRequest(`${PROCESS_TABLE}?on_conflict=id`, {
           method: "POST",
           headers: { Prefer: "resolution=merge-duplicates" },
           body: JSON.stringify([row])
@@ -2319,6 +2329,7 @@
       if (!config) return null;
       const response = await fetch(`${config.url}/rest/v1/${path}`, {
         ...options,
+        cache: "no-store",
         headers: {
           apikey: config.anonKey,
           Authorization: `Bearer ${config.anonKey}`,
@@ -2326,7 +2337,7 @@
           ...(options.headers || {})
         }
       });
-      if (!response.ok) throw new Error(await response.text());
+      if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
       if (response.status === 204) return null;
       const text = await response.text();
       return text ? JSON.parse(text) : null;
@@ -2349,12 +2360,14 @@
 
     async function cloudUpsertLeads(items) {
       const clean = sanitizeLeads(items);
-      if (!getCloudConfig() || !clean.length) return;
+      if (!getCloudConfig() || !clean.length) return { ok: true, skipped: true };
       const rows = clean.map(lead => ({ id: lead.id, data: { ...lead, module: "crm" }, updated_at: lead.updatedAt || new Date().toISOString() }));
       try {
         await cloudUpsertRows(DATA_TABLE, rows);
+        return { ok: true };
       } catch (error) {
         console.error("No pude guardar CRM", error);
+        return { ok: false, error };
       }
     }
 
