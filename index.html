@@ -1378,7 +1378,7 @@
       <aside class="panel form-panel">
         <div class="panel-head">
           <div>
-            <h2>Cargar registro</h2>
+            <h2 id="formTitle">Cargar registro</h2>
             <div class="small-note">Para eventos que ya deben gestionarse operativamente. Las consultas, reuniones y presupuestos iniciales se ordenan desde CRM.</div>
           </div>
         </div>
@@ -1532,7 +1532,7 @@
 
           <div class="message" id="formMessage"></div>
           <div class="actions">
-            <button class="btn rose" type="submit">Guardar registro</button>
+            <button class="btn rose" id="submitRecordBtn" type="submit">Guardar registro</button>
             <button class="btn secondary" id="resetFormBtn" type="button">Vaciar formulario</button>
           </div>
         </form>
@@ -1751,7 +1751,9 @@
 
     const els = {
       form: document.getElementById("recordForm"),
+      formTitle: document.getElementById("formTitle"),
       formMessage: document.getElementById("formMessage"),
+      submitRecordBtn: document.getElementById("submitRecordBtn"),
       resetFormBtn: document.getElementById("resetFormBtn"),
       exportBtn: document.getElementById("exportBtn"),
       cloudBtn: document.getElementById("cloudBtn"),
@@ -1788,6 +1790,7 @@
     };
 
     let records = loadRecords();
+    let editingRecordId = "";
 
     initAuth();
 
@@ -1833,8 +1836,10 @@
     els.logoutBtn.addEventListener("click", logoutDashboard);
     els.form.addEventListener("submit", handleSubmit);
     els.resetFormBtn.addEventListener("click", () => {
+      editingRecordId = "";
       els.form.reset();
       initDefaults();
+      updateFormMode();
       showMessage("", "");
     });
     els.exportBtn.addEventListener("click", exportCsv);
@@ -1858,6 +1863,8 @@
       if (dateButton) openDateEditor(dateButton.dataset.editDate);
       const observationButton = event.target.closest("[data-view-observation]");
       if (observationButton) openObservationModal(observationButton.dataset.viewObservation);
+      const editButton = event.target.closest("[data-edit-record]");
+      if (editButton) loadRecordIntoForm(editButton.dataset.editRecord);
     });
     els.tableContainer.addEventListener("change", event => {
       const select = event.target.closest("[data-update-field]");
@@ -1867,6 +1874,13 @@
 
     function initDefaults() {
       document.getElementById("fechaCierre").value = new Date().toISOString().slice(0, 10);
+    }
+
+    function updateFormMode() {
+      const editing = Boolean(editingRecordId);
+      els.formTitle.textContent = editing ? "Editar registro" : "Cargar registro";
+      els.submitRecordBtn.textContent = editing ? "Guardar cambios" : "Guardar registro";
+      els.resetFormBtn.textContent = editing ? "Cancelar edición" : "Vaciar formulario";
     }
 
     function switchDashboardView(view, selectedTab) {
@@ -1910,9 +1924,7 @@
         return;
       }
 
-      records.unshift({
-        id: makeId(),
-        fechaCarga: new Date().toISOString(),
+      const normalized = {
         ...data,
         fechaCierre: data.fechaCierre,
         edadCumpleanero: toNumber(data.edadCumpleanero),
@@ -1920,16 +1932,58 @@
         costo: toNumber(data.costo),
         senia: toNumber(data.senia),
         saldo: toNumber(data.saldo),
-        facturacion: data.facturacion || "Pendiente"
-      });
+        facturacion: data.facturacion || "Pendiente",
+        updatedAt: new Date().toISOString()
+      };
+
+      if (editingRecordId) {
+        const index = records.findIndex(record => record.id === editingRecordId);
+        if (index === -1) {
+          showMessage("No encontré el registro para editar. Actualizá datos e intentá nuevamente.", "error");
+          return;
+        }
+        records[index] = {
+          ...records[index],
+          ...normalized,
+          id: records[index].id,
+          fechaCarga: records[index].fechaCarga || new Date().toISOString()
+        };
+      } else {
+        records.unshift({
+          id: makeId(),
+          fechaCarga: new Date().toISOString(),
+          ...normalized
+        });
+      }
 
       saveRecords();
       els.form.reset();
+      editingRecordId = "";
       initDefaults();
+      updateFormMode();
       showMessage("Registro guardado. El dashboard ya se actualizó.", "ok");
       render();
     }
 
+    function loadRecordIntoForm(id) {
+      const record = records.find(item => item.id === id);
+      if (!record) return;
+      editingRecordId = id;
+      const fields = [
+        "fechaCierre", "fechaEvento", "cliente", "homenajeado", "edadCumpleanero", "tipoEvento",
+        "propuesta", "tematica", "canal", "etapa", "estadoOperativo", "responsable",
+        "monto", "costo", "senia", "saldo", "facturacion", "lugar", "incluye", "observaciones"
+      ];
+      fields.forEach(field => {
+        const input = els.form.elements[field];
+        if (!input) return;
+        input.value = record[field] ?? "";
+      });
+      updateFormMode();
+      showMessage("Editando el registro seleccionado. Guardá cambios para actualizarlo sin duplicar.", "ok");
+      document.querySelector(".form-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setTimeout(() => els.form.elements.cliente?.focus(), 250);
+    }
     function validateForm(data) {
       const required = ["fechaCierre", "cliente", "tipoEvento", "tematica", "canal", "etapa", "estadoOperativo", "responsable"];
       const missing = required.filter(field => !String(data[field] || "").trim());
@@ -2156,6 +2210,7 @@
             </div>
           </td>
           <td>
+            <button class="mini-action" type="button" data-edit-record="${escapeAttr(record.id)}">Editar</button>
             <strong>${escapeHtml(record.cliente)}</strong><br>
             <span class="small-note">${escapeHtml(record.homenajeado || "-")}${record.edadCumpleanero ? ` · ${record.edadCumpleanero} años` : ""}</span>
             ${renderEventLifeline(record, true)}
@@ -2266,6 +2321,7 @@
             </div>
             <button class="mini-action" type="button" data-edit-date="${escapeAttr(record.id)}">Cambiar fecha del evento</button>
             <button class="mini-action" type="button" data-calendar="${escapeAttr(record.id)}">${calendarButtonText(record)}</button>
+            <button class="mini-action" type="button" data-edit-record="${escapeAttr(record.id)}">Editar registro</button>
           </div>
           <div class="record-card-field">
             <label>Calendario</label>
@@ -2481,7 +2537,6 @@
         if (!config?.webAppUrl) return;
       }
       const payload = buildCalendarPayload(record, config.secret);
-      const fallbackWindow = openCalendarFallbackWindow();
       record.googleCalendarStatus = "Agendando";
       record.updatedAt = new Date().toISOString();
       saveRecords();
@@ -2500,22 +2555,15 @@
         record.updatedAt = new Date().toISOString();
         saveRecords();
         render();
-        closeCalendarFallbackWindow(fallbackWindow);
         alert("Evento agendado en Google Calendar.");
       } catch (error) {
-        const fallbackOpened = openCalendarFallbackUrl(fallbackWindow, DEFAULT_CALENDAR_WEB_APP_URL, payload);
-        record.googleCalendarStatus = fallbackOpened ? "Revisar calendario" : "Sin agendar";
+        record.googleCalendarStatus = "Sin agendar";
         record.updatedAt = new Date().toISOString();
         saveRecords();
         render();
-        if (fallbackOpened) {
-          alert("El agendado silencioso falló en esta computadora, pero abrí una ventana de respaldo para completar el evento en Google Calendar. Cuando esa ventana diga 'Evento agendado', el evento ya quedó creado.");
-        } else {
-          alert(`No se pudo agendar en Google Calendar: ${formatCalendarError(error)}`);
-        }
+        alert(`No se pudo agendar en Google Calendar. El evento sigue marcado como Sin agendar.\n\nDetalle: ${formatCalendarError(error)}`);
       }
     }
-
     function openCalendarFallbackWindow() {
       try {
         const popup = window.open("", `happyDecoCalendar_${Date.now()}`, "width=560,height=720");
@@ -2615,15 +2663,17 @@
           `Edad: ${record.edadCumpleanero || "-"}`,
           `Temática: ${record.tematica || "-"}`,
           `Tipo de evento: ${record.tipoEvento || "-"}`,
-          `Propuesta: ${record.propuesta || "-"}`,
+          `Propuesta: ${shortCalendarText(record.propuesta, 80)}`,
           `Responsable: ${record.responsable || "-"}`,
           `Estado operativo: ${record.estadoOperativo || "-"}`,
-          "",
-          `Observaciones: ${record.observaciones || "-"}`,
-          "",
           `ID Dashboard: ${record.id}`
         ].join("\n")
       };
+    }
+
+    function shortCalendarText(value, maxLength = 120) {
+      const text = String(value || "-").replace(/\s+/g, " ").trim();
+      return text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
     }
 
     function deleteRecord(id) {
@@ -2769,7 +2819,8 @@
       });
       if (!response.ok) throw new Error(await response.text());
       if (response.status === 204) return null;
-      return response.json();
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
     }
 
     async function pullCloudRecords(options = {}) {
