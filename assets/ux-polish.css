@@ -312,29 +312,45 @@ textarea {
 /* Module cards navigation */
 .module-switcher {
   display: grid;
-  grid-template-columns: repeat(7, minmax(128px, 1fr));
-  gap: 14px;
-  margin: 18px 0 22px;
+  grid-template-columns: repeat(7, minmax(118px, 1fr));
+  align-items: start;
+  align-self: start;
+  gap: 10px;
+  margin: 14px 0 20px;
 }
 
 .module-card {
-  display: block;
-  min-height: 124px;
-  padding: 20px 20px 18px;
-  border: 1px solid rgba(232, 202, 215, .9);
+  position: relative;
+  display: grid;
+  align-content: start;
+  min-height: 86px;
+  padding: 14px 16px 13px;
+  overflow: hidden;
+  border: 1px solid rgba(239, 211, 223, .82);
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.86));
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,250,253,.9)),
+    radial-gradient(circle at 100% 0, rgba(126, 219, 223, .18), transparent 46%);
   color: #3f303a;
   text-decoration: none;
-  box-shadow: 0 14px 34px rgba(72, 52, 35, .08);
+  box-shadow: 0 10px 24px rgba(72, 52, 35, .055);
   transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+}
+
+.module-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, #86ded9, #f49ac2, #ffd978);
+  opacity: .7;
 }
 
 .module-card strong {
   display: block;
-  margin-bottom: 8px;
-  font-size: clamp(20px, 1.6vw, 25px);
-  line-height: 1.12;
+  margin-bottom: 6px;
+  font-size: clamp(16px, 1.18vw, 19px);
+  line-height: 1.08;
   font-weight: 900;
   letter-spacing: 0;
 }
@@ -342,21 +358,28 @@ textarea {
 .module-card span {
   display: block;
   color: #806f79;
-  font-size: clamp(15px, 1vw, 18px);
-  line-height: 1.35;
+  font-size: clamp(12px, .9vw, 14px);
+  line-height: 1.32;
 }
 
 .module-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   border-color: rgba(126, 219, 223, .7);
-  box-shadow: 0 18px 44px rgba(72, 52, 35, .12);
+  box-shadow: 0 14px 30px rgba(72, 52, 35, .09);
 }
 
 .module-card.active,
 .module-card[aria-current="page"] {
   border-color: rgba(126, 219, 223, .95);
-  background: linear-gradient(135deg, rgba(126, 219, 223, .26), rgba(255,255,255,.95));
-  box-shadow: 0 18px 42px rgba(126, 219, 223, .18);
+  background:
+    linear-gradient(135deg, rgba(126, 219, 223, .24), rgba(255,255,255,.94) 62%),
+    radial-gradient(circle at 100% 0, rgba(244, 154, 194, .16), transparent 48%);
+  box-shadow: 0 14px 32px rgba(126, 219, 223, .14);
+}
+
+.module-card.active::before,
+.module-card[aria-current="page"]::before {
+  opacity: 1;
 }
 
 @media (max-width: 1380px) {
@@ -370,18 +393,18 @@ textarea {
 @media (max-width: 760px) {
   .module-switcher {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     overflow: visible;
-    gap: 10px;
+    gap: 9px;
     margin: 14px 0 18px;
     padding: 0;
   }
   .module-card {
     min-height: auto;
-    padding: 18px;
+    padding: 14px 15px 13px;
   }
-  .module-card strong { font-size: 21px; }
-  .module-card span { font-size: 15px; }
+  .module-card strong { font-size: 18px; }
+  .module-card span { font-size: 12px; }
 
   .module-crm main,
   .module-crm .hero,
