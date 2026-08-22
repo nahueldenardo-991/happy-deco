@@ -18,8 +18,12 @@
 
     .finance-manual{display:grid;gap:14px}.manual-hero{display:flex;justify-content:space-between;gap:18px;align-items:center;background:linear-gradient(135deg,#fff,#fff7fb 58%,#e9fbf9)}.manual-hero h2{font-size:clamp(24px,3vw,34px);margin:0 0 8px}.manual-hero p{max-width:760px;margin:0;color:var(--muted)}.manual-badge{min-width:210px;border:1px solid #bdeee8;background:#f1fffd;border-radius:16px;padding:14px}.manual-badge strong,.manual-badge span{display:block}.manual-badge span{color:var(--muted);font-size:13px;margin-top:4px}.manual-tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:94px;z-index:3;background:rgba(255,250,246,.88);backdrop-filter:blur(8px);padding:8px 0}.manual-tabs a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;color:var(--ink);font-size:13px;font-weight:850;text-decoration:none}.manual-tabs a:hover{border-color:var(--mint);color:var(--rose2)}.manual-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}.manual-flow>div,.manual-cards>div,.manual-grid article,.manual-timeline>div{border:1px solid var(--line);background:#fffafc;border-radius:14px;padding:13px}.manual-flow strong,.manual-flow span,.manual-cards strong,.manual-cards span,.manual-timeline strong,.manual-timeline span{display:block}.manual-flow strong{color:var(--rose2)}.manual-flow span,.manual-cards span,.manual-timeline span{font-size:13px;color:var(--muted);margin-top:4px}.manual-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.manual-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.manual-grid article p{font-size:13px;color:var(--muted);margin:7px 0 0}.example-card{border-top:4px solid var(--mint)}.example-label{display:inline-flex;background:#fff0f6;color:var(--rose2);font-size:11px;font-weight:900;border-radius:999px;padding:5px 9px;margin-bottom:8px}.manual-timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.finance-manual ol,.finance-manual ul{padding-left:20px}.finance-manual li{margin:6px 0}.finance-manual p{line-height:1.6}
 
+
+    .manual-decision{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.manual-decision>div{border:1px solid var(--line);border-radius:15px;background:#fff;padding:14px}.manual-decision strong,.manual-decision span{display:block}.manual-decision span{font-size:13px;color:var(--muted);margin-top:5px}.manual-detail-list{display:grid;gap:10px}.manual-detail{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden}.manual-detail summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;justify-content:space-between;gap:14px;align-items:center;font-weight:900}.manual-detail summary::-webkit-details-marker{display:none}.manual-detail summary span{font-size:12px;color:var(--rose2);background:#fff0f6;border:1px solid #f5d4e3;border-radius:999px;padding:6px 9px;white-space:nowrap}.manual-detail[open] summary{background:linear-gradient(90deg,#fff7fb,#f3fffd)}.manual-detail-body{padding:0 18px 18px}.manual-detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.manual-mini-card{border:1px solid #f1e3ea;border-radius:13px;background:#fffafc;padding:12px}.manual-mini-card strong{display:block;margin-bottom:5px}.manual-mini-card p{font-size:13px;color:var(--muted);margin:0}.manual-example-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.manual-example-flow>div{background:#fff8df;border:1px solid #f3df9d;border-radius:12px;padding:12px}.manual-example-flow strong,.manual-example-flow span{display:block}.manual-example-flow span{font-size:12px;color:#6f5821;margin-top:4px}.manual-checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.manual-checklist>div{border-left:4px solid var(--mint);background:#f7fbfa;border-radius:12px;padding:12px}.manual-checklist strong{display:block}.manual-checklist span{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+
     @media(max-width:1100px){.app{grid-template-columns:235px minmax(0,1fr)}.main{padding:26px 22px 60px}.kpis{grid-template-columns:repeat(3,1fr)}.two,.three,.health{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr 1fr}.money-actions{grid-template-columns:1fr 1fr}}
     @media(max-width:760px){
+.manual-decision,.manual-detail-grid,.manual-example-flow,.manual-checklist{grid-template-columns:1fr}.manual-detail summary{align-items:flex-start;flex-direction:column}.manual-detail summary span{white-space:normal}
 .manual-tabs{position:static;overflow-x:auto;flex-wrap:nowrap}.manual-tabs a{white-space:nowrap}.manual-hero{display:block}.manual-badge{margin-top:14px;min-width:0}.manual-flow,.manual-grid,.manual-timeline{grid-template-columns:1fr}.manual-cards{grid-template-columns:1fr}.nav button{flex:0 0 auto}.main{scroll-margin-top:132px}
 .app{display:block}.side{position:sticky;top:0;height:auto;border-right:0;padding:12px 14px 10px;z-index:8;box-shadow:0 8px 25px rgba(89,58,77,.09)}.side .brand{display:inline-block;font-size:21px}.side .tag{display:none}.back-link{display:inline-flex;float:right;margin:0;padding:7px 10px;font-size:12px}.nav{clear:both;display:flex;gap:7px;overflow-x:auto;padding:8px 1px 2px;margin-top:10px;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}.nav-group{display:contents}.nav-label{display:none}.nav button{white-space:nowrap;min-height:38px;padding:8px 12px;border:1px solid var(--line);background:#fff}.nav button.active:before{display:none}.main{padding:18px 12px 48px}.top{position:static;display:block;padding-bottom:14px}.top h1{font-size:27px}.actions{margin-top:14px;display:grid;grid-template-columns:1fr 1fr}.actions .btn{padding:10px}.actions .btn.primary{grid-column:1/-1;grid-row:1}.kpis{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:1px 1px 8px}.kpis .kpi{flex:0 0 82%;scroll-snap-align:start}.form-grid{grid-template-columns:1fr}.field.wide{grid-column:auto}.card{padding:15px;border-radius:15px}.section-head{align-items:stretch;flex-direction:column}.section-head .btn{width:100%}.money-actions{grid-template-columns:1fr}.status-strip{grid-template-columns:1fr}.item-row{grid-template-columns:1fr 78px}.item-row>*:nth-child(3),.item-row>*:nth-child(4){grid-column:span 1}.item-row>*:last-child{grid-column:1/-1}.modal{padding:18px}.footer-actions{bottom:-18px;margin:20px -18px -18px;padding:12px 18px}.footer-actions .btn{flex:1}}
   </style>
@@ -146,13 +150,14 @@ manual.innerHTML=`
     <div>
       <span class="page-kicker">Manual financiero</span>
       <h2>Finanzas Happy Deco, paso a paso</h2>
-      <p>Esta guia explica como usar Finanzas para mirar cobros, caja, costos, rentabilidad, punto de equilibrio, stock y facturacion sin mezclar conceptos.</p>
+      <p>Gu&iacute;a visual para entender cobros, caja, costos, rentabilidad, punto de equilibrio, stock, propuestas y facturaci&oacute;n sin mezclar conceptos.</p>
     </div>
-    <div class="manual-badge"><strong>Uso recomendado</strong><span>Actualizar, revisar, cargar faltantes y decidir.</span></div>
+    <div class="manual-badge"><strong>Objetivo</strong><span>Que Xime, Cati y Nahuel sepan qu&eacute; mirar, qu&eacute; cargar y qu&eacute; decisi&oacute;n tomar.</span></div>
   </div>
 
   <div class="manual-tabs" aria-label="Accesos rapidos del manual">
     <a href="#manual-flujo">Flujo</a>
+    <a href="#manual-decision">Decisiones</a>
     <a href="#manual-solapas">Solapas</a>
     <a href="#manual-ejemplos">Ejemplos</a>
     <a href="#manual-rutina">Rutina</a>
@@ -162,145 +167,72 @@ manual.innerHTML=`
   <section id="manual-flujo" class="card">
     <h2>1. Flujo correcto de uso</h2>
     <div class="manual-flow">
-      <div><strong>CRM</strong><span>Nace la consulta, reunion o presupuesto.</span></div>
-      <div><strong>Dashboard</strong><span>Entra cuando esta Se&ntilde;ado o Pagado completo.</span></div>
+      <div><strong>CRM</strong><span>Nace la consulta, reuni&oacute;n o presupuesto.</span></div>
+      <div><strong>Dashboard</strong><span>Entra cuando est&aacute; Se&ntilde;ado o Pagado completo.</span></div>
       <div><strong>Proceso</strong><span>Se cargan boceto, materiales, tareas y estado operativo.</span></div>
-      <div><strong>Produccion</strong><span>Se prepara lo que esta listo para producir.</span></div>
+      <div><strong>Producci&oacute;n</strong><span>Se prepara lo que est&aacute; listo para producir.</span></div>
       <div><strong>Finanzas</strong><span>Controla cobros, costos, margen, caja y cierre.</span></div>
     </div>
-    <div class="note"><strong>Regla central:</strong> Finanzas no deberia llenarse con consultas. Trabaja sobre ventas confirmadas, eventos realizados y movimientos de dinero.</div>
+    <div class="note"><strong>Regla central:</strong> Finanzas no deber&iacute;a llenarse con consultas. Trabaja sobre ventas confirmadas, eventos realizados y movimientos de dinero.</div>
   </section>
 
-  <section class="grid two" style="margin-top:14px">
+  <section id="manual-decision" class="card">
+    <h2>2. Mapa r&aacute;pido de decisiones</h2>
+    <div class="manual-decision">
+      <div><strong>&iquest;Falta cobrar?</strong><span>Entrar a Cobranzas y revisar saldo, fecha del evento y estado de pago.</span></div>
+      <div><strong>&iquest;Hay plata disponible?</strong><span>Entrar a Caja. Caja muestra entradas y salidas, no ganancia.</span></div>
+      <div><strong>&iquest;El evento fue rentable?</strong><span>Entrar a Eventos realizados o Rentabilidad y mirar costo real completo.</span></div>
+      <div><strong>&iquest;Se puede retirar dinero?</strong><span>Mirar punto de equilibrio, caja, deudas, impuestos y reservas antes de decidir.</span></div>
+    </div>
+  </section>
+
+  <section class="grid two">
     <div class="card">
-      <h2>2. Que significa cada lectura</h2>
+      <h2>3. Tres conceptos que no se deben mezclar</h2>
       <div class="manual-cards">
-        <div><strong>Cobranzas</strong><span>Cuanto se vendio, cuanto se cobro y cuanto falta cobrar.</span></div>
-        <div><strong>Caja</strong><span>Dinero que entro y salio. No equivale a ganancia.</span></div>
-        <div><strong>Rentabilidad</strong><span>Si el evento dejo margen despues de costos.</span></div>
-        <div><strong>Punto de equilibrio</strong><span>Cuanto hay que facturar para cubrir la estructura mensual.</span></div>
+        <div><strong>Cobranzas</strong><span>Lo vendido, cobrado y pendiente.</span></div>
+        <div><strong>Caja</strong><span>Dinero que entr&oacute; y sali&oacute;.</span></div>
+        <div><strong>Rentabilidad</strong><span>Resultado despu&eacute;s de costos.</span></div>
+        <div><strong>Punto de equilibrio</strong><span>M&iacute;nimo mensual para cubrir estructura.</span></div>
       </div>
     </div>
     <div class="card">
-      <h2>3. Regla de oro</h2>
-      <p>No cargar dos veces una venta que ya viene desde Dashboard. Primero usar <strong>Actualizar todo</strong>. Si la venta no aparece, revisar el estado comercial y la conexion antes de cargarla manualmente.</p>
-      <div class="alert"><strong>Se&ntilde;a no es ganancia.</strong> Una se&ntilde;a mejora caja y reduce saldo pendiente, pero el resultado real se conoce cuando el evento esta realizado y tiene costos completos.</div>
+      <h2>4. Regla de oro</h2>
+      <p>No cargar dos veces una venta que ya viene desde Dashboard. Primero usar <strong>Actualizar todo</strong>. Si la venta no aparece, revisar estado comercial y conexi&oacute;n antes de cargarla manualmente.</p>
+      <div class="alert"><strong>Se&ntilde;a no es ganancia.</strong> Mejora caja y reduce saldo pendiente, pero el resultado real se conoce cuando el evento est&aacute; realizado y con costos completos.</div>
     </div>
   </section>
 
-  <section id="manual-solapas" class="card" style="margin-top:14px">
-    <h2>4. Para que sirve cada solapa de Finanzas</h2>
-    <div class="manual-grid">
-      <article><strong>Dashboard financiero</strong><p>Vista rapida de facturacion, ventas proyectadas, pendientes, resultado calculable y punto de equilibrio. Usarlo para saber en menos de un minuto donde esta parado el negocio.</p></article>
-      <article><strong>Eventos realizados</strong><p>Muestra trabajos cerrados. Ahi se revisa venta, costo estimado, costo real, resultado y margen. Si falta costo real, no tomar el margen como definitivo.</p></article>
-      <article><strong>Cobranzas</strong><p>Controla se&ntilde;as, saldos y pagos pendientes. Sirve para saber a quien hay que cobrar y que eventos tienen dinero pendiente.</p></article>
-      <article><strong>Rentabilidad</strong><p>Lee si las propuestas y eventos dejan resultado. Se usa para decidir precios, alcance, descuentos y mejoras operativas.</p></article>
-      <article><strong>Caja</strong><p>Se alimenta de Ingresos y gastos. Entradas son cobros reales; salidas son pagos, inversiones y pagos de tarjeta. Caja muestra disponibilidad, no utilidad.</p></article>
-      <article><strong>Punto de equilibrio</strong><p>Calcula cuanto debe facturar el negocio para cubrir costos fijos y estructura. Ayuda a saber si el mes esta cubierto o todavia falta vender.</p></article>
-      <article><strong>Items y precios</strong><p>Catalogo maestro de materiales, servicios, impresiones, traslados y horas. Mantenerlo actualizado evita cotizar con costos viejos.</p></article>
-      <article><strong>Control de stock</strong><p>Sirve para revisar existencias fisicas y necesidades de reposicion. No reemplaza el conteo real: lo ordena.</p></article>
-      <article><strong>Propuestas</strong><p>Define que incluye cada propuesta, su costo estandar y su precio. Es la base para calcular precio minimo, recomendado y margen esperado.</p></article>
-      <article><strong>Personal</strong><p>Carga roles y valor hora de quienes trabajan, incluidas socias. El negocio debe saber cuanto cuesta el trabajo, aunque hoy no se retire todo.</p></article>
-      <article><strong>Mobiliario</strong><p>Controla activos reutilizables, vida util y costo por uso. Sirve para no olvidarse de reposicion y desgaste.</p></article>
-      <article><strong>Ingresos y gastos</strong><p>Registra movimientos reales de dinero: cobros, compras, pagos, tarjeta e inversiones. Esta solapa alimenta Caja.</p></article>
-      <article><strong>Comisiones</strong><p>Muestra comisiones comerciales calculadas por ventas confirmadas. Cuando se pagan, se registran como gasto para afectar caja.</p></article>
-      <article><strong>Facturacion</strong><p>Organiza que comprobantes estan pendientes o emitidos. No emite facturas: ayuda a no olvidarlas.</p></article>
-      <article><strong>Publicidad</strong><p>Compara inversion, consultas, reservas y ventas atribuidas. ROAS no es ganancia, solo relacion entre inversion y facturacion atribuida.</p></article>
-      <article><strong>Configuracion</strong><p>Guarda supuestos: costos fijos, margenes, impuestos, kilometros y reservas. Cambiar esto modifica calculos.</p></article>
+  <section id="manual-solapas" class="card">
+    <h2>5. Para qu&eacute; sirve cada solapa de Finanzas</h2>
+    <p class="muted">Abr&iacute; cada bloque para ver una explicaci&oacute;n m&aacute;s completa, ejemplos y alertas de uso.</p>
+    <div class="manual-detail-list">
+      <details class="manual-detail"><summary>Dashboard financiero <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Es la primera lectura. Resume ventas proyectadas, facturaci&oacute;n realizada, saldo pendiente, resultado calculable y punto de equilibrio.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo mirarlo</strong><p>Al empezar la semana, antes de una reuni&oacute;n de socias o antes de decidir compras grandes.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si muestra mucho saldo pendiente, la prioridad no es vender m&aacute;s: primero hay que cobrar lo ya confirmado.</p></div></div><div class="note"><strong>Alerta:</strong> si aparece un aviso de sincronizaci&oacute;n, usar Actualizar todo y revisar que haya internet antes de confiar en los n&uacute;meros.</div></div></details>
+      <details class="manual-detail"><summary>Eventos realizados <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Eval&uacute;a trabajos ya hechos. Permite ver venta, costo estimado, costo real, resultado y margen.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Despu&eacute;s de cada evento, cuando ya se pueda cargar lo que realmente se gast&oacute;.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Un evento vendido en $600.000 con costo real de $390.000 deja $210.000 de resultado antes de mirar estructura mensual.</p></div></div><div class="alert"><strong>Alerta:</strong> si dice costo real pendiente o incompleto, el margen no es definitivo.</div></div></details>
+      <details class="manual-detail"><summary>Cobranzas <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Muestra total vendido, cobrado y saldo pendiente por clienta o evento.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Todos los d&iacute;as con eventos cercanos y cada vez que ingresa una se&ntilde;a o saldo.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si el evento es en 3 d&iacute;as y queda saldo pendiente, hay que accionar antes del armado.</p></div></div><div class="note"><strong>Buena pr&aacute;ctica:</strong> cargar pagos en el origen del evento y luego presionar Actualizar todo.</div></div></details>
+      <details class="manual-detail"><summary>Rentabilidad <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Permite saber qu&eacute; eventos y propuestas crean valor y cu&aacute;les consumen demasiado margen.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Al revisar precios, promociones, descuentos o propuestas que dan mucho trabajo.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si una propuesta se vende mucho pero deja poco margen, tal vez necesita subir precio o reducir alcance.</p></div></div><div class="alert"><strong>Alerta:</strong> rentabilidad baja no siempre significa mala venta. Puede indicar exceso de horas, traslado, materiales caros o precio viejo.</div></div></details>
+      <details class="manual-detail"><summary>Caja <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Responde si hay disponibilidad de dinero y compromisos. Se alimenta desde Ingresos y gastos.</p></div><div class="manual-mini-card"><strong>Qu&eacute; incluye</strong><p>Entradas, salidas, inversiones, pagos de tarjeta, deuda de tarjetas y ventas por cobrar.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Puede haber caja positiva por se&ntilde;as futuras, pero eso no significa ganancia distribuible.</p></div></div><div class="note"><strong>Idea clave:</strong> Caja es movimiento de dinero. Rentabilidad es resultado del trabajo.</div></div></details>
+      <details class="manual-detail"><summary>Punto de equilibrio <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Indica cu&aacute;nto debe facturar el negocio para cubrir la estructura mensual.</p></div><div class="manual-mini-card"><strong>C&oacute;mo se lee</strong><p>Si est&aacute; por debajo de 100%, todav&iacute;a falta cubrir el mes. Si supera 100%, reci&eacute;n se eval&uacute;an reservas y retiros.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si el equilibrio es $2.000.000 y hay $1.200.000 realizados, el mes cubri&oacute; 60%.</p></div></div><div class="formula"><strong>F&oacute;rmula</strong>Costos fijos mensuales dividido margen de contribuci&oacute;n promedio.</div></div></details>
+      <details class="manual-detail"><summary>&Iacute;tems y precios <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Es el cat&aacute;logo maestro de materiales, servicios, impresiones, traslados, horas y costos unitarios.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo actualizarlo</strong><p>Cuando sube un proveedor, cambia un insumo o aparece un costo nuevo.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si los globos suben y no se actualizan, todas las propuestas quedan cotizadas con margen falso.</p></div></div><div class="alert"><strong>Alerta:</strong> un item sin precio puede romper la lectura de costo real.</div></div></details>
+      <details class="manual-detail"><summary>Control de stock <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Ordena existencias, faltantes y reposiciones para que la producci&oacute;n no llegue tarde.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Antes de comprar, antes de eventos grandes y al cerrar cada semana de producci&oacute;n.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si una propuesta requiere 2 paneles y stock marca 1 disponible, hay que comprar, alquilar o ajustar alcance.</p></div></div><div class="note"><strong>Buena pr&aacute;ctica:</strong> el sistema ayuda, pero no reemplaza el conteo f&iacute;sico.</div></div></details>
+      <details class="manual-detail"><summary>Propuestas <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Define qu&eacute; incluye cada servicio, su costo est&aacute;ndar, precio actual, precio m&iacute;nimo y precio recomendado.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Al crear una propuesta nueva o cuando una propuesta empieza a quedar poco rentable.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si Premium agrega m&aacute;s paneles e impresiones, debe tener componentes distintos a Intermedia.</p></div></div><div class="alert"><strong>Alerta:</strong> si se cambia el alcance comercial pero no la propuesta financiera, el margen queda enga&ntilde;oso.</div></div></details>
+      <details class="manual-detail"><summary>Personal <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Pone valor al trabajo de cada persona, incluidas las socias, aunque ese dinero no se retire ese d&iacute;a.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Al calcular costos reales, horas de armado, dise&ntilde;o, compras, producci&oacute;n y montaje.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si Xime trabaja 5 horas de montaje, esas horas tienen costo para entender si el evento fue rentable.</p></div></div><div class="note"><strong>Idea clave:</strong> pagar trabajo y distribuir ganancias son decisiones distintas.</div></div></details>
+      <details class="manual-detail"><summary>Mobiliario <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Registra activos reutilizables, valor de reposici&oacute;n, usos y desgaste.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Al comprar mobiliario nuevo, reparar elementos o evaluar si algo ya no conviene mantener.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Un panel de $200.000 usado 20 veces deber&iacute;a reservar $10.000 por uso para reposici&oacute;n.</p></div></div><div class="alert"><strong>Alerta:</strong> si no se contempla desgaste, la ganancia parece mayor de lo que realmente es.</div></div></details>
+      <details class="manual-detail"><summary>Ingresos y gastos <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Registra movimientos reales de dinero y alimenta Caja.</p></div><div class="manual-mini-card"><strong>Tipos</strong><p>Ingreso, gasto diario, compra con tarjeta, pago de tarjeta e inversi&oacute;n.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Una compra con tarjeta aumenta deuda. El pago del resumen genera salida de caja.</p></div></div><div class="note"><strong>Buena pr&aacute;ctica:</strong> cargar una fila por comprobante o concepto claro.</div></div></details>
+      <details class="manual-detail"><summary>Comisiones <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Calcula comisiones comerciales seg&uacute;n ventas confirmadas.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Al cierre mensual o cuando se necesite liquidar comisiones.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si una venta genera comisi&oacute;n, afecta rentabilidad. Cuando se paga, tambi&eacute;n afecta caja.</p></div></div><div class="alert"><strong>Alerta:</strong> no descontar dos veces la comisi&oacute;n: una cosa es devengar, otra pagar.</div></div></details>
+      <details class="manual-detail"><summary>Facturaci&oacute;n <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Ordena comprobantes pendientes, emitidos, anulados o que no requieren factura.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Al cerrar una venta, despu&eacute;s de cobrar se&ntilde;a o al terminar un evento.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si un evento figura cobrado pero pendiente de comprobante, administrativamente todav&iacute;a no est&aacute; cerrado.</p></div></div><div class="note"><strong>Importante:</strong> esta solapa no emite facturas. Solo organiza el seguimiento.</div></div></details>
+      <details class="manual-detail"><summary>Publicidad <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Relaciona inversi&oacute;n publicitaria, consultas, reservas y ventas atribuidas.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo usarlo</strong><p>Al evaluar campa&ntilde;as, promociones o presupuesto de redes.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Una campa&ntilde;a puede traer muchos mensajes pero pocas reservas. Eso pide revisar segmentaci&oacute;n o respuesta comercial.</p></div></div><div class="alert"><strong>Alerta:</strong> ROAS no es ganancia. Solo compara facturaci&oacute;n atribuida contra inversi&oacute;n.</div></div></details>
+      <details class="manual-detail"><summary>Configuraci&oacute;n <span>Ver explicaci&oacute;n completa</span></summary><div class="manual-detail-body"><div class="manual-detail-grid"><div class="manual-mini-card"><strong>Para qu&eacute; sirve</strong><p>Define supuestos que afectan todo: costos fijos, m&aacute;rgenes, impuestos, kilometraje y reservas.</p></div><div class="manual-mini-card"><strong>Cu&aacute;ndo tocarlo</strong><p>Solo cuando cambian criterios del negocio o se revisa el mes con cuidado.</p></div><div class="manual-mini-card"><strong>Ejemplo</strong><p>Si suben costos fijos, tambi&eacute;n sube el punto de equilibrio mensual.</p></div></div><div class="alert"><strong>Alerta:</strong> modificar configuraci&oacute;n cambia c&aacute;lculos. Hacer backup antes de cambios importantes.</div></div></details>
     </div>
   </section>
 
-  <section id="manual-ejemplos" class="grid three" style="margin-top:14px">
-    <div class="card example-card">
-      <span class="example-label">Ejemplo 1</span>
-      <h2>Venta se&ntilde;ada</h2>
-      <p>Una clienta paga se&ntilde;a para una propuesta intermedia.</p>
-      <ol>
-        <li>Debe verse en Cobranzas como venta confirmada.</li>
-        <li>Puede aparecer como venta proyectada.</li>
-        <li>No debe tomarse como margen final hasta que el evento se realice y se carguen costos.</li>
-      </ol>
-    </div>
-    <div class="card example-card">
-      <span class="example-label">Ejemplo 2</span>
-      <h2>Evento realizado sin costos</h2>
-      <p>El cumple ya se hizo, pero faltan precios de materiales.</p>
-      <ol>
-        <li>Aparece en Eventos realizados.</li>
-        <li>Debe indicar costo real pendiente o incompleto.</li>
-        <li>No usar ese margen para decidir retiros.</li>
-      </ol>
-    </div>
-    <div class="card example-card">
-      <span class="example-label">Ejemplo 3</span>
-      <h2>Compra con tarjeta</h2>
-      <p>Se compra material con tarjeta para varios eventos.</p>
-      <ol>
-        <li>Cargar como Compra con tarjeta.</li>
-        <li>Aumenta deuda de tarjeta.</li>
-        <li>Cuando se paga el resumen, cargar Pago de tarjeta.</li>
-      </ol>
-    </div>
-  </section>
+  <section id="manual-ejemplos" class="card"><h2>6. Ejemplos gr&aacute;ficos de uso</h2><div class="manual-example-flow"><div><strong>Venta se&ntilde;ada</strong><span>Dashboard confirma venta. Finanzas la muestra en Cobranzas como cobrada parcial y saldo pendiente.</span></div><div><strong>Evento realizado</strong><span>Pasa a Eventos realizados. Si faltan precios, queda como costo real incompleto.</span></div><div><strong>Cierre completo</strong><span>Con costos reales cargados, Finanzas muestra resultado, margen y si fue rentable.</span></div></div><div class="manual-example-flow"><div><strong>Compra con tarjeta</strong><span>Se carga como compra con tarjeta. Aumenta deuda, no baja caja todav&iacute;a.</span></div><div><strong>Pago del resumen</strong><span>Se carga como pago de tarjeta. Ahora baja caja y reduce deuda.</span></div><div><strong>Lectura correcta</strong><span>Caja muestra disponibilidad. Rentabilidad muestra si el evento dej&oacute; margen.</span></div></div></section>
 
-  <section class="grid two" style="margin-top:14px">
-    <div class="card">
-      <h2>5. Costo estimado vs costo real</h2>
-      <div class="status-strip">
-        <div><span class="mini">Costo estimado</span><strong>Antes del evento</strong><p>Sale de propuesta, Dashboard o carga manual. Sirve para proyectar.</p></div>
-        <div><span class="mini">Costo real</span><strong>Despues del evento</strong><p>Sale de items con cantidad y precio, mas otros costos reales si existen.</p></div>
-        <div><span class="mini">Margen final</span><strong>Solo con costos completos</strong><p>Si faltan precios, el margen debe leerse como incompleto.</p></div>
-      </div>
-      <div class="formula"><strong>Formula simple</strong>Resultado = venta cobrada o acordada - costo real completo. Margen = resultado dividido por venta.</div>
-    </div>
-    <div class="card">
-      <h2>6. Como usar Caja</h2>
-      <p>Caja responde una pregunta distinta: <strong>cuanto dinero hay disponible o comprometido</strong>.</p>
-      <ul>
-        <li><strong>Entradas:</strong> cobros cargados como ingresos.</li>
-        <li><strong>Salidas:</strong> gastos pagados, inversiones y pagos de tarjeta.</li>
-        <li><strong>Saldo neto:</strong> entradas menos salidas. No es ganancia.</li>
-        <li><strong>Deuda de tarjetas:</strong> compras con tarjeta menos pagos registrados.</li>
-        <li><strong>Ventas por cobrar:</strong> saldos pendientes que vienen de Cobranzas.</li>
-      </ul>
-    </div>
-  </section>
+  <section class="grid two"><div class="card"><h2>7. Costo estimado vs costo real</h2><div class="status-strip"><div><span class="mini">Costo estimado</span><strong>Antes del evento</strong><p>Sale de propuesta, Dashboard o carga manual. Sirve para proyectar.</p></div><div><span class="mini">Costo real</span><strong>Despu&eacute;s del evento</strong><p>Sale de items con cantidad y precio, m&aacute;s otros costos reales si existen.</p></div><div><span class="mini">Margen final</span><strong>Solo con costos completos</strong><p>Si faltan precios, el margen debe leerse como incompleto.</p></div></div><div class="formula"><strong>F&oacute;rmula simple</strong>Resultado = venta cobrada o acordada - costo real completo. Margen = resultado dividido por venta.</div></div><div class="card"><h2>8. Checklist para cerrar un evento</h2><div class="manual-checklist"><div><strong>Venta</strong><span>Monto, se&ntilde;a, saldo y estado comercial revisados.</span></div><div><strong>Cobro</strong><span>Saldo cobrado o identificado como pendiente.</span></div><div><strong>Costo</strong><span>Materiales, horas, traslado y extras cargados.</span></div><div><strong>Administraci&oacute;n</strong><span>Facturaci&oacute;n y comprobantes revisados.</span></div></div></div></section>
 
-  <section id="manual-rutina" class="card" style="margin-top:14px">
-    <h2>7. Rutina recomendada</h2>
-    <div class="manual-timeline">
-      <div><strong>Al confirmar una venta</strong><span>Actualizar todo, revisar Cobranzas, validar se&ntilde;a, saldo y facturacion pendiente.</span></div>
-      <div><strong>Antes del evento</strong><span>Revisar costo estimado, propuesta, materiales y compras necesarias.</span></div>
-      <div><strong>Despues del evento</strong><span>Marcar realizado, cargar costos reales, controlar margen y cerrar facturacion/cobro.</span></div>
-      <div><strong>Cada semana</strong><span>Mirar saldos pendientes, deuda de tarjetas, caja y eventos sin costo completo.</span></div>
-      <div><strong>Cada mes</strong><span>Actualizar precios, costos fijos, punto de equilibrio, publicidad y reservas.</span></div>
-    </div>
-  </section>
+  <section id="manual-rutina" class="card"><h2>9. Rutina recomendada</h2><div class="manual-timeline"><div><strong>Al confirmar una venta</strong><span>Actualizar todo, revisar Cobranzas, validar se&ntilde;a, saldo y facturaci&oacute;n pendiente.</span></div><div><strong>Antes del evento</strong><span>Revisar costo estimado, propuesta, materiales y compras necesarias.</span></div><div><strong>Despu&eacute;s del evento</strong><span>Marcar realizado, cargar costos reales, controlar margen y cerrar facturaci&oacute;n/cobro.</span></div><div><strong>Cada semana</strong><span>Mirar saldos pendientes, deuda de tarjetas, caja y eventos sin costo completo.</span></div><div><strong>Cada mes</strong><span>Actualizar precios, costos fijos, punto de equilibrio, publicidad y reservas.</span></div></div></section>
 
-  <section id="manual-errores" class="grid two" style="margin-top:14px">
-    <div class="card">
-      <h2>8. Errores comunes a evitar</h2>
-      <ul>
-        <li>Confundir caja con ganancia.</li>
-        <li>Cargar manualmente una venta que ya viene del Dashboard.</li>
-        <li>Tomar se&ntilde;as como utilidad disponible.</li>
-        <li>Dejar items sin precio y mirar el margen como si fuera real.</li>
-        <li>No registrar pagos de tarjeta despues de cargar compras con tarjeta.</li>
-        <li>No actualizar precios de insumos antes de cotizar.</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h2>9. Que hacer si algo no coincide</h2>
-      <ol>
-        <li>Presionar <strong>Actualizar todo</strong>.</li>
-        <li>Revisar si el evento esta Se&ntilde;ado, Pagado completo o Realizado.</li>
-        <li>Verificar si falta monto, se&ntilde;a, saldo, costo o facturacion.</li>
-        <li>Mirar si el dato corresponde a Caja, Cobranzas o Rentabilidad.</li>
-        <li>Si sigue raro, exportar backup antes de corregir manualmente.</li>
-      </ol>
-      <div class="note"><strong>Prioridad:</strong> no borrar datos reales para corregir una diferencia. Primero entender de donde viene el numero.</div>
-    </div>
-  </section>
+  <section id="manual-errores" class="grid two"><div class="card"><h2>10. Errores comunes a evitar</h2><ul><li>Confundir caja con ganancia.</li><li>Cargar manualmente una venta que ya viene del Dashboard.</li><li>Tomar se&ntilde;as como utilidad disponible.</li><li>Dejar items sin precio y mirar el margen como si fuera real.</li><li>No registrar pagos de tarjeta despu&eacute;s de cargar compras con tarjeta.</li><li>No actualizar precios de insumos antes de cotizar.</li></ul></div><div class="card"><h2>11. Qu&eacute; hacer si algo no coincide</h2><ol><li>Presionar <strong>Actualizar todo</strong>.</li><li>Revisar si el evento est&aacute; Se&ntilde;ado, Pagado completo o Realizado.</li><li>Verificar si falta monto, se&ntilde;a, saldo, costo o facturaci&oacute;n.</li><li>Mirar si el dato corresponde a Caja, Cobranzas o Rentabilidad.</li><li>Si sigue raro, exportar backup antes de corregir manualmente.</li></ol><div class="note"><strong>Prioridad:</strong> no borrar datos reales para corregir una diferencia. Primero entender de d&oacute;nde viene el n&uacute;mero.</div></div></section>
 </div>`;
 configuracion.innerHTML=`<div class="grid two"><div class="card"><h2>Supuestos financieros</h2>${settingRows()}</div><div class="card"><h2>Datos y seguridad</h2><p>Los datos quedan persistidos en este dispositivo y se pueden exportar como backup. La arquitectura prevista sincroniza este módulo con la base compartida de Happy Deco.</p><button class="btn" id="importBtn">Importar backup</button> <button class="btn danger" id="deleteDemoBtn">Eliminar datos DEMO</button><input id="importFile" type="file" accept="application/json" hidden><h3>Estado del modelo</h3><p class="good">✓ Fórmulas principales operativas</p><p class="warning">⚠ Costos estándar pendientes de validar con proveedores reales</p></div></div>`;
 bindDynamic(); save()}
