@@ -4,6 +4,7 @@ html {
 
 body {
   text-rendering: geometricPrecision;
+  overflow-x: hidden;
 }
 
 body::selection {
@@ -305,5 +306,112 @@ textarea {
   .nav a,
   .nav button {
     min-width: 0;
+  }
+}
+
+/* Module cards navigation */
+.module-switcher {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(128px, 1fr));
+  gap: 14px;
+  margin: 18px 0 22px;
+}
+
+.module-card {
+  display: block;
+  min-height: 124px;
+  padding: 20px 20px 18px;
+  border: 1px solid rgba(232, 202, 215, .9);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.86));
+  color: #3f303a;
+  text-decoration: none;
+  box-shadow: 0 14px 34px rgba(72, 52, 35, .08);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+}
+
+.module-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: clamp(20px, 1.6vw, 25px);
+  line-height: 1.12;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.module-card span {
+  display: block;
+  color: #806f79;
+  font-size: clamp(15px, 1vw, 18px);
+  line-height: 1.35;
+}
+
+.module-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(126, 219, 223, .7);
+  box-shadow: 0 18px 44px rgba(72, 52, 35, .12);
+}
+
+.module-card.active,
+.module-card[aria-current="page"] {
+  border-color: rgba(126, 219, 223, .95);
+  background: linear-gradient(135deg, rgba(126, 219, 223, .26), rgba(255,255,255,.95));
+  box-shadow: 0 18px 42px rgba(126, 219, 223, .18);
+}
+
+@media (max-width: 1380px) {
+  .module-switcher { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 980px) {
+  .module-switcher { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .module-switcher {
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: visible;
+    gap: 10px;
+    margin: 14px 0 18px;
+    padding: 0;
+  }
+  .module-card {
+    min-height: auto;
+    padding: 18px;
+  }
+  .module-card strong { font-size: 21px; }
+  .module-card span { font-size: 15px; }
+
+  .module-crm main,
+  .module-crm .hero,
+  .module-crm .layout,
+  .module-crm .form-panel,
+  .module-crm .toolbar,
+  .module-crm .zone-overview,
+  .module-crm .view,
+  .module-crm .pipeline,
+  .module-manual .shell,
+  .module-manual .hero,
+  .module-manual .flow-line {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .module-crm .hero,
+  .module-crm .layout,
+  .module-crm .zone-overview,
+  .module-manual .hero,
+  .module-manual .grid-2 {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .module-crm .form-panel,
+  .module-crm .pipeline,
+  .module-crm .zone-card,
+  .module-manual .hero > *,
+  .module-manual .panel {
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }

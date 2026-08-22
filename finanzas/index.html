@@ -18,12 +18,22 @@
     @media(max-width:1100px){.app{grid-template-columns:235px minmax(0,1fr)}.main{padding:26px 22px 60px}.kpis{grid-template-columns:repeat(3,1fr)}.two,.three,.health{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr 1fr}.money-actions{grid-template-columns:1fr 1fr}}
     @media(max-width:760px){.app{display:block}.side{position:sticky;top:0;height:auto;border-right:0;padding:12px 14px 10px;z-index:8;box-shadow:0 8px 25px rgba(89,58,77,.09)}.side .brand{display:inline-block;font-size:21px}.side .tag{display:none}.back-link{display:inline-flex;float:right;margin:0;padding:7px 10px;font-size:12px}.nav{clear:both;display:flex;gap:7px;overflow-x:auto;padding:8px 1px 2px;margin-top:10px;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}.nav-group{display:contents}.nav-label{display:none}.nav button{white-space:nowrap;min-height:38px;padding:8px 12px;border:1px solid var(--line);background:#fff}.nav button.active:before{display:none}.main{padding:18px 12px 48px}.top{position:static;display:block;padding-bottom:14px}.top h1{font-size:27px}.actions{margin-top:14px;display:grid;grid-template-columns:1fr 1fr}.actions .btn{padding:10px}.actions .btn.primary{grid-column:1/-1;grid-row:1}.kpis{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:1px 1px 8px}.kpis .kpi{flex:0 0 82%;scroll-snap-align:start}.form-grid{grid-template-columns:1fr}.field.wide{grid-column:auto}.card{padding:15px;border-radius:15px}.section-head{align-items:stretch;flex-direction:column}.section-head .btn{width:100%}.money-actions{grid-template-columns:1fr}.status-strip{grid-template-columns:1fr}.item-row{grid-template-columns:1fr 78px}.item-row>*:nth-child(3),.item-row>*:nth-child(4){grid-column:span 1}.item-row>*:last-child{grid-column:1/-1}.modal{padding:18px}.footer-actions{bottom:-18px;margin:20px -18px -18px;padding:12px 18px}.footer-actions .btn{flex:1}}
   </style>
+  <link rel="stylesheet" href="../assets/ux-polish.css">
 </head>
-<body>
+<body class="module-finance">
 <div class="app">
   <aside class="side"><div class="brand">Happy <span>Deco</span></div><div class="tag">Gestión financiera</div><a class="back-link" href="../" aria-label="Volver al Dashboard principal">← Volver al Dashboard</a><nav class="nav" id="nav" aria-label="Navegación financiera"></nav></aside>
   <main class="main">
     <header class="top"><div><span class="page-kicker">Finanzas Happy Deco</span><h1 id="title">Dashboard</h1><p id="subtitle">Una lectura clara del negocio en menos de 30 segundos.</p></div><div class="actions"><button class="btn primary" id="syncEventsBtn" aria-live="polite">Actualizar todo</button><button class="btn" id="backupBtn">Exportar backup</button><button class="btn" id="newBtn">+ Carga manual</button></div></header><div id="syncNotice" class="alert" style="display:none" role="status"></div>
+    <nav class="module-switcher" aria-label="Pantallas principales">
+      <a class="module-card" href="../panel-control/"><strong>Panel de control</strong><span>Vista general de pr&oacute;ximos eventos, pendientes y alertas.</span></a>
+      <a class="module-card" href="../crm/"><strong>CRM</strong><span>Para consultas, reuniones, presupuestos y seguimiento.</span></a>
+      <a class="module-card" href="../"><strong>Dashboard</strong><span>Para eventos que ya deben gestionarse operativamente.</span></a>
+      <a class="module-card" href="../proceso/"><strong>Proceso</strong><span>Para avanzar con boceto, materiales y tareas.</span></a>
+      <a class="module-card" href="../produccion/"><strong>Producci&oacute;n</strong><span>Para preparar eventos listos para producir.</span></a>
+      <a class="module-card active" aria-current="page" href="./"><strong>Finanzas</strong><span>Para controlar cobros, costos y m&aacute;rgenes.</span></a>
+      <a class="module-card" href="../manual/"><strong>Manual</strong><span>Gu&iacute;a simple para usar la herramienta completa.</span></a>
+    </nav>
     <section id="dashboard" class="view active"></section>
     <section id="eventos" class="view"></section>
     <section id="cobranzas" class="view"></section>
