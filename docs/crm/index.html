@@ -1544,7 +1544,7 @@
         if (!options.silent) showToast(wasLinked ? "Dashboard actualizado. El registro sigue vinculado a Proceso." : "Evento enviado al Dashboard y Proceso");
       } catch (error) {
         console.error("No pude pasar al Dashboard", error);
-        if (!options.silent) alert("No pude pasar al Dashboard. Revisá la conexión a Supabase.");
+        if (!options.silent) alert(`No pude pasar al Dashboard. Cerrá esta pestaña, abrí nuevamente el link oficial y reintentá.\n\nDetalle técnico: ${readableError(error)}`);
         if (button) {
           button.disabled = false;
           button.textContent = wasLinked ? "Actualizar Dashboard" : "Pasar al Dashboard";
@@ -1710,7 +1710,8 @@
       });
       if (!response.ok) throw new Error(await response.text());
       if (response.status === 204) return null;
-      return response.json();
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
     }
 
     async function pullCloudLeads() {
@@ -1746,6 +1747,16 @@
         headers: { Prefer: "resolution=merge-duplicates" },
         body: JSON.stringify(rows)
       });
+    }
+
+    function readableError(error) {
+      const message = String(error?.message || error || "error desconocido");
+      try {
+        const parsed = JSON.parse(message);
+        return parsed.message || parsed.hint || parsed.details || message.slice(0, 220);
+      } catch {
+        return message.slice(0, 220);
+      }
     }
 
     async function cloudDeleteLead(id) {
