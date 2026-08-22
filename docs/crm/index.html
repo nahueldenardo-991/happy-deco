@@ -862,6 +862,7 @@
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
+  <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body class="module-crm">
   <header class="topbar">
@@ -1134,6 +1135,7 @@
   <div class="toast" id="toast"></div>
   <div class="detail-drawer" id="detailDrawer" aria-hidden="true"></div>
 
+  <script src="../lifeline.js"></script>
   <script>
     const STORAGE_KEY = "happyDecoCrmLeads";
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
@@ -1663,6 +1665,7 @@
           <p>${escapeHtml(lead.tematica || "Temática pendiente")} · ${escapeHtml(lead.homenajeado || "Sin homenajeado")}</p>
           <p>${formatDate(lead.fechaEvento) || "Sin fecha de evento"} · ${escapeHtml(lead.responsable)}</p>
           <p><strong>Seguimiento:</strong> ${escapeHtml(lead.proximaAccion || "Sin tarea")} ${formatDate(lead.proximaAccionFecha) ? `· ${formatDate(lead.proximaAccionFecha)}` : ""}</p>
+          ${renderEventLifeline(lead, true)}
           ${renderSalesGuide(lead, guide)}
           <div class="card-actions">
             <button class="mini" type="button" data-action="edit" data-id="${lead.id}">Editar</button>
@@ -1919,6 +1922,10 @@
           </header>
           <div class="drawer-body">
             <section class="drawer-section">
+              <h4>Línea de vida</h4>
+              ${renderEventLifeline(lead)}
+            </section>
+            <section class="drawer-section">
               <h4>Datos principales</h4>
               <div class="detail-grid">
                 ${detailItem("Teléfono", lead.telefono || "-")}
@@ -1974,6 +1981,10 @@
           <p>${escapeHtml(String(value || "-"))}</p>
         </div>
       `;
+    }
+
+    function renderEventLifeline(lead, compact = false) {
+      return window.HappyDecoLifeline?.render(lead, { compact }) || "";
     }
 
     function syncStateRows(lead) {

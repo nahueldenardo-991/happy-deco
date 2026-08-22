@@ -777,6 +777,7 @@
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
+  <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body class="module-process">
   <div class="app">
@@ -828,6 +829,7 @@
     </main>
   </div>
 
+  <script src="../lifeline.js"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -1172,6 +1174,7 @@
               <div class="metric"><label>Estado</label><b>${statusLabel(blockers.length ? "trabado" : event.status)}</b></div>
               <div class="metric"><label>Seña</label><b>${escapeHtml(event.deposit || "Pendiente")}</b></div>
             </div>
+            ${renderEventLifeline(event)}
           </div>
 
           <div class="workflow">
@@ -1288,6 +1291,10 @@
           renderList();
         }, 450);
       });
+    }
+
+    function renderEventLifeline(event, compact = false) {
+      return window.HappyDecoLifeline?.render(event, { compact }) || "";
     }
 
     function renderStage(event, stage) {
