@@ -92,6 +92,10 @@
     const done = stageKey === "realizado" || operativeKey === "realizado" || finalized || status === "cerrado";
     const billing = lower(record?.facturacion || record?.billing || "pendiente");
     const balance = num(record?.saldo || record?.balance);
+    const costLoaded = num(record?.costo || record?.actualCost) > 0;
+    const billingResolved = ["facturado", "no requiere factura"].includes(billing);
+    const financeComplete = done && balance <= 0 && billingResolved && costLoaded;
+    const financeAttention = confirmed && (balance > 0 || !billingResolved || (done && !costLoaded));
 
     return [
       {
@@ -133,8 +137,8 @@
       {
         id: "finanzas",
         label: "Finanzas",
-        state: cancelled ? "danger" : (["facturado", "no requiere factura"].includes(billing) && balance <= 0) || stageKey === "pagado completo" ? "done" : confirmed && (balance > 0 || billing === "pendiente") ? "warning" : confirmed ? "current" : "pending",
-        note: "No muestra importes sensibles"
+        state: cancelled ? "danger" : financeComplete ? "done" : financeAttention ? "warning" : confirmed ? "current" : "pending",
+        note: financeComplete ? "Cierre financiero completo" : financeAttention ? "Revisar saldo, facturación o costos" : "No muestra importes sensibles"
       }
     ];
   }
