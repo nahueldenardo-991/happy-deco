@@ -714,10 +714,10 @@
     }
 
     function openProtectedUrl(url) {
-      const password = prompt("Acceso administrativo requerido. Ingres? la contrase?a:");
+      const password = prompt("Acceso administrativo requerido. Ingresá la contraseña:");
       if (password === null) return;
       if (password !== ADMIN_PASSWORD) {
-        alert("Contrase?a incorrecta.");
+        alert("Contraseña incorrecta.");
         return;
       }
       sessionStorage.setItem(DASHBOARD_AUTH_SESSION_KEY, "ok");
