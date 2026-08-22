@@ -1,0 +1,6627 @@
+{
+  "version": 3,
+  "importedAt": "2026-08-14",
+  "items": [
+    {
+      "id": "inventory-1",
+      "name": "alfombra fucsia",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "lateral del asador (cerca del sector fierros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-2",
+      "name": "alfombra gris",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "lateral del asador (cerca del sector fierros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-3",
+      "name": "alfombra negra",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "lateral del asador (cerca del sector fierros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-4",
+      "name": "alfombras color natural",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [],
+      "features": "",
+      "location": "lateral del asador (cerca del sector fierros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-5",
+      "name": "alfombras rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "lateral del asador (cerca del sector fierros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-6",
+      "name": "algas de mar en fibrofacil tam. Chico vs. colores",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [
+        "61"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-7",
+      "name": "almohadones",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 23,
+      "codes": [
+        "181"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-8",
+      "name": "amarillo pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo (al lado de la caja polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-9",
+      "name": "arañas blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente (caja corporeos)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-10",
+      "name": "arbolitos fibrofacil verde",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "56"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-11",
+      "name": "arcoiris consta de 4 partes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-12",
+      "name": "azucareras",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "179"
+      ],
+      "features": "",
+      "location": "caja de carton al frente del asador",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-13",
+      "name": "bandeja de vidrio rosa",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "debajo de la mesa alzada",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-14",
+      "name": "bandeja grande torta cuadrada blanca",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-15",
+      "name": "bandeja negra circular",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-16",
+      "name": "bandeja ovalada chica color menta",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-17",
+      "name": "bandeja ovalada grande color menta",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-18",
+      "name": "bandeja plateada con strass plateada",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "debajo de la mesa alzada",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-19",
+      "name": "bandejas circulares dorado con celeste",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-20",
+      "name": "bandejas de vidrio dorados",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "debajo de la mesa alzada",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-21",
+      "name": "bandejas de vidrio ovaladas doradas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "debajo de la mesa alzada",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-22",
+      "name": "bandejas de vidrio plateadas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "debajo de la mesa alzada",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-23",
+      "name": "bandejas estilo jaula",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-24",
+      "name": "bandejas grandes blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-25",
+      "name": "bandejas hojas plateadas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-26",
+      "name": "bandejas largas color arena",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-27",
+      "name": "bandejas medianas blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-28",
+      "name": "bandejas ovaladas beige",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-29",
+      "name": "bandejas ovaladas chicas color chocolate",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-30",
+      "name": "bandejas ovaladas chicas color fucsia",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-31",
+      "name": "bandejas ovaladas chicas color mostaza",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-32",
+      "name": "bandejas ovaladas chicas color rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-33",
+      "name": "bandejas ovaladas chicas color verde agua",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-34",
+      "name": "bandejas ovaladas chicas s/pintar",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 7,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-35",
+      "name": "bandejas ovaladas grandes color azul",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-36",
+      "name": "bandejas ovaladas grandes color beige/arena",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-37",
+      "name": "bandejas ovaladas grandes color rojo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-38",
+      "name": "bandejas ovaladas rosa viejo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-39",
+      "name": "bandejas ovaladas verde viejo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-40",
+      "name": "bandejas ovalas grandes color negro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-41",
+      "name": "bandejita c/chupetinera tipo arcoiris color amarillo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "222"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-42",
+      "name": "bandejita c/chupetinera tipo arcoiris color celeste pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "221"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-43",
+      "name": "bandejita exagonal amarillo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "188"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-44",
+      "name": "bandejita exagonal fucsia",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "184"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-45",
+      "name": "bandejita exagonal lila pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "186"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-46",
+      "name": "bandejita exagonal negra",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "190"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-47",
+      "name": "bandejita exagonal rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "185"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-48",
+      "name": "bandejita exagonal verde oscuro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "189"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-49",
+      "name": "bandejita exagonal violeta",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "187"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-50",
+      "name": "bandejita forma celula alargada color rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "196"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-51",
+      "name": "bandejita forma celula chica color amarilla",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "202"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-52",
+      "name": "bandejita forma celula chica color lila pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "199"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-53",
+      "name": "bandejita forma celula chica color roja",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "198"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-54",
+      "name": "bandejita forma celula chica color verde oscuro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "200"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-55",
+      "name": "bandejita forma celula chica color violeta",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "201"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-56",
+      "name": "bandejita forma celula mediana color rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "197"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-57",
+      "name": "bandejita forma celula tipo cuadrada fucsia",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "192"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-58",
+      "name": "bandejita forma celula tipo cuadrada negra",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "195"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-59",
+      "name": "bandejita forma celula tipo cuadrada roja",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "193"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-60",
+      "name": "bandejita forma celula tipo cuadrada rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "191"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-61",
+      "name": "bandejita forma celula tipo cuadrada violeta",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "194"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-62",
+      "name": "banquito placero",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-63",
+      "name": "bienvenidos en polifan",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-64",
+      "name": "blanca fria",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa blanca de tela (al lado de la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-65",
+      "name": "blancas calidas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [],
+      "features": "",
+      "location": "bolsa blanca de tela (al lado de la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-66",
+      "name": "blanco pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 10,
+      "codes": [],
+      "features": "bolsa de 100",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-67",
+      "name": "bolsas de burbujas de 18",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "bolsa de 100",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-68",
+      "name": "caballito blanco que se mueve",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-69",
+      "name": "cajoncitos rosa pastel (mesa de niños)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-70",
+      "name": "cajoncitos verde agua (mesa de niños)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-71",
+      "name": "cajones de regalos en fibrofacil tam. Grande y chico",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "69"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-72",
+      "name": "caminos lilas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo sobre caja marron al costado de caja hongos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-73",
+      "name": "caminos rosas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo sobre caja marron al costado de caja hongos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-74",
+      "name": "caminos yutes arpillera",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo sobre caja marron al costado de caja hongos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-75",
+      "name": "canasta calabaza (color violeta)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-76",
+      "name": "canasta campestre (chica)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-77",
+      "name": "canasta grande blanca c/ flores violetas y lilas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "151"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-78",
+      "name": "canasto grande mimbre",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "68"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-79",
+      "name": "canasto mimbre tam. Chico con orejitas para agarrar",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "67"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-80",
+      "name": "caramelera chica de cristal",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-81",
+      "name": "carameleras grandes de cristal",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-82",
+      "name": "carameleras grandes gomitas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 8,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-83",
+      "name": "cartel barbie (blanco)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos (al lado de los numeros en neon)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-84",
+      "name": "cartel de circo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "63"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-85",
+      "name": "cartel happy birthay luz calida en Neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "165"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-86",
+      "name": "cartel happy birthay luz fria en Neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "166"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-87",
+      "name": "cartel just Married ( recien casados) en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "163"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-88",
+      "name": "cartel oh Baby en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "162"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-89",
+      "name": "cartel One (uno) en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "164"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-90",
+      "name": "celeste pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 14,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo (al lado de la caja polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-91",
+      "name": "centro de mesa estilo arbol c/flores amarillas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "147"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-92",
+      "name": "centro de mesa ramas c/ flores color blanca",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "149"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-93",
+      "name": "centro de mesa ramas c/ flores color celeste pastel y blanco",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "150"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-94",
+      "name": "centro mesa corazon estilo arbol c/flores rosas pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "148"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-95",
+      "name": "ceramica GRANDE c/ pelotitas mostazas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-96",
+      "name": "ceramica grande flor beige",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-97",
+      "name": "ceramica mediana rosa",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-98",
+      "name": "ceramicas grandes flor celestes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-99",
+      "name": "ceramicas grandes flor rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-100",
+      "name": "ceramicas grandes flor verde claro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-101",
+      "name": "ceramicas medianas flor celestes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-102",
+      "name": "ceramicas medianas flor rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-103",
+      "name": "ceramicas medianas flor verde claro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-104",
+      "name": "ceramicas pequeñas celestes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-105",
+      "name": "ceramicas pequeñas mostazas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-106",
+      "name": "ceramicas pequeñas rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-107",
+      "name": "ceramicas pequeñas verde claro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-108",
+      "name": "cercos de granja",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-109",
+      "name": "cermicas grandes flor mostaza",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-110",
+      "name": "cermicas medianas flor mostaza",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-111",
+      "name": "commpoteras grises",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-112",
+      "name": "compoteras arenas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-113",
+      "name": "compoteras azul marino",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-114",
+      "name": "compoteras celeste pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-115",
+      "name": "compoteras rosas pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-116",
+      "name": "compoteras verdes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-117",
+      "name": "conejito campestre de mesa/pequenito",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "146"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-118",
+      "name": "copas de Agua",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 26,
+      "codes": [
+        "177"
+      ],
+      "features": "",
+      "location": "dentro de la casa",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-119",
+      "name": "copos de nieve ( grande)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente tono verde (caja de corporeos)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-120",
+      "name": "copos de nieve (pequeños)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente  tono verde (caja de corporeos)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-121",
+      "name": "cromado dorado",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "bolsa de 100",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-122",
+      "name": "cromado plateado",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "bolsa de 100",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-123",
+      "name": "cuadrille rojo y blanco",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 6,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo sobre caja marron al costado de caja hongos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-124",
+      "name": "cubos BABY tam. Chico",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [
+        "55"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-125",
+      "name": "cubos BABY tam. Grande",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [
+        "54"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-126",
+      "name": "cucharitas de acero inoxidable",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 26,
+      "codes": [
+        "175"
+      ],
+      "features": "",
+      "location": "caja de carton al frente del asador",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-127",
+      "name": "deslizantes de alfombra",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "lateral del asador (cerca del sector fierros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-128",
+      "name": "dino grande verde",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-129",
+      "name": "durazno",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "bolsa de 100",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-130",
+      "name": "durazno pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo (al lado de la caja polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-131",
+      "name": "enredaderas verde",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "88"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-132",
+      "name": "esferas arbolitos chicas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "78"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-133",
+      "name": "esferas arbolitos grande",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "79"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-134",
+      "name": "esferas de telgopor",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [],
+      "features": "",
+      "location": "bolsa blanca (caja corporeos )",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-135",
+      "name": "estrella fibro (blanca)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-136",
+      "name": "eucaliptos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "80"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-137",
+      "name": "extruc. Circular de 1,80 de diametro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "73"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-138",
+      "name": "extruc. Hierro rect. Blanca 2x2",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "71"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-139",
+      "name": "extruc. Hierro rect. Gris 3x3; 3x2; 4x2",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "72"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-140",
+      "name": "extructura de pino desarmable de 3x3 y 3x2",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "74"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-141",
+      "name": "farolas grandes c/luz",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "66"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-142",
+      "name": "florecitas blancas con verde de pimpoyo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "77"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-143",
+      "name": "florero canasto mimbre",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-144",
+      "name": "florero de mesa jarra metal (rosa)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-145",
+      "name": "florero grande vidrio rosa",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-146",
+      "name": "florero petiso blanco",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-147",
+      "name": "florero petiso celeste pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-148",
+      "name": "florero petiso rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-149",
+      "name": "floreros de madera (crudo)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "debajo de la mesa alzada",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-150",
+      "name": "floreros de metal color (rosa)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [],
+      "features": "",
+      "location": "debajo de la mesa alzada",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-151",
+      "name": "floreros de vidrio",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-152",
+      "name": "flores encapuchadas rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "120"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-153",
+      "name": "flota flota rosa",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-154",
+      "name": "fondo blanco con puntos brillosos y rosa pastel (minnie)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "0"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-155",
+      "name": "fondo de mar blanco con algas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-156",
+      "name": "fondo de mickey estilo revista",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-157",
+      "name": "fondo rosa con chispitas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-158",
+      "name": "frascos c/ grifo de 5 Litros c/u para jugos naturales",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "178"
+      ],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-159",
+      "name": "funda amarillo chillon brilloso",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-160",
+      "name": "funda azul",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-161",
+      "name": "funda beige",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente (al lado de la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-162",
+      "name": "funda celeste brilloso",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-163",
+      "name": "funda circular grande flores",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "234"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-164",
+      "name": "funda circular grande minnie roja",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "232"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-165",
+      "name": "funda circular grande minnie roja fondo blanco",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "233"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-166",
+      "name": "funda color chocolate",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente (al lado de la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-167",
+      "name": "funda color ladrillo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-168",
+      "name": "funda dulce de leche",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente (al lado de la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-169",
+      "name": "funda fucsia seda fria",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-170",
+      "name": "funda lila",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-171",
+      "name": "funda naranja",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-172",
+      "name": "funda negra con brillos dorados",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-173",
+      "name": "funda plateada",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-174",
+      "name": "funda rectangular cuadrille celeste",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "248"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-175",
+      "name": "funda rectangular cuadrille roja",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "246"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-176",
+      "name": "funda rectangular cuadrille rosa",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "243"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-177",
+      "name": "funda rectangular de mariposa",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "238"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-178",
+      "name": "funda rectangular fondo rojo con margaritas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "236"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-179",
+      "name": "funda rectangular frutillita",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "241"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-180",
+      "name": "funda rectangular jiraffa beige pasteñ",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "249"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-181",
+      "name": "funda rectangular mickey blanco y negro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "251"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-182",
+      "name": "funda rectangular pista blanco y negro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "239"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-183",
+      "name": "funda rectangular rallas azules finitas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "0 0",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-184",
+      "name": "funda rectangular rallas rosas y blancas (circo)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "237"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-185",
+      "name": "funda rectangular rallas rosas y blancas (circo) pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "252"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-186",
+      "name": "funda rectangular rosa con corazones blancos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "244"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-187",
+      "name": "funda rectangular rosa con corazones y margaritas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "247"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-188",
+      "name": "funda rectangular vaca",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "240"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-189",
+      "name": "funda rectangular zebra marron",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "250"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-190",
+      "name": "funda rojo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-191",
+      "name": "funda rosa chicle",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-192",
+      "name": "funda rosa flour",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-193",
+      "name": "funda verde hoja",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-194",
+      "name": "funda verde lima",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-195",
+      "name": "funda verde manzana",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-196",
+      "name": "funda verde oliva",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente (al lado de la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-197",
+      "name": "funda violeta oscuro (merlina)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-198",
+      "name": "fundas cilindros corazones",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "229"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-199",
+      "name": "fundas cilindros estillo sirena",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "231"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-200",
+      "name": "fundas cilindros estilo circo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "230"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-201",
+      "name": "fundas cilindros flores pasteles",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 6,
+      "codes": [
+        "224",
+        "225"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-202",
+      "name": "fundas cilindros troncos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-203",
+      "name": "fundas color negro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa blanca de tela (al lado de la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-204",
+      "name": "fundas colores (confetis, estrellas y circulos)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "226"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-205",
+      "name": "fundas estilo paw patrol (dos rallas y una azul con patas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "228"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-206",
+      "name": "fundas palo de helados (celeste, rosa y amarillo)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "227"
+      ],
+      "features": "",
+      "location": "bolsa naranja con blanco (al lado de los numeros)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-207",
+      "name": "fundas rectangular bengalina pista",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "242"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-208",
+      "name": "fundas rectangular rayas blancas y rojas circo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "245"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-209",
+      "name": "fundas verde agua",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa negra de consorcio (al ladode la caja de polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-210",
+      "name": "helice de molino (beige con blanco)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-211",
+      "name": "hojas verdes estilo selva chicas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [
+        "89"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-212",
+      "name": "hojas verdes estilo selva grandes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "91"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-213",
+      "name": "hojas verdes estilo selva medianas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 7,
+      "codes": [
+        "90"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-214",
+      "name": "hongos rojos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [],
+      "features": "",
+      "location": "caja de madera (al lado de la reposera)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-215",
+      "name": "hongos rosa",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "caja de madera (al lado de la reposera)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-216",
+      "name": "jaulitas blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-217",
+      "name": "jaulitas doradas estilo regalo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 6,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-218",
+      "name": "jirafa chica 1,20",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "172"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-219",
+      "name": "jirafa de 1.45",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-220",
+      "name": "juego de dinos chicos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-221",
+      "name": "juego de frutas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-222",
+      "name": "juego(1par) bandeja tipo escalon color celeste c/brillos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "219"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-223",
+      "name": "juego(1par) bandeja tipo escalon color rosa cremita",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "220"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-224",
+      "name": "leon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-225",
+      "name": "leopardo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-226",
+      "name": "letras bievenido (negro)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos (al lado de los numeros en neon)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-227",
+      "name": "letras hakuna matata (color chocolate)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente grande verde (caja de corporeos)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-228",
+      "name": "letrero mattel barbie",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos (al lado de los numeros en neon)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-229",
+      "name": "lila pastel brilloso",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo (al lado de la caja polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-230",
+      "name": "mantel rojo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo sobre caja marron al costado de caja hongos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-231",
+      "name": "margarita blanca (grande)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-232",
+      "name": "margarita en fibro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "a la derecha de la entrada, en la maquina de cocer",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-233",
+      "name": "margaritas blancas (pequeñas)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-234",
+      "name": "margaritas individuales blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 66,
+      "codes": [
+        "138"
+      ],
+      "features": "",
+      "location": "box negra (bolsa blanca)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-235",
+      "name": "mariposa mediana con movimiento",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "1"
+      ],
+      "features": "",
+      "location": "al frente de la reposera blanca (caja color madera)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-236",
+      "name": "mariposas chicas con movimiento",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "al frente de la reposera blanca (caja blanca",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-237",
+      "name": "mariposas con movimientos realistas (rosa/ celeste)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-238",
+      "name": "mariposas en fibrofacil tam. Mediano",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "62"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-239",
+      "name": "mariposas grandes fijas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "al frente de la reposera blanca (caja color madera)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-240",
+      "name": "medusas colgantes con luces",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [],
+      "features": "",
+      "location": "bolsa blanca",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-241",
+      "name": "mesitas blancas p/sillitas tifany",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [
+        "183"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-242",
+      "name": "mesitas de pino cuadradas c/sus resp. Patas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [
+        "180"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-243",
+      "name": "mini arbolitos c/florecitas rojas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "143"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-244",
+      "name": "mini canastitas flores amarillas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "141"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-245",
+      "name": "mini canastitas flores blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "142"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-246",
+      "name": "mini canastitas flores lilas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "140"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-247",
+      "name": "mini frasquitos c/flores amarillas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "144"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-248",
+      "name": "mini frasquitos c/flores lilas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "145"
+      ],
+      "features": "",
+      "location": "caja de carton (dice las margaritas)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-249",
+      "name": "monos en color beige y arena",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-250",
+      "name": "moño rosa grande",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-251",
+      "name": "murcielagos negros",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 13,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente (caja de corporeos)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-252",
+      "name": "naranja pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo (al lado de la caja polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-253",
+      "name": "nombre paz",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-254",
+      "name": "nombre pia",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-255",
+      "name": "nubes blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos (al lado de los numeros en neon)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-256",
+      "name": "numero 0 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "161"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-257",
+      "name": "Numero 1 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "152"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-258",
+      "name": "numero 2 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "153"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-259",
+      "name": "numero 3 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "154"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-260",
+      "name": "numero 4 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "155"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-261",
+      "name": "numero 5 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "156"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-262",
+      "name": "numero 6 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "157"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-263",
+      "name": "numero 7 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "158"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-264",
+      "name": "numero 8 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "159"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-265",
+      "name": "numero 9 en neon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "160"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-266",
+      "name": "oso beige tamano grande 1,20",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "170"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-267",
+      "name": "oso dulce de leche tamano mediano 1,00",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "171"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-268",
+      "name": "ostras de plstico pequeñas (para mesa)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 10,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-269",
+      "name": "ostras en fibroFacil G y CH",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "60"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-270",
+      "name": "palmeras G y CH",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "57"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-271",
+      "name": "pampas beige",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 20,
+      "codes": [
+        "86"
+      ],
+      "features": "",
+      "location": "esquina cerca del asador",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-272",
+      "name": "panal de abejita en fibr facil finito",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "58"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-273",
+      "name": "panal de abejita grande en madera de pino",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "59"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-274",
+      "name": "paneritas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "176"
+      ],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-275",
+      "name": "Pizarra blanca con tripode",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "65"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-276",
+      "name": "pizarra CARTEL BIENV. con tripode color madera",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "70"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-277",
+      "name": "plantines verde hojas estilo selva",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "92"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-278",
+      "name": "plantita tiritas largas de mar",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "85"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-279",
+      "name": "plantitas de relleno verde con blanco",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "76"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-280",
+      "name": "plantitas estilo mar",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "81"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-281",
+      "name": "plantitas tipo laureles",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "82"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-282",
+      "name": "plantitas verde con rojo estilo mar",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 9,
+      "codes": [
+        "84"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-283",
+      "name": "plantitas verdes con flores de telgopor blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [
+        "83"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-284",
+      "name": "platos azul marino",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-285",
+      "name": "platos beige/arena",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-286",
+      "name": "platos de ceramica color rosa y beige",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-287",
+      "name": "platos grises",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-288",
+      "name": "platos rosas pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-289",
+      "name": "platos verdes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-290",
+      "name": "porta flores petisos blancos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "debajo de la mesa alzada",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-291",
+      "name": "porta flores petisos blancos (parecen porta lapices)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "debajo de la mesa alzada",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-292",
+      "name": "posatorta banco nordico",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-293",
+      "name": "posatorta finito alto mostaza",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-294",
+      "name": "posatorta forma de hongo grande color rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "223"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-295",
+      "name": "posatorta forma flor tamano chica color amarillo comun",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "209"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-296",
+      "name": "posatorta forma flor tamano chica color amarillo pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "208"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-297",
+      "name": "posatorta forma flor tamano chica color lila",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "210"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-298",
+      "name": "posatorta forma flor tamano chica color roja",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "206"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-299",
+      "name": "posatorta forma flor tamano chica color rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "207"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-300",
+      "name": "posatorta forma flor tamano chica color verde agua",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "205"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-301",
+      "name": "posatorta forma flor tamano grande color lila",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "204"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-302",
+      "name": "posatorta forma flor tamano grande color verde",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "203"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-303",
+      "name": "posatorta forma hongo tamano chica azul petroleo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "217"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-304",
+      "name": "posatorta forma hongo tamano chica color amarillo comun",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "214"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-305",
+      "name": "posatorta forma hongo tamano chica color fucsia",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "211"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-306",
+      "name": "posatorta forma hongo tamano chica color rosa cremita",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "216"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-307",
+      "name": "posatorta forma hongo tamano chica color rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "215"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-308",
+      "name": "posatorta forma hongo tamano chica color verde",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "212"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-309",
+      "name": "posatorta forma hongo tamano chica color violetas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "213"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-310",
+      "name": "posatorta grande violeta",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-311",
+      "name": "posatortas chicos blancos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-312",
+      "name": "posatortas chicos color negro",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-313",
+      "name": "posatortas chicos rojo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-314",
+      "name": "posatortas estilo nordicos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-315",
+      "name": "posatortas forma hongo tamano chica color negra",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "218"
+      ],
+      "features": "estilo boleiras ( son plasticas)",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-316",
+      "name": "posatortas grandes blancos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-317",
+      "name": "posatortas grandes negros",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "mesa de alzadas",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-318",
+      "name": "ramito de escuela de caballero salmon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "125"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-319",
+      "name": "ramito de flor blanca chiquitas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "101"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-320",
+      "name": "ramito de flor blanca con amarillo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "96"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-321",
+      "name": "ramito de flores explosivas celestes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "106"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-322",
+      "name": "ramito de flores lirio lila",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "107"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-323",
+      "name": "ramito de flores lirio rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "117"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-324",
+      "name": "ramito de flores V rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "119"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-325",
+      "name": "ramito mosqui blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [
+        "127"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-326",
+      "name": "ramitos de flores dalia salmon",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "103"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-327",
+      "name": "ramitos de flores floral rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "118"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-328",
+      "name": "ramitos de flores lirio celestes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "105"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-329",
+      "name": "ramitos de flores naranja estilo acuaticas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "108"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-330",
+      "name": "ramitos de flores peonias cerradas naranjas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "109"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-331",
+      "name": "ramitos de flores rosas abiertas fucsia",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "115"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-332",
+      "name": "ramitos de lirio blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "95"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-333",
+      "name": "ramitos haste blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [
+        "126"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-334",
+      "name": "ramo cositos rojos chicos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "136"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-335",
+      "name": "ramo cositos rojos largos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "135"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-336",
+      "name": "ramo de diente de leon blanco",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [
+        "130"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-337",
+      "name": "ramo de florecitas abiertas rojas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "131"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-338",
+      "name": "ramo de florecitas estilo hawaiianas rojas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "133"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-339",
+      "name": "ramo de flores abiertas rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "124"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-340",
+      "name": "ramo de flores astilbe rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-341",
+      "name": "ramo de flores blancas (medio amarillas)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "102"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-342",
+      "name": "ramo de flores cerradas y abiertas rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "121"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-343",
+      "name": "ramo de flores fucsia estilo actuaricas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "114"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-344",
+      "name": "ramo de flores gerbera naranja",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "110"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-345",
+      "name": "ramo de flores gerbera rosita",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "113"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-346",
+      "name": "ramo de flores lavanda",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [
+        "132"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-347",
+      "name": "ramo de flores orquideas rosa pastel (lindo)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "116"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-348",
+      "name": "ramo de flores peonias celestes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "104"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-349",
+      "name": "ramo de flores peonias cerradas rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "123"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-350",
+      "name": "ramo de gardenias blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "99"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-351",
+      "name": "ramo de gerbera fucsia",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "112"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-352",
+      "name": "ramo de lirio blanco",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "98"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-353",
+      "name": "ramo de rosas estilo boda",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "94"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-354",
+      "name": "ramo de rosas rosa chicle",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "122"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-355",
+      "name": "ramo de solo rosas blancas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "97"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-356",
+      "name": "ramo margitas rojas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "129"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-357",
+      "name": "ramo navideños",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "134"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-358",
+      "name": "ramos de (7) margaritas verdes",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "139"
+      ],
+      "features": "",
+      "location": "box negra (bolsa blanca)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-359",
+      "name": "ramos de margaritas largas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 10,
+      "codes": [
+        "137"
+      ],
+      "features": "",
+      "location": "box negra (bolsa blanca)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-360",
+      "name": "ramos de rosas blancas con rosa",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "111"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-361",
+      "name": "rojos",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "bolsa de 100",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-362",
+      "name": "rosa medio violeta",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "bolsa de 100",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-363",
+      "name": "rosa pastel",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 14,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo (al lado de la caja polifan)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-364",
+      "name": "rosas blancas sueltas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [
+        "100"
+      ],
+      "features": "",
+      "location": "caja negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-365",
+      "name": "rosas color rosa viejo con blanco",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "128"
+      ],
+      "features": "",
+      "location": "box negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-366",
+      "name": "ruedas infables carreras auto",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-367",
+      "name": "sillitas tifany blanca",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 17,
+      "codes": [
+        "182"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-368",
+      "name": "sol",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos (al lado de los numeros en neon)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-369",
+      "name": "tabla de surf (amarillo pastel con rosa)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-370",
+      "name": "tachos led c/luz a eleccion Marca RGB",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 6,
+      "codes": [
+        "168"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-371",
+      "name": "take ypur candy",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-372",
+      "name": "tarimas de circo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "64"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-373",
+      "name": "tazas blancas merienda",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 26,
+      "codes": [
+        "174"
+      ],
+      "features": "",
+      "location": "caja de carton al frente del asador",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-374",
+      "name": "techo pasteleria (impresión blanco y celeste)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-375",
+      "name": "tela de araña negra",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "caja de corporeos (al lado de los numeros en neon)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-376",
+      "name": "telas de arañas",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [],
+      "features": "",
+      "location": "bolsa transparente (caja corporeos)",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-377",
+      "name": "tigre chico",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "173"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-378",
+      "name": "tiras jazmin del cielo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "75"
+      ],
+      "features": "",
+      "location": "bolsa negra",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-379",
+      "name": "tiras led de neon a pila para paneles de 2,50 de largo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "167"
+      ],
+      "features": "",
+      "location": "debajo de la mesa c/ vinilos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-380",
+      "name": "tiras led de neon luz calida 5 metros c/u",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 5,
+      "codes": [
+        "169"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-381",
+      "name": "tul lila",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo sobre caja marron al costado de caja hongos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-382",
+      "name": "tul rosa",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [],
+      "features": "",
+      "location": "bolsa rizzo sobre caja marron al costado de caja hongos",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-383",
+      "name": "violeta medio ladrillo",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [],
+      "features": "bolsa de 100",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-384",
+      "name": "yuyo pampa lila (suegra rosa)",
+      "category": "Accesorios de temáticas",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [
+        "87"
+      ],
+      "features": "",
+      "location": "esquina cerca del asador",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-385",
+      "name": "caramelera/golosinera blanca rectangular de mesa",
+      "category": "Estantes para souvenirs",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "53"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-386",
+      "name": "carrito candy",
+      "category": "Estantes para souvenirs",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "52"
+      ],
+      "features": "consta de 2 partes (techo y mesa)",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-387",
+      "name": "estante escalera bolsitas color blanco",
+      "category": "Estantes para souvenirs",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "50"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-388",
+      "name": "estante escalera bolsitas color madera y blanco",
+      "category": "Estantes para souvenirs",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "51"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-389",
+      "name": "falsa torta encastrable tam.G, M y CH",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "35"
+      ],
+      "features": "",
+      "location": "pared lat.der. Peg. Puerta corrediza",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-390",
+      "name": "juego de mesas cilindros blancas tam. G,M,CH",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "46"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-391",
+      "name": "juego de mesas cubos transparentes tam. G,M,CH",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "45"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-392",
+      "name": "juego de mesas octagonales blanca tam. G,M,CH",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "47"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-393",
+      "name": "mesa color madera tipo medio barril",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "48"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-394",
+      "name": "mesa escalera",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "41"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-395",
+      "name": "mesa tetris",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "40"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-396",
+      "name": "mesa varillada blanca alta",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "44"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-397",
+      "name": "mesa varillada cilindro alta blanca",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "36"
+      ],
+      "features": "",
+      "location": "pared lat.der. Peg. Puerta corrediza",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-398",
+      "name": "mesas arco 3D tam. G, M, CH",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "38"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-399",
+      "name": "mesas blancas rectangulares petiza c/tapa blanca",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "29"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-400",
+      "name": "mesas cilindros varilladas blanca encastrable tam. G,M, CH",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "37"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-401",
+      "name": "mesas diamantes invertido",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "34"
+      ],
+      "features": "",
+      "location": "pared lat.der. Peg. Puerta corrediza",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-402",
+      "name": "mesas frente esterililla crudo",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "49"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-403",
+      "name": "mesas nordicas tam. G,M,CH",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "39"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-404",
+      "name": "mesas varilladas crudo color madera alta",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "42"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-405",
+      "name": "mesas varilladas crudo color madera baja",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "43"
+      ],
+      "features": "",
+      "location": "",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-406",
+      "name": "mesitas rectangulares grande,mediana y chica c/tapas",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "30"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-407",
+      "name": "tapa mesa redonda blanca varillada",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "31"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-408",
+      "name": "tapas mesa redonda col. crudo varillada tamano grande",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 3,
+      "codes": [
+        "32"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-409",
+      "name": "tapas mesa redonda color crudo varillada tamano chico",
+      "category": "Mesas accesorias",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 4,
+      "codes": [
+        "33"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-410",
+      "name": "3D panel Arco iris",
+      "category": "Paneles 3D",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "3"
+      ],
+      "features": "2 medio arcoiris",
+      "location": "lateral izquierdo",
+      "assembly": "2 personas se necesita de un taladro o destornillador, 6 tornillos y coincidir la parte de adelnate y la otra persona de atrás atonillando los tornillos",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-411",
+      "name": "3D panel curvo estante bolsitas",
+      "category": "Paneles 3D",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "4"
+      ],
+      "features": "uno solo, con 4 tablas",
+      "location": "lateral izquierdo",
+      "assembly": "2 personas se necesita para cargar",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-412",
+      "name": "3D panel Favio",
+      "category": "Paneles 3D",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "5"
+      ],
+      "features": "2 medio panel",
+      "location": "lateral izquierdo",
+      "assembly": "2  personas para armar, se necesita de un taladro o destornillador, 6 tornillos y coincidir la parte  de adelante",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-413",
+      "name": "3D panel Rectangular",
+      "category": "Paneles 3D",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "1"
+      ],
+      "features": "2 columnas y 1 columna superior",
+      "location": "lateral izquierdo",
+      "assembly": "2 personas para armar, tiene dos partes iguales y la parte superior esta pintada en tres lados, la parte sin pintar va mirando al cielo",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-414",
+      "name": "3D panel Romano",
+      "category": "Paneles 3D",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "2"
+      ],
+      "features": "2 media columna y 1 columna arco",
+      "location": "garage y carpinteria",
+      "assembly": "2 personas para armar, las medias columnas son encastrables con el arco",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-415",
+      "name": "estructura de carpa de fibro",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "19"
+      ],
+      "features": "",
+      "location": "garage",
+      "assembly": "se lo arma con 2 paneles semi inclinados haciendo coincidir los agujeros o con el panel romano 3d",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-416",
+      "name": "mesa Blanca c/tapa",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "23"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-417",
+      "name": "mesa Jeep c/tapa beige",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "27"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-418",
+      "name": "mesa ostra c/tapa lila",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "26"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-419",
+      "name": "mesa para flores color rosa c/tapa rosa",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "28"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-420",
+      "name": "mesa rayada color durazno c/tapa",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "24"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-421",
+      "name": "mesa roja c/tapa",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "25"
+      ],
+      "features": "",
+      "location": "pared lateral derecho",
+      "assembly": "",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-422",
+      "name": "panel arco hueco",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "14"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar y lleva tambien una madera horizontal en la parte de abajo",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-423",
+      "name": "panel arcoiris simple grande",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "22"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-424",
+      "name": "panel casita molino",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "9"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar.",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-425",
+      "name": "panel chico ancho tipo bienvenido",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "8"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar.",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-426",
+      "name": "panel curvo de 1,60 x 80",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "6"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar.",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-427",
+      "name": "panel curvo de 1,60x70",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "7"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar.",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-428",
+      "name": "panel curvo grande 1,80x80",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "15"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-429",
+      "name": "panel estante bolsitas curvo",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 0,
+      "codes": [
+        "21"
+      ],
+      "features": "consta de 6 tablas, 2 tablitas en los laterales y 2 patas",
+      "location": "pared de ingreso",
+      "assembly": "taladro, 12 tornillos largos negros (caja de herramienta). 1ero, se atornilla la tabla n6 y luego se coloca las patas, despues el resto de estantes entre 2 personas",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-430",
+      "name": "panel flaco chico curvo 1,70x60",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "20"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-431",
+      "name": "panel Nube 1,80x80",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "11"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar.",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-432",
+      "name": "panel rayado 1,80x80",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "13"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar.",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-433",
+      "name": "panel rectangular 1,80x80",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "12"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar.",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-434",
+      "name": "panel rectangular inclinado",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "10"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar.",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-435",
+      "name": "panel semicurvo grande 1,80x80",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 1,
+      "codes": [
+        "18"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-436",
+      "name": "paneles semi curvo 1,70x60",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "17"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar",
+      "source": "Inventario Happydeco.xlsx"
+    },
+    {
+      "id": "inventory-437",
+      "name": "paneles verde 1,70x60",
+      "category": "Paneles simples",
+      "unit": "unidad",
+      "unitCost": 0,
+      "updated": "",
+      "stock": 2,
+      "codes": [
+        "16"
+      ],
+      "features": "",
+      "location": "pared de ingreso",
+      "assembly": "insertar cada pata con su correspondiente lugar",
+      "source": "Inventario Happydeco.xlsx"
+    }
+  ]
+}
