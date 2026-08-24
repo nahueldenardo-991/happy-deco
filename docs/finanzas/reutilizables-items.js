@@ -66,17 +66,16 @@
   }
 
   function reusableCandidates() {
-    const blocked = /mobiliario|globos|globo|limpieza|consumible|descartable|gr[aá]fica|impresi[oó]n/i;
+    const blocked = /globo/i;
     const alreadyReusable = new Set(state.reusables.map(item => slug(item.name)));
     return state.costItems
       .map((item, index) => ({ item, index }))
       .filter(({ item }) => item && !item.linkedAssetId && !item.linkedReusableId && item.source !== "Mobiliario" && item.source !== "Reutilizables")
       .filter(({ item }) => !blocked.test(`${item.category || ""} ${item.name || ""}`))
-      .filter(({ item }) => !alreadyReusable.has(slug(item.name)))
-      .slice(0, 12);
+      .filter(({ item }) => !alreadyReusable.has(slug(item.name)));
   }
 
-  function importCandidate(index) {
+  function importCandidate(index, options = {}) {
     const item = state.costItems[index];
     if (!item) return;
     const baseName = String(item.name || "Reutilizable").replace(/^Costo de uso\s*·\s*/i, "").trim();
@@ -102,6 +101,21 @@
       proposal.inclusions = (proposal.items || []).map(component => component.name).join("; ");
       proposal.standardCost = (proposal.items || []).reduce((sum, component) => sum + (Number(component.quantity) || 0) * (Number(component.unitCost) || 0), 0);
     });
+    syncReusableCosts();
+    if (!options.silent) {
+      save();
+      render();
+    }
+  }
+
+  function importAllCandidates() {
+    const candidates = reusableCandidates();
+    if (!candidates.length) return;
+    if (!confirm(`¿Pasar ${candidates.length} ítems a Reutilizables? Se excluirán los que digan "globo" y se actualizarán en Ítems y precios como costos por uso.`)) return;
+    candidates
+      .slice()
+      .sort((a, b) => b.index - a.index)
+      .forEach(({ index }) => importCandidate(index, { silent: true }));
     syncReusableCosts();
     save();
     render();
@@ -148,13 +162,14 @@
         </div>
       </div>`;
     if (candidates.length) {
-      section.insertAdjacentHTML("beforeend", `
+    section.insertAdjacentHTML("beforeend", `
         <div class="card" style="margin-top:14px">
           <div class="section-head">
             <div>
-              <h2>Posibles reutilizables en Ítems y precios</h2>
-              <p class="crud-help">Solo incorporar elementos que vuelven a usarse. No pasar globos, descartables ni mobiliario.</p>
+              <h2>Reutilizables todavía cargados en Ítems y precios</h2>
+              <p class="crud-help">${candidates.length} ítems detectados. Se excluye automáticamente todo lo que diga "globo".</p>
             </div>
+            <button class="btn primary" type="button" id="importAllReusableBtn">Pasar todos a Reutilizables</button>
           </div>
           <div class="table-wrap">
             <table>
@@ -176,6 +191,8 @@
     section.querySelectorAll('[data-edit="reusable"]').forEach(button => button.onclick = () => openCrud("reusable", Number(button.dataset.index)));
     section.querySelectorAll('[data-remove="reusable"]').forEach(button => button.onclick = () => removeCrud("reusable", Number(button.dataset.index)));
     section.querySelectorAll("[data-import-reusable]").forEach(button => button.onclick = () => importCandidate(Number(button.dataset.importReusable)));
+    const importAllButton = document.getElementById("importAllReusableBtn");
+    if (importAllButton) importAllButton.onclick = importAllCandidates;
   }
 
   function lockReusableRows() {
