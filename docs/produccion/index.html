@@ -507,6 +507,7 @@
     };
     const DASHBOARD_TABLE = "happy_deco_dashboard_records";
     const PROCESS_TABLE = "happy_deco_process_events";
+    const PRODUCTION_CACHE_PATH = "../data/production-cache.json";
 
     const els = {
       counter: document.querySelector("#counter"),
@@ -544,11 +545,13 @@
           cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`),
           cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`)
         ]);
+        let fallback = null;
         if (dashboardResult.status === "fulfilled") {
           records = Array.isArray(dashboardResult.value) ? dashboardResult.value.map(row => row.data).filter(Boolean) : [];
           localStorage.setItem("happyDecoRecords", JSON.stringify(records));
         } else {
-          records = [];
+          fallback = fallback || await loadProductionCache();
+          records = fallback.records;
           console.error("No se pudo leer Dashboard para producción", dashboardResult.reason);
         }
 
@@ -556,30 +559,57 @@
           processEvents = Array.isArray(processResult.value) ? processResult.value.map(row => row.data).filter(Boolean) : [];
           localStorage.setItem("happyDecoEvents", JSON.stringify(processEvents));
         } else {
-          processEvents = [];
+          fallback = fallback || await loadProductionCache();
+          processEvents = fallback.processEvents;
           console.error("No se pudo leer Proceso para producción", processResult.reason);
         }
 
-        if (dashboardResult.status === "rejected" || processResult.status === "rejected") {
-          setCloudWarning("No pude leer toda la información compartida. Tocá Actualizar desde nube antes de preparar o imprimir una ficha.");
+        if (fallback) {
+          setCloudWarning("Modo respaldo: este celular no pudo conectar con Supabase. Se muestra la última copia publicada de Producción.");
         }
 
-        if (dashboardResult.status === "rejected" && processResult.status === "rejected") {
-          els.lastUpdate.textContent = "Sin conexión con la nube. No se muestran datos viejos de este celular.";
+        if (fallback && dashboardResult.status === "rejected" && processResult.status === "rejected") {
+          els.lastUpdate.textContent = `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`;
         } else {
           els.lastUpdate.textContent = `Actualizado desde nube ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
         }
       } catch (error) {
         console.error("No se pudo leer producción", error);
-        records = [];
-        processEvents = [];
-        els.lastUpdate.textContent = "Sin conexión con la nube. No se muestran datos viejos de este celular.";
-        setCloudWarning("No pude conectar con Supabase. Revisá internet y tocá Actualizar desde nube.");
+        try {
+          const fallback = await loadProductionCache();
+          records = fallback.records;
+          processEvents = fallback.processEvents;
+          els.lastUpdate.textContent = `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`;
+          setCloudWarning("Modo respaldo: este celular no pudo conectar con Supabase. Se muestra la última copia publicada de Producción.");
+        } catch (cacheError) {
+          console.error("No se pudo leer respaldo de producción", cacheError);
+          records = [];
+          processEvents = [];
+          els.lastUpdate.textContent = "Sin conexión con la nube ni respaldo.";
+          setCloudWarning("No pude conectar con Supabase ni cargar el respaldo. Revisá internet y volvé a intentar.");
+        }
       } finally {
         els.refreshBtn.classList.remove("syncing");
         els.refreshBtn.textContent = "Actualizar desde nube";
       }
       render();
+    }
+
+    async function loadProductionCache() {
+      const response = await fetch(PRODUCTION_CACHE_PATH, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Respaldo ${response.status}`);
+      const payload = await response.json();
+      return {
+        generatedAt: payload.generatedAt || "",
+        records: Array.isArray(payload.records) ? payload.records : [],
+        processEvents: Array.isArray(payload.processEvents) ? payload.processEvents : []
+      };
+    }
+
+    function formatCacheDate(value) {
+      const date = value ? new Date(value) : null;
+      if (!date || Number.isNaN(date.getTime())) return "disponible";
+      return `del ${date.toLocaleDateString("es-AR")} ${date.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
     }
 
     function setCloudWarning(message) {
