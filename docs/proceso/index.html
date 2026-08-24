@@ -1521,7 +1521,7 @@
           localSaved = false;
           console.warn("No pude guardar el boceto localmente", storageError);
         }
-        const result = await cloudUpsertEvents(state.events);
+        const result = await cloudUpsertEvent(event);
         renderDetail();
         if (!result.ok) {
           requestAnimationFrame(() => {
@@ -1658,7 +1658,9 @@
       if (!options.silent) showMaterialSaveProgress("Guardando materiales...");
       event.materials = parseMaterials(readMaterialsRows());
       event.updatedAt = new Date().toISOString();
-      const result = await saveEventsConfirmed();
+      state.events = sanitizeEvents(state.events);
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      const result = await cloudUpsertEvent(event);
       renderList();
       if (!result.ok) {
         setStatus(detail.querySelector("[data-materials-status]"), "No se pudo sincronizar. Revisá conexión y volvé a guardar.", true);
@@ -1815,6 +1817,7 @@
       if (!config) return null;
       const response = await fetch(`${config.url}/rest/v1/${path}`, {
         ...options,
+        cache: "no-store",
         headers: {
           apikey: config.anonKey,
           Authorization: `Bearer ${config.anonKey}`,
@@ -1823,8 +1826,8 @@
         }
       });
       if (!response.ok) throw new Error(await response.text());
-      if (response.status === 204) return null;
-      return response.json();
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
     }
 
     async function pullCloudEvents() {
@@ -1848,20 +1851,34 @@
       }
     }
 
+    async function cloudUpsertEvent(event) {
+      const cleanEvent = sanitizeEvents([event])[0];
+      if (!getCloudConfig() || !cleanEvent) return { ok: true, skipped: true };
+      try {
+        await cloudRequest(PROCESS_TABLE, {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify([{
+            id: cleanEvent.id,
+            data: { ...cleanEvent, updatedAt: cleanEvent.updatedAt || new Date().toISOString() },
+            updated_at: cleanEvent.updatedAt || new Date().toISOString()
+          }])
+        });
+        return { ok: true };
+      } catch (error) {
+        console.error("No pude guardar este evento en nube", error);
+        return { ok: false, error };
+      }
+    }
+
     async function cloudUpsertEvents(items) {
       const cleanItems = sanitizeEvents(items);
       if (!getCloudConfig() || !cleanItems.length) return { ok: true, skipped: true };
       try {
-        const rows = cleanItems.map(event => ({
-          id: event.id,
-          data: { ...event, updatedAt: event.updatedAt || new Date().toISOString() },
-          updated_at: event.updatedAt || new Date().toISOString()
-        }));
-        await cloudRequest(PROCESS_TABLE, {
-          method: "POST",
-          headers: { Prefer: "resolution=merge-duplicates" },
-          body: JSON.stringify(rows)
-        });
+        for (const event of cleanItems) {
+          const result = await cloudUpsertEvent(event);
+          if (!result.ok) throw result.error || new Error("No se pudo sincronizar evento");
+        }
         return { ok: true };
       } catch (error) {
         console.error("No pude guardar proceso en nube", error);

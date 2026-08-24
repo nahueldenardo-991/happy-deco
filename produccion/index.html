@@ -608,7 +608,9 @@
         theme: event.theme || record.tematica || "",
         package: event.package || record.incluye || record.propuesta || "",
         sketch: event.sketch || null,
-        materials: parseMaterials(event.materials).length ? parseMaterials(event.materials) : parseProposalItems(event.package || record.incluye || record.propuesta || ""),
+        materials: event.id
+          ? parseMaterials(event.materials)
+          : parseProposalItems(event.package || record.incluye || record.propuesta || ""),
         materialChecks: event.materialChecks || {},
         productionStatus: event.productionStatus || "Listo para producir",
         notes: mergeNotes([event.productionNotes, event.notes, event.id ? "" : record.observaciones])
@@ -878,6 +880,7 @@
       const config = getCloudConfig();
       const response = await fetch(`${config.url}/rest/v1/${path}`, {
         ...options,
+        cache: "no-store",
         headers: {
           apikey: config.anonKey,
           Authorization: `Bearer ${config.anonKey}`,
@@ -886,8 +889,8 @@
         }
       });
       if (!response.ok) throw new Error(await response.text());
-      if (response.status === 204) return null;
-      return response.json();
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
     }
 
     function safeJson(value) {
