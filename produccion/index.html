@@ -935,12 +935,19 @@
     function getCloudConfig() {
       try {
         const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
-        const active = config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
+        const savedUrl = String(config.url || "");
+        const savedKey = String(config.anonKey || "");
+        const isOfficialProject = savedUrl.includes("niwkiklxyblrvbeusqbd.supabase.co") && savedKey === DEFAULT_CLOUD_CONFIG.anonKey;
+        const active = isOfficialProject ? config : DEFAULT_CLOUD_CONFIG;
+        if (!isOfficialProject && (config.url || config.anonKey)) {
+          localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(DEFAULT_CLOUD_CONFIG));
+        }
         return {
           url: String(active.url || "").replace(/\/$/, ""),
           anonKey: String(active.anonKey || "")
         };
       } catch {
+        localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(DEFAULT_CLOUD_CONFIG));
         return DEFAULT_CLOUD_CONFIG;
       }
     }
