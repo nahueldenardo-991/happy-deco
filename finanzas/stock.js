@@ -9,7 +9,7 @@
     catch (error) {
       if (key !== 'happyDecoFinanceV1' || error?.name !== 'QuotaExceededError') throw error;
       const compact = JSON.parse(value);
-      compact.costItems = (compact.costItems||[]).filter(item=>item.source!=='Inventario Happydeco.xlsx'||Number(item.unitCost)>0||item.lastStockControl).map(item=>({id:item.id,name:item.name,category:item.category,unit:item.unit,unitCost:item.unitCost||0,updated:item.updated||'',stock:item.stock||0,location:item.location||'',source:item.source||''}));
+      compact.costItems = (compact.costItems||[]).filter(item=>item.source!=='Inventario Happydeco.xlsx'||Number(item.unitCost)>0||item.lastStockControl).map(item=>({id:item.id,name:item.name,category:item.category,unit:item.unit,unitCost:item.unitCost||0,updated:item.updated||'',stock:item.stock||0,location:item.location||'',source:item.source||'',linkedAssetId:item.linkedAssetId||'',linkedReusableId:item.linkedReusableId||'',features:item.features||''}));
       compact.stockChecks = (compact.stockChecks||[]).filter(check=>check.notes!=='Control inicial según inventario Happy Deco');
       compact.inventoryVersion = 0;
       this.removeItem(key);
