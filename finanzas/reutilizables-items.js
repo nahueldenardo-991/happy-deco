@@ -35,8 +35,8 @@
         unit: "uso",
         unitCost: reusableCost,
         updated: today(),
-        stock: previousCostItem?.stock ?? 0,
-        location: previousCostItem?.location || "Controlar en Stock",
+        stock: previousCostItem?.stock ?? item.stock ?? 0,
+        location: previousCostItem?.location || item.location || "Controlar en Stock",
         features: `Valor ${money(item.value)} ÷ ${item.usefulEvents || 0} usos de vida útil`,
         source: "Reutilizables"
       });
@@ -86,11 +86,19 @@
       value: Number(item.unitCost) || 0,
       usefulEvents: 1,
       uses: 0,
+      stock: Number(item.stock) || 0,
+      location: item.location || "",
       notes: "Importado desde Ítems y precios. Revisar valor y vida útil."
     };
     const newCostName = `Costo de uso · ${newReusable.name}`;
     state.reusables.push(newReusable);
     state.costItems.splice(index, 1);
+    state.stockChecks.forEach(check => {
+      if (check.itemId === item.id) {
+        check.itemId = `reusable-cost-${newReusable.id}`;
+        check.itemName = newCostName;
+      }
+    });
     state.proposals.forEach(proposal => {
       (proposal.items || []).forEach(component => {
         if (component.name === item.name) {
@@ -105,6 +113,27 @@
     if (!options.silent) {
       save();
       render();
+    }
+  }
+
+  function ensureInitialStockCheck(reusable, previousReusable = null) {
+    const costItem = linkedCostItem(reusable);
+    if (!costItem) return;
+    const stock = Number(reusable.stock) || 0;
+    costItem.stock = stock;
+    costItem.location = reusable.location || costItem.location || "Controlar en Stock";
+    const alreadyChecked = state.stockChecks.some(check => check.itemId === costItem.id);
+    if (!previousReusable && stock > 0 && !alreadyChecked) {
+      state.stockChecks.push({
+        id: `control-${Date.now()}-${slug(reusable.name)}`,
+        itemId: costItem.id,
+        itemName: costItem.name,
+        controlDate: today(),
+        previousStock: 0,
+        counted: stock,
+        difference: stock,
+        notes: "Cantidad inicial cargada en Reutilizables"
+      });
     }
   }
 
@@ -196,6 +225,24 @@
   }
 
   function lockReusableRows() {
+    const candidates = reusableCandidates();
+    if (candidates.length) {
+      const hiddenIds = new Set(candidates.map(({ item }) => item.id));
+      document.querySelectorAll("#items tbody tr").forEach(row => {
+        const editButton = row.querySelector('[data-edit="costItem"]');
+        const index = Number(editButton?.dataset.index);
+        const item = state.costItems[index];
+        if (item && hiddenIds.has(item.id)) row.remove();
+      });
+      const card = document.querySelector("#items .card");
+      if (card && !card.querySelector("#itemsReusableCleanupNotice")) {
+        card.insertAdjacentHTML("afterbegin", `
+          <div class="note" id="itemsReusableCleanupNotice" style="margin-bottom:14px">
+            <strong>${candidates.length} reutilizables fueron separados de esta vista.</strong>
+            Para limpiar definitivamente Ítems y precios, entrá a Reutilizables y usá <strong>Pasar todos a Reutilizables</strong>. Se excluye todo lo que diga "globo".
+          </div>`);
+      }
+    }
     state.costItems.forEach((item, index) => {
       if (!item.linkedReusableId) return;
       const actionCell = document.querySelector(`[data-edit="costItem"][data-index="${index}"]`)?.parentElement;
@@ -218,6 +265,8 @@
       ["value", "Valor de compra o reposición", "number"],
       ["usefulEvents", "Vida útil en usos/eventos", "number"],
       ["uses", "Usos acumulados", "number"],
+      ["stock", "Cantidad inicial disponible", "number"],
+      ["location", "Ubicación en depósito", "text"],
       ["notes", "Observaciones", "textarea"]
     ]
   };
@@ -225,9 +274,16 @@
   const originalSubmit = crudForm.onsubmit;
   crudForm.onsubmit = event => {
     const isReusable = crudContext?.type === "reusable";
+    const previousIndex = isReusable ? crudContext.index : null;
+    const previousReusable = previousIndex === null ? null : { ...(state.reusables?.[previousIndex] || {}) };
+    const beforeIds = new Set((state.reusables || []).map(item => item.id));
     originalSubmit(event);
     if (isReusable) {
       syncReusableCosts();
+      const currentReusable = previousIndex === null
+        ? state.reusables.find(item => !beforeIds.has(item.id))
+        : state.reusables[previousIndex];
+      if (currentReusable) ensureInitialStockCheck(currentReusable, previousReusable);
       save();
       render();
     }
