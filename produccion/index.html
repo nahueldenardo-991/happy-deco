@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Producción | Happy Deco</title>
   <style>
     :root {
@@ -189,6 +192,35 @@
       padding: 9px 11px;
       outline: none;
     }
+
+    .refresh-btn {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 9px 14px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .refresh-btn.syncing {
+      background: #fff7df;
+      color: #8a6820;
+    }
+
+    .cloud-warning {
+      display: none;
+      margin: 0 0 16px;
+      border: 1px solid #ffd7df;
+      border-left: 5px solid var(--rose);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      background: #fff7f9;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .cloud-warning.active { display: block; }
 
     .production-list {
       display: grid;
@@ -458,9 +490,11 @@
         <strong id="counter">Cargando eventos...</strong>
         <p class="subtitle" id="lastUpdate">Leyendo información compartida.</p>
       </div>
+      <button class="refresh-btn" id="refreshBtn" type="button">Actualizar desde nube</button>
       <input class="search" id="search" type="search" placeholder="Buscar por cliente, temática o homenajeado">
     </section>
 
+    <div class="cloud-warning" id="cloudWarning"></div>
     <section class="production-list" id="productionList"></section>
   </main>
 
@@ -479,6 +513,8 @@
       lastUpdate: document.querySelector("#lastUpdate"),
       search: document.querySelector("#search"),
       list: document.querySelector("#productionList"),
+      refreshBtn: document.querySelector("#refreshBtn"),
+      cloudWarning: document.querySelector("#cloudWarning"),
       dashboardBtn: document.querySelector("#dashboardBtn")
     };
 
@@ -491,31 +527,64 @@
 
     function init() {
       els.search.addEventListener("input", render);
+      els.refreshBtn.addEventListener("click", () => loadProductionData());
       bindProtectedNavigation();
       if (els.dashboardBtn) els.dashboardBtn.addEventListener("click", openDashboardWithPassword);
       loadProductionData();
     }
 
     async function loadProductionData() {
+      setCloudWarning("");
+      els.refreshBtn.classList.add("syncing");
+      els.refreshBtn.textContent = "Actualizando...";
       try {
         const config = getCloudConfig();
         if (!config) throw new Error("Nube no configurada");
-        const [dashboardRows, processRows] = await Promise.all([
+        const [dashboardResult, processResult] = await Promise.allSettled([
           cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`),
           cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`)
         ]);
-        records = Array.isArray(dashboardRows) ? dashboardRows.map(row => row.data).filter(Boolean) : [];
-        processEvents = Array.isArray(processRows) ? processRows.map(row => row.data).filter(Boolean) : [];
-        localStorage.setItem("happyDecoRecords", JSON.stringify(records));
-        localStorage.setItem("happyDecoEvents", JSON.stringify(processEvents));
-        els.lastUpdate.textContent = `Actualizado ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+        if (dashboardResult.status === "fulfilled") {
+          records = Array.isArray(dashboardResult.value) ? dashboardResult.value.map(row => row.data).filter(Boolean) : [];
+          localStorage.setItem("happyDecoRecords", JSON.stringify(records));
+        } else {
+          records = [];
+          console.error("No se pudo leer Dashboard para producción", dashboardResult.reason);
+        }
+
+        if (processResult.status === "fulfilled") {
+          processEvents = Array.isArray(processResult.value) ? processResult.value.map(row => row.data).filter(Boolean) : [];
+          localStorage.setItem("happyDecoEvents", JSON.stringify(processEvents));
+        } else {
+          processEvents = [];
+          console.error("No se pudo leer Proceso para producción", processResult.reason);
+        }
+
+        if (dashboardResult.status === "rejected" || processResult.status === "rejected") {
+          setCloudWarning("No pude leer toda la información compartida. Tocá Actualizar desde nube antes de preparar o imprimir una ficha.");
+        }
+
+        if (dashboardResult.status === "rejected" && processResult.status === "rejected") {
+          els.lastUpdate.textContent = "Sin conexión con la nube. No se muestran datos viejos de este celular.";
+        } else {
+          els.lastUpdate.textContent = `Actualizado desde nube ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+        }
       } catch (error) {
         console.error("No se pudo leer producción", error);
-        records = safeJson(localStorage.getItem("happyDecoRecords"));
-        processEvents = safeJson(localStorage.getItem("happyDecoEvents"));
-        els.lastUpdate.textContent = "Mostrando datos guardados en este navegador.";
+        records = [];
+        processEvents = [];
+        els.lastUpdate.textContent = "Sin conexión con la nube. No se muestran datos viejos de este celular.";
+        setCloudWarning("No pude conectar con Supabase. Revisá internet y tocá Actualizar desde nube.");
+      } finally {
+        els.refreshBtn.classList.remove("syncing");
+        els.refreshBtn.textContent = "Actualizar desde nube";
       }
       render();
+    }
+
+    function setCloudWarning(message) {
+      els.cloudWarning.textContent = message || "";
+      els.cloudWarning.classList.toggle("active", Boolean(message));
     }
 
     function render() {
@@ -884,6 +953,8 @@
         headers: {
           apikey: config.anonKey,
           Authorization: `Bearer ${config.anonKey}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
           "Content-Type": "application/json",
           ...(options.headers || {})
         }
