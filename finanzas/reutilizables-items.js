@@ -67,11 +67,13 @@
 
   function reusableCandidates() {
     const blocked = /globo/i;
+    const isFurnitureLike = window.HappyDecoFurnitureTools?.isFurnitureLike || (() => false);
     const alreadyReusable = new Set(state.reusables.map(item => slug(item.name)));
     return state.costItems
       .map((item, index) => ({ item, index }))
       .filter(({ item }) => item && !item.linkedAssetId && !item.linkedReusableId && item.source !== "Mobiliario" && item.source !== "Reutilizables")
       .filter(({ item }) => !blocked.test(`${item.category || ""} ${item.name || ""}`))
+      .filter(({ item }) => !isFurnitureLike(`${item.category || ""} ${item.name || ""}`))
       .filter(({ item }) => !alreadyReusable.has(slug(item.name)));
   }
 
@@ -279,6 +281,7 @@
     const beforeIds = new Set((state.reusables || []).map(item => item.id));
     originalSubmit(event);
     if (isReusable) {
+      window.HappyDecoFurnitureTools?.syncFurnitureCosts?.();
       syncReusableCosts();
       const currentReusable = previousIndex === null
         ? state.reusables.find(item => !beforeIds.has(item.id))
@@ -301,6 +304,7 @@
 
   const previousRender = render;
   render = function() {
+    window.HappyDecoFurnitureTools?.syncFurnitureCosts?.();
     syncReusableCosts();
     previousRender();
     renderReusableSection();
