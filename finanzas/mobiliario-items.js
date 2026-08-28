@@ -2,7 +2,7 @@
   const today = () => new Date().toISOString().slice(0, 10);
   const slug = value => String(value || "mobiliario").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "mobiliario";
   const normalize = value => String(value || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
-  const furnitureKeywords = ["panel", "mesa", "ostra", "3d"];
+  const furnitureKeywords = ["panel", "mesa", "ostra", "3d", "carrito", "estante", "escalera"];
 
   function isFurnitureLike(value) {
     const text = normalize(value);
@@ -22,7 +22,7 @@
 
   function syncFurnitureCosts() {
     ensureFinanceLists();
-    const movedCount = migrateFurnitureFromReusables();
+    const movedCount = migrateFurnitureFromReusables() + migrateFurnitureCostItems();
     const activeIds = new Set();
     state.assets.forEach((asset, index) => {
       asset.id = asset.id || `asset-${index}-${String(asset.name||'mobiliario').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
@@ -117,6 +117,69 @@
       });
     });
     return moving.length;
+  }
+
+  function cleanFurnitureName(value) {
+    return String(value || "Mobiliario").replace(/^Costo de uso\s*·\s*/i, "").trim() || "Mobiliario";
+  }
+
+  function migrateFurnitureCostItems() {
+    ensureFinanceLists();
+    let moved = 0;
+    state.costItems.forEach(item => {
+      if (!item || item.linkedAssetId || item.linkedReusableId || item.source === "Mobiliario") return;
+      if (!isFurnitureLike(`${item.name || ""} ${item.category || ""}`)) return;
+      const name = cleanFurnitureName(item.name);
+      const existingAsset = state.assets.find(asset => slug(asset.name) === slug(name));
+      const asset = existingAsset || {
+        id: `asset-${item.id || Date.now()}-${slug(name)}`,
+        name,
+        value: Number(item.unitCost) || 0,
+        usefulEvents: 1,
+        uses: 0,
+        status: "Bueno",
+        stock: Number(item.stock) || 0,
+        location: item.location || "",
+        notes: "Movido automáticamente desde Ítems y precios."
+      };
+      if (existingAsset) {
+        asset.value = Number(asset.value) || Number(item.unitCost) || 0;
+        asset.usefulEvents = Number(asset.usefulEvents) || 1;
+        asset.stock = Number(asset.stock ?? item.stock) || 0;
+        asset.location = asset.location || item.location || "";
+      } else {
+        state.assets.push(asset);
+      }
+      delete item.linkedReusableId;
+      item.linkedAssetId = asset.id;
+      item.name = `Costo de uso · ${asset.name}`;
+      item.category = "Mobiliario";
+      item.unit = "uso";
+      item.unitCost = assetCostPerUse(asset);
+      item.updated = today();
+      item.stock = item.stock ?? asset.stock ?? 0;
+      item.location = item.location || asset.location || "Gestionado en Mobiliario";
+      item.features = `Valor ${money(asset.value)} ÷ ${asset.usefulEvents || 0} eventos de vida útil`;
+      item.source = "Mobiliario";
+      state.stockChecks.forEach(check => {
+        if (check.itemId === item.id || normalize(check.itemName).includes(normalize(name))) {
+          check.itemId = item.id;
+          check.itemName = item.name;
+        }
+      });
+      state.proposals.forEach(proposal => {
+        (proposal.items || []).forEach(component => {
+          if (component.name === name || component.name === item.name || normalize(component.name).includes(normalize(name))) {
+            component.name = item.name;
+            component.unitCost = item.unitCost;
+          }
+        });
+        proposal.inclusions = (proposal.items || []).map(component => component.name).join("; ");
+        proposal.standardCost = (proposal.items || []).reduce((sum, component) => sum + (Number(component.quantity) || 0) * (Number(component.unitCost) || 0), 0);
+      });
+      moved += 1;
+    });
+    return moved;
   }
 
   function linkedFurnitureItem(asset) {
