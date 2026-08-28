@@ -662,6 +662,37 @@
       gap: 8px;
     }
 
+    .material-picker-head {
+      display: grid;
+      gap: 8px;
+    }
+
+    .material-category-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .material-category-tabs button {
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      box-shadow: none;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .material-category-tabs button.active {
+      border-color: var(--teal);
+      background: #eefcfb;
+      color: var(--teal);
+    }
+
     .material-picker input {
       min-height: 46px;
       padding: 10px 12px;
@@ -680,8 +711,9 @@
 
     .material-results {
       display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 6px;
-      max-height: 220px;
+      max-height: 310px;
       overflow: auto;
     }
 
@@ -707,6 +739,17 @@
       color: var(--muted);
       font-size: 13px;
       font-weight: 700;
+    }
+
+    .material-result mark {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #fff6dc;
+      color: #8a6418;
+      font-size: 12px;
+      font-weight: 900;
     }
 
     .material-row {
@@ -994,6 +1037,7 @@
     let editingUntil = 0;
     let pendingSaveTimer = null;
     let financeCatalog = loadFinanceCatalogLocal();
+    let materialCategoryFilter = "Todas";
 
     state.selectedId = getDeepLinkedEventId() || state.events[0]?.id || null;
 
@@ -1365,6 +1409,13 @@
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
       detail.querySelector("#materialSearch")?.addEventListener("input", (event) => renderMaterialResults(event.target.value));
+      detail.querySelectorAll("[data-material-category]").forEach(button => {
+        button.addEventListener("click", () => {
+          materialCategoryFilter = button.dataset.materialCategory || "Todas";
+          detail.querySelectorAll("[data-material-category]").forEach(tab => tab.classList.toggle("active", tab === button));
+          renderMaterialResults(detail.querySelector("#materialSearch")?.value || "");
+        });
+      });
       detail.querySelector("#materialResults")?.addEventListener("click", (event) => {
         const pick = event.target.closest("[data-pick-material]");
         if (pick) addMaterialFromCatalog(pick.dataset.pickMaterial);
@@ -1509,7 +1560,12 @@
           </div>
           <div class="materials-editor">
             <div class="material-picker">
-              <input id="materialSearch" type="search" placeholder="Buscar en Ítems y precios: panel, globos, impresión..." autocomplete="off">
+              <div class="material-picker-head">
+                <div class="material-category-tabs" aria-label="Filtrar materiales">
+                  ${materialCategoryButtons()}
+                </div>
+                <input id="materialSearch" type="search" placeholder="Buscar por nombre o palabra: panel curvo, globos, impresión..." autocomplete="off">
+              </div>
               <div id="materialResults" class="material-results"></div>
             </div>
             <div class="materials-list" data-materials-list>
@@ -2216,22 +2272,39 @@
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
     }
 
+    function materialCategories() {
+      const categories = [...new Set(financeCatalog.costItems.map(item => item.category || "Sin categoría"))]
+        .filter(Boolean)
+        .sort((a, b) => String(a).localeCompare(String(b)));
+      const preferred = ["Mobiliario", "Reutilizables", "Globos", "Gráfica e impresión", "Materiales", "Mano de obra", "Logística"];
+      return ["Todas", ...preferred.filter(category => categories.includes(category)), ...categories.filter(category => !preferred.includes(category))].slice(0, 12);
+    }
+
+    function materialCategoryButtons() {
+      const categories = materialCategories();
+      if (!categories.includes(materialCategoryFilter)) materialCategoryFilter = "Todas";
+      return categories
+        .map(category => `<button type="button" data-material-category="${escapeAttr(category)}" class="${category === materialCategoryFilter ? "active" : ""}">${escapeHtml(category)}</button>`)
+        .join("");
+    }
+
     function renderMaterialResults(query = "") {
       const container = detail.querySelector("#materialResults");
       if (!container) return;
       const q = searchText(query);
       const tokens = q.split(/\s+/).filter(Boolean);
-      if (!tokens.length) {
-        container.innerHTML = `<div class="hint">Escribí para buscar componentes cargados en Finanzas.</div>`;
+      if (!financeCatalog.costItems.length) {
+        container.innerHTML = `<div class="hint">Todavía no hay Ítems y precios disponibles. Tocá Actualizar desde nube o revisá Finanzas.</div>`;
         return;
       }
       const results = financeCatalog.costItems
-        .filter(item => tokens.every(token => searchText(`${item.name} ${item.category} ${item.unit}`).includes(token)))
+        .filter(item => materialCategoryFilter === "Todas" || (item.category || "Sin categoría") === materialCategoryFilter)
+        .filter(item => !tokens.length || tokens.every(token => searchText(`${item.name} ${item.category} ${item.unit} ${item.features || ""}`).includes(token)))
         .sort((a, b) => (Number(b.unitCost) > 0) - (Number(a.unitCost) > 0) || String(a.name).localeCompare(String(b.name)))
-        .slice(0, 12);
+        .slice(0, tokens.length ? 18 : 24);
       container.innerHTML = results.length
-        ? results.map(item => `<button class="material-result" type="button" data-pick-material="${escapeAttr(item.id)}"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.category || "Sin categoría")} · ${escapeHtml(item.unit || "unidad")} · ${Number(item.unitCost) > 0 ? formatMoney(item.unitCost) : "Precio pendiente"}</span></button>`).join("")
-        : `<div class="hint">Sin resultados. Revisá si existe en Finanzas > Ítems y precios.</div>`;
+        ? results.map(item => `<button class="material-result" type="button" data-pick-material="${escapeAttr(item.id)}"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.category || "Sin categoría")} · ${escapeHtml(item.unit || "unidad")}</span><mark>${Number(item.unitCost) > 0 ? formatMoney(item.unitCost) : "Precio pendiente"}</mark></button>`).join("")
+        : `<div class="hint">Sin resultados en ${escapeHtml(materialCategoryFilter)}. Probá otra categoría o una palabra más corta.</div>`;
     }
 
     function parseMaterials(value) {
