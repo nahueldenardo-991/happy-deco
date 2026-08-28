@@ -657,12 +657,67 @@
       gap: 12px;
     }
 
+    .material-picker {
+      display: grid;
+      gap: 8px;
+    }
+
+    .material-picker input {
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 16px;
+      background: #fff;
+    }
+
+    .material-picker input:focus,
+    .material-row input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
+    }
+
+    .material-results {
+      display: grid;
+      gap: 6px;
+      max-height: 220px;
+      overflow: auto;
+    }
+
+    .material-result {
+      width: 100%;
+      min-height: auto;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      text-align: left;
+      box-shadow: none;
+    }
+
+    .material-result strong,
+    .material-result span {
+      display: block;
+    }
+
+    .material-result span {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
     .material-row {
       align-items: stretch;
       padding: 10px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 100px 120px 100px 88px;
+      gap: 8px;
     }
 
     .material-row input {
@@ -675,14 +730,41 @@
       background: #fff;
     }
 
-    .material-row input:focus {
-      outline: none;
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
+    .material-row input[readonly] {
+      background: #fffaf5;
+      color: var(--muted);
     }
 
     .material-row .danger {
       min-width: 88px;
+    }
+
+    .material-name {
+      min-height: 46px;
+      display: grid;
+      align-content: center;
+      gap: 2px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      font-weight: 900;
+    }
+
+    .material-name span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .material-subtotal {
+      min-height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #f4fbfa;
+      color: var(--teal);
+      font-weight: 900;
     }
 
     .materials-counter {
@@ -841,6 +923,8 @@
       anonKey: "sb_publishable_BZOa1hRBnH0KWocgyCZmfw_-lrLIgGd"
     };
     const PROCESS_TABLE = "happy_deco_process_events";
+    const DASHBOARD_TABLE = "happy_deco_dashboard_records";
+    const FINANCE_RECORD_ID = "FINANCE-SHARED-STATE-V1";
 
     const stages = [
       {
@@ -909,6 +993,7 @@
 
     let editingUntil = 0;
     let pendingSaveTimer = null;
+    let financeCatalog = loadFinanceCatalogLocal();
 
     state.selectedId = getDeepLinkedEventId() || state.events[0]?.id || null;
 
@@ -937,6 +1022,7 @@
 
     render();
     initCloudSync();
+    refreshFinanceCatalog();
 
     function loadEvents() {
       try {
@@ -957,6 +1043,7 @@
           .map(event => ({
             ...event,
             materials: Array.isArray(event.materials) ? event.materials.filter(Boolean) : parseMaterials(event.materials),
+            materialItems: normalizeMaterialItems(event.materialItems),
             sketch: event.sketch && event.sketch.dataUrl ? event.sketch : null
           }))
         : [];
@@ -1012,6 +1099,7 @@
         commercialNotes: "",
         productionNotes: "",
         materials: [],
+        materialItems: [],
         sketch: null,
         checks: {},
         updatedAt: new Date().toISOString()
@@ -1275,9 +1363,14 @@
       detail.querySelector("[data-upload-area]")?.addEventListener("dragover", handleSketchDrag);
       detail.querySelector("[data-upload-area]")?.addEventListener("drop", handleSketchDrop);
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
-      detail.querySelector("[data-add-material]")?.addEventListener("click", addMaterial);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
-      detail.querySelectorAll("[data-material-input]").forEach(input => {
+      detail.querySelector("#materialSearch")?.addEventListener("input", (event) => renderMaterialResults(event.target.value));
+      detail.querySelector("#materialResults")?.addEventListener("click", (event) => {
+        const pick = event.target.closest("[data-pick-material]");
+        if (pick) addMaterialFromCatalog(pick.dataset.pickMaterial);
+      });
+      renderMaterialResults("");
+      detail.querySelectorAll("[data-material-qty]").forEach(input => {
         input.addEventListener("input", updateMaterialsDraft);
       });
       detail.querySelectorAll("[data-remove-material]").forEach(button => {
@@ -1402,38 +1495,51 @@
     }
 
     function renderMaterialsEditor(event) {
-      const materials = Array.isArray(event.materials) ? event.materials : parseMaterials(event.materials);
-      const rows = materials.length ? materials : [""];
-      const materialCount = parseMaterials(materials).length;
+      ensureBaseProposalMaterials(event);
+      const items = currentMaterialItems(event);
+      const materialCount = items.length;
+      const total = items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitCost || 0), 0);
       return `
         <div class="sketch-card">
           <div class="section-title">
             <label>Listado de materiales</label>
             <div class="materials-actions">
-              <button class="ghost" type="button" data-add-material>Agregar material</button>
               <button class="primary" type="button" data-save-materials>Guardar materiales</button>
             </div>
           </div>
           <div class="materials-editor">
-            <div class="materials-list" data-materials-list>
-              ${rows.map((material, index) => renderMaterialRow(material, index)).join("")}
+            <div class="material-picker">
+              <input id="materialSearch" type="search" placeholder="Buscar en Ítems y precios: panel, globos, impresión..." autocomplete="off">
+              <div id="materialResults" class="material-results"></div>
             </div>
-            <div class="materials-counter" data-materials-counter>${materialCount} ítem${materialCount === 1 ? "" : "s"} detectado${materialCount === 1 ? "" : "s"}</div>
+            <div class="materials-list" data-materials-list>
+              ${items.length ? items.map((material, index) => renderMaterialRow(material, index)).join("") : `<div class="hint">Buscá y agregá materiales desde Ítems y precios. Si la propuesta tiene componentes cargados, aparecen automáticamente acá.</div>`}
+            </div>
+            <div class="materials-counter" data-materials-counter>${materialCount} ítem${materialCount === 1 ? "" : "s"} detectado${materialCount === 1 ? "" : "s"} · costo real base ${formatMoney(total)}</div>
           </div>
           <div class="save-progress" data-materials-progress>
             <div class="save-progress-bar"><span></span></div>
             <span>Guardando y sincronizando...</span>
           </div>
           <div class="materials-status" data-materials-status></div>
-          <span class="hint">Cargá un material por casilla y tocá Guardar materiales. Cada material guardado se convierte en un check de la ficha de producción.</span>
+          <span class="hint">Los textos se siguen enviando a Producción como checklist. Los ítems con cantidad y precio alimentan el costo real en Finanzas.</span>
         </div>
       `;
     }
 
     function renderMaterialRow(material, index) {
+      const quantity = Number(material.quantity || 1);
+      const unitCost = Number(material.unitCost || 0);
+      const subtotal = quantity * unitCost;
       return `
-        <div class="material-row" data-material-row>
-          <input data-material-input value="${escapeAttr(material || "")}" placeholder="Ej: Panel curvo con patas" aria-label="Material ${index + 1}">
+        <div class="material-row" data-material-row data-item-id="${escapeAttr(material.itemId || "")}" data-item-name="${escapeAttr(material.name || "")}" data-item-category="${escapeAttr(material.category || "")}">
+          <div class="material-name">
+            ${escapeHtml(material.name || "Material sin nombre")}
+            <span>${escapeHtml(material.category || "Sin categoría")}${unitCost > 0 ? ` · ${formatMoney(unitCost)} c/u` : " · Precio pendiente"}</span>
+          </div>
+          <input data-material-qty type="number" min="0" step="1" value="${escapeAttr(quantity)}" aria-label="Cantidad de ${escapeAttr(material.name || `material ${index + 1}`)}">
+          <input data-material-cost type="number" min="0" step="1" value="${escapeAttr(unitCost)}" readonly aria-label="Costo unitario">
+          <div class="material-subtotal">${formatMoney(subtotal)}</div>
           <button class="danger" type="button" data-remove-material="${index}">Quitar</button>
         </div>
       `;
@@ -1613,28 +1719,41 @@
       renderDetail();
     }
 
-    function addMaterial() {
+    function addMaterialFromCatalog(itemId) {
       const event = getSelected();
       if (!event) return;
-      event.materials = readMaterialsRows();
-      event.materials.push("");
+      const item = financeCatalog.costItems.find(entry => entry.id === itemId);
+      if (!item) return;
+      event.materialItems = readMaterialItemsRows();
+      event.materialItems.push(normalizeMaterialItem({
+        itemId: item.id,
+        name: item.name,
+        category: item.category,
+        quantity: 1,
+        unitCost: item.unitCost
+      }));
+      event.materials = materialItemsToText(event.materialItems);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
       renderDetail();
       requestAnimationFrame(() => {
-        const inputs = detail.querySelectorAll("[data-material-input]");
+        const inputs = detail.querySelectorAll("[data-material-qty]");
         const last = inputs[inputs.length - 1];
-        if (last) last.focus();
+        if (last) {
+          last.focus();
+          last.select();
+        }
       });
-      setStatus(detail.querySelector("[data-materials-status]"), "Material agregado. Recordá guardar cambios.");
+      setStatus(detail.querySelector("[data-materials-status]"), "Material agregado desde Ítems y precios. Recordá guardar cambios.");
     }
 
     function removeMaterial(index) {
       const event = getSelected();
       if (!event) return;
-      const values = readMaterialsRows();
+      const values = readMaterialItemsRows();
       values.splice(index, 1);
-      event.materials = values.length ? values : [""];
+      event.materialItems = values;
+      event.materials = materialItemsToText(values);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
       renderDetail();
@@ -1644,8 +1763,9 @@
     function updateMaterialsDraft() {
       const event = getSelected();
       if (!event) return;
-      const materials = readMaterialsRows();
-      event.materials = materials;
+      const materials = readMaterialItemsRows();
+      event.materialItems = materials;
+      event.materials = materialItemsToText(materials);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
       updateMaterialsCounter(materials);
@@ -1656,7 +1776,8 @@
       const event = getSelected();
       if (!event) return;
       if (!options.silent) showMaterialSaveProgress("Guardando materiales...");
-      event.materials = parseMaterials(readMaterialsRows());
+      event.materialItems = readMaterialItemsRows();
+      event.materials = materialItemsToText(event.materialItems);
       event.updatedAt = new Date().toISOString();
       state.events = sanitizeEvents(state.events);
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
@@ -1672,16 +1793,24 @@
       return result;
     }
 
-    function readMaterialsRows() {
-      return [...detail.querySelectorAll("[data-material-input]")]
-        .map(input => input.value.trim());
+    function readMaterialItemsRows() {
+      return [...detail.querySelectorAll("[data-material-row]")]
+        .map(row => normalizeMaterialItem({
+          itemId: row.dataset.itemId || "",
+          name: row.dataset.itemName || "",
+          category: row.dataset.itemCategory || "",
+          quantity: Number(row.querySelector("[data-material-qty]")?.value) || 0,
+          unitCost: Number(row.querySelector("[data-material-cost]")?.value) || 0
+        }))
+        .filter(item => item.name && item.quantity > 0);
     }
 
-    function updateMaterialsCounter(materials = readMaterialsRows()) {
+    function updateMaterialsCounter(materials = readMaterialItemsRows()) {
       const counter = detail.querySelector("[data-materials-counter]");
       if (!counter) return;
-      const count = parseMaterials(materials).length;
-      counter.textContent = `${count} ítem${count === 1 ? "" : "s"} detectado${count === 1 ? "" : "s"}`;
+      const count = materials.length;
+      const total = materials.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitCost || 0), 0);
+      counter.textContent = `${count} ítem${count === 1 ? "" : "s"} detectado${count === 1 ? "" : "s"} · costo real base ${formatMoney(total)}`;
     }
 
     function setStatus(element, message, isError = false) {
@@ -1864,10 +1993,36 @@
             updated_at: cleanEvent.updatedAt || new Date().toISOString()
           }])
         });
+        await cloudUpsertDashboardMaterials(cleanEvent);
         return { ok: true };
       } catch (error) {
         console.error("No pude guardar este evento en nube", error);
         return { ok: false, error };
+      }
+    }
+
+    async function cloudUpsertDashboardMaterials(event) {
+      if (!event?.id) return;
+      const materialItems = normalizeMaterialItems(event.materialItems);
+      if (!materialItems.length) return;
+      try {
+        const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(event.id)}&select=data&limit=1`);
+        const current = Array.isArray(rows) ? rows[0]?.data : null;
+        if (!current || current.module === "finance" || current.module === "crm") return;
+        const updatedAt = new Date().toISOString();
+        const data = {
+          ...current,
+          materials: event.materials || materialItemsToText(materialItems),
+          materialItems,
+          updatedAt
+        };
+        await cloudRequest(DASHBOARD_TABLE, {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify([{ id: event.id, data, updated_at: updatedAt }])
+        });
+      } catch (error) {
+        console.warn("Proceso guardó materiales, pero no pudo reflejarlos en Dashboard para Finanzas", error);
       }
     }
 
@@ -1892,6 +2047,36 @@
         await cloudRequest(`${PROCESS_TABLE}?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
       } catch (error) {
         console.error("No pude eliminar proceso en nube", error);
+      }
+    }
+
+    function loadFinanceCatalogLocal() {
+      try {
+        const data = JSON.parse(localStorage.getItem("happyDecoFinanceV1") || "{}");
+        return {
+          proposals: Array.isArray(data.proposals) ? data.proposals : [],
+          costItems: Array.isArray(data.costItems) ? data.costItems : []
+        };
+      } catch {
+        return { proposals: [], costItems: [] };
+      }
+    }
+
+    async function refreshFinanceCatalog() {
+      financeCatalog = loadFinanceCatalogLocal();
+      if (!getCloudConfig()) return;
+      try {
+        const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(FINANCE_RECORD_ID)}&select=data&limit=1`);
+        const shared = Array.isArray(rows) ? rows[0]?.data?.finance : null;
+        if (shared) {
+          financeCatalog = {
+            proposals: Array.isArray(shared.proposals) ? shared.proposals : financeCatalog.proposals,
+            costItems: Array.isArray(shared.costItems) ? shared.costItems : financeCatalog.costItems
+          };
+          renderDetail();
+        }
+      } catch (error) {
+        console.warn("No pude traer Ítems y precios desde Finanzas", error);
       }
     }
 
@@ -1932,8 +2117,130 @@
       return date.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
     }
 
+    function formatMoney(value) {
+      return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(Number(value || 0));
+    }
+
+    function normalizeText(value) {
+      return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/^propuesta\s+/, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function searchText(value) {
+      return normalizeText(value).replace(/[^\w\s]/g, " ");
+    }
+
+    function normalizeMaterialItem(item = {}) {
+      if (!item || typeof item !== "object") return null;
+      const quantity = Number(item.quantity ?? item.qty ?? item.cantidad ?? 1) || 0;
+      const unitCost = Number(item.unitCost ?? item.price ?? item.precio ?? item.cost ?? item.costo ?? 0) || 0;
+      const name = String(item.name || item.itemName || "").trim();
+      if (!name) return null;
+      return {
+        itemId: String(item.itemId || item.id || ""),
+        name,
+        category: String(item.category || item.categoria || "Sin categoría").trim() || "Sin categoría",
+        quantity,
+        unitCost
+      };
+    }
+
+    function normalizeMaterialItems(items) {
+      return Array.isArray(items) ? items.map(normalizeMaterialItem).filter(Boolean) : [];
+    }
+
+    function materialItemsToText(items) {
+      return normalizeMaterialItems(items).map(item => item.quantity > 1 ? `${item.quantity} x ${item.name}` : item.name);
+    }
+
+    function proposalName(event) {
+      return event.package || event.propuesta || event.proposal || "";
+    }
+
+    function proposalForEvent(event) {
+      const wanted = normalizeText(proposalName(event));
+      if (!wanted) return null;
+      return financeCatalog.proposals.find(proposal => normalizeText(proposal.name) === wanted)
+        || financeCatalog.proposals.find(proposal => {
+          const name = normalizeText(proposal.name);
+          return name && (wanted.includes(name) || name.includes(wanted));
+        })
+        || null;
+    }
+
+    function baseItemsForEvent(event) {
+      const proposal = proposalForEvent(event);
+      return normalizeMaterialItems(proposal?.items || []);
+    }
+
+    function matchCatalogItem(name) {
+      const wanted = normalizeText(name);
+      if (!wanted) return null;
+      return financeCatalog.costItems.find(item => normalizeText(item.name) === wanted)
+        || financeCatalog.costItems.find(item => {
+          const itemName = normalizeText(item.name);
+          return itemName && (wanted.includes(itemName) || itemName.includes(wanted));
+        })
+        || null;
+    }
+
+    function currentMaterialItems(event) {
+      const structured = normalizeMaterialItems(event.materialItems);
+      if (structured.length) return structured;
+      return parseMaterials(event.materials).map(material => {
+        const text = String(material).replace(/^\d+\s*x\s*/i, "").trim();
+        const quantityMatch = String(material).match(/^(\d+)\s*x\s+/i);
+        const item = matchCatalogItem(text);
+        return normalizeMaterialItem({
+          itemId: item?.id || "",
+          name: item?.name || text,
+          category: item?.category || "Carga previa",
+          quantity: quantityMatch ? Number(quantityMatch[1]) : 1,
+          unitCost: item?.unitCost || 0
+        });
+      }).filter(Boolean);
+    }
+
+    function ensureBaseProposalMaterials(event) {
+      if (normalizeMaterialItems(event.materialItems).length || parseMaterials(event.materials).length) return;
+      const baseItems = baseItemsForEvent(event);
+      if (!baseItems.length) return;
+      event.materialItems = baseItems;
+      event.materials = materialItemsToText(baseItems);
+      event.updatedAt = new Date().toISOString();
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+    }
+
+    function renderMaterialResults(query = "") {
+      const container = detail.querySelector("#materialResults");
+      if (!container) return;
+      const q = searchText(query);
+      const tokens = q.split(/\s+/).filter(Boolean);
+      if (!tokens.length) {
+        container.innerHTML = `<div class="hint">Escribí para buscar componentes cargados en Finanzas.</div>`;
+        return;
+      }
+      const results = financeCatalog.costItems
+        .filter(item => tokens.every(token => searchText(`${item.name} ${item.category} ${item.unit}`).includes(token)))
+        .sort((a, b) => (Number(b.unitCost) > 0) - (Number(a.unitCost) > 0) || String(a.name).localeCompare(String(b.name)))
+        .slice(0, 12);
+      container.innerHTML = results.length
+        ? results.map(item => `<button class="material-result" type="button" data-pick-material="${escapeAttr(item.id)}"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.category || "Sin categoría")} · ${escapeHtml(item.unit || "unidad")} · ${Number(item.unitCost) > 0 ? formatMoney(item.unitCost) : "Precio pendiente"}</span></button>`).join("")
+        : `<div class="hint">Sin resultados. Revisá si existe en Finanzas > Ítems y precios.</div>`;
+    }
+
     function parseMaterials(value) {
-      if (Array.isArray(value)) return value.map(item => String(item || "").trim()).filter(Boolean);
+      if (Array.isArray(value)) {
+        return value
+          .map(item => typeof item === "object" && item ? item.name || item.itemName || "" : String(item || ""))
+          .map(item => item.trim())
+          .filter(Boolean);
+      }
       return String(value || "")
         .split(/\n|,/)
         .map(item => item.trim())
