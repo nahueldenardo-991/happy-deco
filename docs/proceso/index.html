@@ -854,6 +854,16 @@
       color: var(--teal);
     }
 
+    .proposal-select-tools {
+      display: grid;
+      gap: 8px;
+    }
+
+    .proposal-select-tools button {
+      width: 100%;
+      min-height: 42px;
+    }
+
     .materials-counter {
       font-size: 13px;
       color: var(--muted);
@@ -1392,6 +1402,7 @@
                 ${field("budget", "Monto/presupuesto", event.budget)}
                 ${field("deposit", "Seña", event.deposit)}
                 ${field("balance", "Saldo", event.balance)}
+                ${renderProposalSelect(event)}
                 <div>
                   <label for="status">Estado manual</label>
                   <select id="status" data-field="status">
@@ -1453,6 +1464,8 @@
       detail.querySelector("[data-upload-area]")?.addEventListener("drop", handleSketchDrop);
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
+      detail.querySelector("#proposalType")?.addEventListener("change", (event) => updateProposalSelection(event.target.value));
+      detail.querySelector("[data-apply-proposal-base]")?.addEventListener("click", applySelectedProposalBase);
       detail.querySelector("[data-toggle-material-picker]")?.addEventListener("click", () => {
         const picker = detail.querySelector("#materialPicker");
         picker?.classList.toggle("open");
@@ -1598,6 +1611,30 @@
       `;
     }
 
+    function renderProposalSelect(event) {
+      const proposals = financeCatalog.proposals || [];
+      const current = proposalForEvent(event)?.name || event.proposalType || "";
+      if (!proposals.length) {
+        return `
+          <div class="proposal-select-tools">
+            <label for="proposalType">Propuesta</label>
+            <input id="proposalType" value="${escapeAttr(current || proposalName(event) || "")}" readonly>
+            <span class="hint">No hay propuestas sincronizadas desde Finanzas todavía.</span>
+          </div>
+        `;
+      }
+      return `
+        <div class="proposal-select-tools">
+          <label for="proposalType">Propuesta</label>
+          <select id="proposalType">
+            <option value="">Seleccionar propuesta</option>
+            ${proposals.map(proposal => `<option value="${escapeAttr(proposal.name)}" ${normalizeText(proposal.name) === normalizeText(current) ? "selected" : ""}>${escapeHtml(proposal.name)}</option>`).join("")}
+          </select>
+          <button class="ghost" type="button" data-apply-proposal-base>Cargar componentes base</button>
+        </div>
+      `;
+    }
+
     function renderMaterialsEditor(event) {
       ensureBaseProposalMaterials(event);
       const items = currentMaterialItems(event);
@@ -1683,6 +1720,30 @@
       event.updatedAt = new Date().toISOString();
       saveEvents();
       render();
+    }
+
+    function updateProposalSelection(value) {
+      const event = getSelected();
+      if (!event) return;
+      event.proposalType = value;
+      event.updatedAt = new Date().toISOString();
+      mergeProposalBaseIntoEvent(event);
+      saveEvents();
+      render();
+    }
+
+    function applySelectedProposalBase() {
+      const event = getSelected();
+      if (!event) return;
+      const before = currentMaterialItems(event).length;
+      mergeProposalBaseIntoEvent(event);
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      render();
+      requestAnimationFrame(() => {
+        const after = currentMaterialItems(getSelected() || {}).length;
+        setStatus(detail.querySelector("[data-materials-status]"), after > before ? "Componentes base cargados desde la propuesta." : "La propuesta ya tenía sus componentes base cargados.");
+      });
     }
 
     function handleSketchUpload(inputEvent) {
@@ -2186,7 +2247,11 @@
 
     async function refreshFinanceCatalog() {
       financeCatalog = loadFinanceCatalogLocal();
-      if (!getCloudConfig()) return;
+      if (!getCloudConfig()) {
+        await mergeInventoryFallback();
+        renderDetail();
+        return;
+      }
       try {
         const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=id,data&order=updated_at.desc&limit=700`);
         const records = Array.isArray(rows) ? rows.map(row => row.data).filter(Boolean) : [];
@@ -2200,10 +2265,28 @@
             costItems: Array.isArray(shared.costItems) ? shared.costItems : financeCatalog.costItems
           };
         }
+        await mergeInventoryFallback();
         applyDashboardContextToEvents();
         renderDetail();
       } catch (error) {
         console.warn("No pude traer Ítems y precios desde Finanzas", error);
+        await mergeInventoryFallback();
+        renderDetail();
+      }
+    }
+
+    async function mergeInventoryFallback() {
+      if (financeCatalog.costItems.length) return;
+      try {
+        const response = await fetch("../finanzas/inventario.json", { cache: "no-store" });
+        if (!response.ok) return;
+        const inventory = await response.json();
+        financeCatalog = {
+          ...financeCatalog,
+          costItems: Array.isArray(inventory.items) ? inventory.items : []
+        };
+      } catch (error) {
+        console.warn("No pude cargar el inventario de respaldo", error);
       }
     }
 
@@ -2350,10 +2433,17 @@
 
     function ensureBaseProposalMaterials(event) {
       if (normalizeMaterialItems(event.materialItems).length || parseMaterials(event.materials).length) return;
+      mergeProposalBaseIntoEvent(event);
+    }
+
+    function mergeProposalBaseIntoEvent(event) {
       const baseItems = baseItemsForEvent(event);
       if (!baseItems.length) return;
-      event.materialItems = baseItems;
-      event.materials = materialItemsToText(baseItems);
+      const existingItems = currentMaterialItems(event);
+      const existingKeys = new Set(existingItems.map(item => item.itemId || normalizeText(item.name)));
+      const missingBase = baseItems.filter(item => !existingKeys.has(item.itemId || normalizeText(item.name)));
+      event.materialItems = [...existingItems, ...missingBase];
+      event.materials = materialItemsToText(event.materialItems);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
     }
