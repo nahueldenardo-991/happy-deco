@@ -1182,13 +1182,14 @@
     }
 
     function markEditing() {
-      editingUntil = Date.now() + 5000;
+      editingUntil = Date.now() + 30000;
     }
 
     function isEditingNow() {
       const active = document.activeElement;
       const isFormField = active && detail.contains(active) && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName);
-      return isFormField || Date.now() < editingUntil;
+      const isMaterialPickerOpen = Boolean(detail.querySelector("#materialPicker.open"));
+      return isFormField || isMaterialPickerOpen || Date.now() < editingUntil;
     }
 
     function createEvent() {
@@ -1732,20 +1733,22 @@
     function updateProposalSelection(value) {
       const event = getSelected();
       if (!event) return;
+      markEditing();
       event.proposalType = value;
       event.updatedAt = new Date().toISOString();
       mergeProposalBaseIntoEvent(event);
-      saveEvents();
+      scheduleSaveEvents();
       render();
     }
 
     function applySelectedProposalBase() {
       const event = getSelected();
       if (!event) return;
+      markEditing();
       const before = currentMaterialItems(event).length;
       mergeProposalBaseIntoEvent(event);
       event.updatedAt = new Date().toISOString();
-      saveEvents();
+      scheduleSaveEvents();
       render();
       requestAnimationFrame(() => {
         const after = currentMaterialItems(getSelected() || {}).length;
@@ -1911,6 +1914,7 @@
     function addMaterialFromCatalog(itemId) {
       const event = getSelected();
       if (!event) return;
+      markEditing();
       const item = financeCatalog.costItems.find(entry => entry.id === itemId);
       if (!item) return;
       event.materialItems = readMaterialItemsRows();
@@ -1924,6 +1928,7 @@
       event.materials = materialItemsToText(event.materialItems);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      scheduleSaveEvents();
       renderDetail();
       requestAnimationFrame(() => {
         detail.querySelector("#materialPicker")?.classList.remove("open");
@@ -1940,12 +1945,14 @@
     function removeMaterial(index) {
       const event = getSelected();
       if (!event) return;
+      markEditing();
       const values = readMaterialItemsRows();
       values.splice(index, 1);
       event.materialItems = values;
       event.materials = materialItemsToText(values);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      scheduleSaveEvents();
       renderDetail();
       setStatus(detail.querySelector("[data-materials-status]"), "Material quitado. Recordá guardar cambios.");
     }
@@ -1953,11 +1960,13 @@
     function updateMaterialsDraft() {
       const event = getSelected();
       if (!event) return;
+      markEditing();
       const materials = readMaterialItemsRows();
       event.materialItems = materials;
       event.materials = materialItemsToText(materials);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      scheduleSaveEvents();
       updateMaterialsCounter(materials);
       setStatus(detail.querySelector("[data-materials-status]"), "Cambios sin guardar");
     }
@@ -1965,6 +1974,7 @@
     async function saveMaterialsFromEditor(options = {}) {
       const event = getSelected();
       if (!event) return;
+      markEditing();
       if (!options.silent) showMaterialSaveProgress("Guardando materiales...");
       event.materialItems = readMaterialItemsRows();
       event.materials = materialItemsToText(event.materialItems);
@@ -2157,7 +2167,14 @@
         const rows = await cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`);
         if (!Array.isArray(rows)) return;
         const selectedId = state.selectedId;
-        state.events = sanitizeEvents(rows.map(row => row.data));
+        const localEvents = new Map(state.events.map(event => [event.id, event]));
+        state.events = sanitizeEvents(rows.map(row => row.data)).map(cloudEvent => {
+          const localEvent = localEvents.get(cloudEvent.id);
+          if (!localEvent) return cloudEvent;
+          const localTime = Date.parse(localEvent.updatedAt || "") || 0;
+          const cloudTime = Date.parse(cloudEvent.updatedAt || "") || 0;
+          return localTime > cloudTime ? localEvent : cloudEvent;
+        });
         state.selectedId = state.events.some(event => event.id === selectedId)
           ? selectedId
           : state.events[0]?.id || null;
@@ -2256,7 +2273,7 @@
       financeCatalog = loadFinanceCatalogLocal();
       if (!getCloudConfig()) {
         await mergeInventoryFallback();
-        renderDetail();
+        if (!isEditingNow()) renderDetail();
         return;
       }
       try {
@@ -2274,11 +2291,11 @@
         }
         await mergeInventoryFallback();
         applyDashboardContextToEvents();
-        renderDetail();
+        if (!isEditingNow()) renderDetail();
       } catch (error) {
         console.warn("No pude traer Ítems y precios desde Finanzas", error);
         await mergeInventoryFallback();
-        renderDetail();
+        if (!isEditingNow()) renderDetail();
       }
     }
 
