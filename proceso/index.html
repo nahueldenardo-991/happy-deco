@@ -660,11 +660,41 @@
     .material-picker {
       display: grid;
       gap: 8px;
+      position: relative;
     }
 
     .material-picker-head {
       display: grid;
       gap: 8px;
+    }
+
+    .material-picker-toggle {
+      width: 100%;
+      min-height: 48px;
+      justify-content: space-between;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      box-shadow: none;
+    }
+
+    .material-picker-toggle span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .material-picker-panel {
+      display: none;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 18px 45px rgba(59, 39, 53, .12);
+    }
+
+    .material-picker.open .material-picker-panel {
+      display: grid;
     }
 
     .material-category-tabs {
@@ -713,7 +743,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 6px;
-      max-height: 310px;
+      max-height: 280px;
       overflow: auto;
     }
 
@@ -808,6 +838,20 @@
       background: #f4fbfa;
       color: var(--teal);
       font-weight: 900;
+    }
+
+    .proposal-source {
+      padding: 10px 12px;
+      border: 1px solid rgba(44, 151, 145, .22);
+      border-radius: 8px;
+      background: #f4fbfa;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .proposal-source strong {
+      color: var(--teal);
     }
 
     .materials-counter {
@@ -1038,6 +1082,7 @@
     let pendingSaveTimer = null;
     let financeCatalog = loadFinanceCatalogLocal();
     let materialCategoryFilter = "Todas";
+    let dashboardRecordsById = new Map();
 
     state.selectedId = getDeepLinkedEventId() || state.events[0]?.id || null;
 
@@ -1408,6 +1453,14 @@
       detail.querySelector("[data-upload-area]")?.addEventListener("drop", handleSketchDrop);
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
+      detail.querySelector("[data-toggle-material-picker]")?.addEventListener("click", () => {
+        const picker = detail.querySelector("#materialPicker");
+        picker?.classList.toggle("open");
+        if (picker?.classList.contains("open")) {
+          renderMaterialResults(detail.querySelector("#materialSearch")?.value || "");
+          requestAnimationFrame(() => detail.querySelector("#materialSearch")?.focus());
+        }
+      });
       detail.querySelector("#materialSearch")?.addEventListener("input", (event) => renderMaterialResults(event.target.value));
       detail.querySelectorAll("[data-material-category]").forEach(button => {
         button.addEventListener("click", () => {
@@ -1550,6 +1603,8 @@
       const items = currentMaterialItems(event);
       const materialCount = items.length;
       const total = items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitCost || 0), 0);
+      const proposal = proposalForEvent(event);
+      const proposalLabel = proposal?.name || proposalName(event) || "Sin propuesta detectada";
       return `
         <div class="sketch-card">
           <div class="section-title">
@@ -1559,14 +1614,24 @@
             </div>
           </div>
           <div class="materials-editor">
-            <div class="material-picker">
-              <div class="material-picker-head">
-                <div class="material-category-tabs" aria-label="Filtrar materiales">
-                  ${materialCategoryButtons()}
+            <div class="proposal-source">
+              <strong>Propuesta detectada:</strong> ${escapeHtml(proposalLabel)}.
+              ${proposal ? "Los componentes base de esa propuesta se cargan automáticamente." : "Cuando Finanzas tenga cargada esa propuesta, sus componentes base aparecerán automáticamente."}
+            </div>
+            <div class="material-picker" id="materialPicker">
+              <button class="ghost material-picker-toggle" type="button" data-toggle-material-picker>
+                Agregar ítem extra
+                <span>Buscar en Ítems y precios</span>
+              </button>
+              <div class="material-picker-panel">
+                <div class="material-picker-head">
+                  <div class="material-category-tabs" aria-label="Filtrar materiales">
+                    ${materialCategoryButtons()}
+                  </div>
+                  <input id="materialSearch" type="search" placeholder="Buscar por nombre o palabra: panel curvo, globos, impresión..." autocomplete="off">
                 </div>
-                <input id="materialSearch" type="search" placeholder="Buscar por nombre o palabra: panel curvo, globos, impresión..." autocomplete="off">
+                <div id="materialResults" class="material-results"></div>
               </div>
-              <div id="materialResults" class="material-results"></div>
             </div>
             <div class="materials-list" data-materials-list>
               ${items.length ? items.map((material, index) => renderMaterialRow(material, index)).join("") : `<div class="hint">Buscá y agregá materiales desde Ítems y precios. Si la propuesta tiene componentes cargados, aparecen automáticamente acá.</div>`}
@@ -1793,6 +1858,7 @@
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
       renderDetail();
       requestAnimationFrame(() => {
+        detail.querySelector("#materialPicker")?.classList.remove("open");
         const inputs = detail.querySelectorAll("[data-material-qty]");
         const last = inputs[inputs.length - 1];
         if (last) {
@@ -2122,18 +2188,38 @@
       financeCatalog = loadFinanceCatalogLocal();
       if (!getCloudConfig()) return;
       try {
-        const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(FINANCE_RECORD_ID)}&select=data&limit=1`);
-        const shared = Array.isArray(rows) ? rows[0]?.data?.finance : null;
+        const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=id,data&order=updated_at.desc&limit=700`);
+        const records = Array.isArray(rows) ? rows.map(row => row.data).filter(Boolean) : [];
+        const shared = records.find(record => record.id === FINANCE_RECORD_ID || record.module === "finance")?.finance || null;
+        dashboardRecordsById = new Map(records
+          .filter(record => record.id && record.module !== "crm" && record.module !== "finance")
+          .map(record => [record.id, record]));
         if (shared) {
           financeCatalog = {
             proposals: Array.isArray(shared.proposals) ? shared.proposals : financeCatalog.proposals,
             costItems: Array.isArray(shared.costItems) ? shared.costItems : financeCatalog.costItems
           };
-          renderDetail();
         }
+        applyDashboardContextToEvents();
+        renderDetail();
       } catch (error) {
         console.warn("No pude traer Ítems y precios desde Finanzas", error);
       }
+    }
+
+    function applyDashboardContextToEvents() {
+      if (!dashboardRecordsById.size) return;
+      state.events = state.events.map(event => {
+        const record = dashboardRecordsById.get(event.id);
+        if (!record) return event;
+        return {
+          ...event,
+          proposalType: record.propuesta || event.proposalType || event.propuesta || "",
+          package: event.package || record.incluye || record.propuesta || "",
+          dashboardIncludes: record.incluye || event.dashboardIncludes || ""
+        };
+      });
+      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
     }
 
     function initCloudSync(force = false) {
@@ -2215,7 +2301,7 @@
     }
 
     function proposalName(event) {
-      return event.package || event.propuesta || event.proposal || "";
+      return event.proposalType || event.propuesta || event.proposal || event.package || "";
     }
 
     function proposalForEvent(event) {
