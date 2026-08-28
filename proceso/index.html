@@ -1466,6 +1466,7 @@
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
       detail.querySelector("#proposalType")?.addEventListener("change", (event) => updateProposalSelection(event.target.value));
       detail.querySelector("[data-apply-proposal-base]")?.addEventListener("click", applySelectedProposalBase);
+      detail.querySelector("[data-refresh-finance-catalog]")?.addEventListener("click", refreshFinanceCatalog);
       detail.querySelector("[data-toggle-material-picker]")?.addEventListener("click", () => {
         const picker = detail.querySelector("#materialPicker");
         picker?.classList.toggle("open");
@@ -1612,17 +1613,8 @@
     }
 
     function renderProposalSelect(event) {
-      const proposals = financeCatalog.proposals || [];
-      const current = proposalForEvent(event)?.name || event.proposalType || "";
-      if (!proposals.length) {
-        return `
-          <div class="proposal-select-tools">
-            <label for="proposalType">Propuesta</label>
-            <input id="proposalType" value="${escapeAttr(current || proposalName(event) || "")}" readonly>
-            <span class="hint">No hay propuestas sincronizadas desde Finanzas todavía.</span>
-          </div>
-        `;
-      }
+      const proposals = proposalOptions(event);
+      const current = proposalForEvent(event)?.name || event.proposalType || extractKnownProposalName(event.package) || "";
       return `
         <div class="proposal-select-tools">
           <label for="proposalType">Propuesta</label>
@@ -1630,7 +1622,11 @@
             <option value="">Seleccionar propuesta</option>
             ${proposals.map(proposal => `<option value="${escapeAttr(proposal.name)}" ${normalizeText(proposal.name) === normalizeText(current) ? "selected" : ""}>${escapeHtml(proposal.name)}</option>`).join("")}
           </select>
-          <button class="ghost" type="button" data-apply-proposal-base>Cargar componentes base</button>
+          <div class="materials-actions">
+            <button class="ghost" type="button" data-apply-proposal-base>Cargar componentes base</button>
+            <button class="ghost" type="button" data-refresh-finance-catalog>Actualizar desde Finanzas</button>
+          </div>
+          <span class="hint">${financeCatalog.proposals.length ? "Las propuestas vienen de Finanzas." : "Todavía no llegó el catálogo de Finanzas; podés seleccionar la propuesta y actualizar después."}</span>
         </div>
       `;
     }
@@ -1641,7 +1637,7 @@
       const materialCount = items.length;
       const total = items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitCost || 0), 0);
       const proposal = proposalForEvent(event);
-      const proposalLabel = proposal?.name || proposalName(event) || "Sin propuesta detectada";
+      const proposalLabel = proposal?.name || event.proposalType || extractKnownProposalName(event.package) || proposalName(event) || "Sin propuesta detectada";
       return `
         <div class="sketch-card">
           <div class="section-title">
@@ -2385,6 +2381,45 @@
 
     function proposalName(event) {
       return event.proposalType || event.propuesta || event.proposal || event.package || "";
+    }
+
+    function proposalOptions(event) {
+      const names = new Set((financeCatalog.proposals || []).map(proposal => proposal.name).filter(Boolean));
+      [
+        event.proposalType,
+        event.propuesta,
+        extractKnownProposalName(event.package),
+        "Express",
+        "Minimalista",
+        "Clásica",
+        "Intermedia",
+        "Premium",
+        "Exclusiva",
+        "Escenográfica 3x3",
+        "Escenográfica 6x3",
+        "Escenográfica 10x3",
+        "A medida",
+        "Personalizada"
+      ].filter(Boolean).forEach(name => names.add(name));
+      return [...names].map(name => ({ name }));
+    }
+
+    function extractKnownProposalName(value = "") {
+      const text = normalizeText(value);
+      const rules = [
+        ["escenografica 10x3", "Escenográfica 10x3"],
+        ["escenografica 6x3", "Escenográfica 6x3"],
+        ["escenografica 3x3", "Escenográfica 3x3"],
+        ["exclusiva", "Exclusiva"],
+        ["premium", "Premium"],
+        ["intermedia", "Intermedia"],
+        ["clasica", "Clásica"],
+        ["minimalista", "Minimalista"],
+        ["express", "Express"],
+        ["a medida", "A medida"],
+        ["personalizada", "Personalizada"]
+      ];
+      return rules.find(([key]) => text.includes(key))?.[1] || "";
     }
 
     function proposalForEvent(event) {
