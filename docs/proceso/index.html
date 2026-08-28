@@ -1022,6 +1022,17 @@
     const PROCESS_TABLE = "happy_deco_process_events";
     const DASHBOARD_TABLE = "happy_deco_dashboard_records";
     const FINANCE_RECORD_ID = "FINANCE-SHARED-STATE-V1";
+    const DEFAULT_PROPOSAL_INCLUSIONS = {
+      "Express": "Panel con funda; mesa principal; armado de mesa; globos; nombre; personaje impreso",
+      "Minimalista": "Panel; mesa principal; guirnalda; globos temáticos; gráfica; nombre; neón",
+      "Clásica": "2 paneles; 3 mesas; globos; gráfica; nombre; alfombra",
+      "Intermedia": "3 paneles; mesa principal + 3 accesorias; alfombra; arco; floreros; gráfica; neón",
+      "Premium": "4 paneles; mesa principal + 5 accesorias; alfombra; arco alto impacto; floreros; gráfica; neón; estante",
+      "Exclusiva": "4 paneles + panel 3D; tarima; mesa principal + 6 accesorias; alfombra; globos; gráfica; neón; luces",
+      "Escenográfica 3x3": "Telón 3x3; panel 3D; mesa principal + 4 accesorias; alfombra; inmersivos; arco; gráfica; neón; luces",
+      "Escenográfica 6x3": "Telón 6x3; panel 3D; mesa principal + 6 accesorias; alfombra; inmersivos; arco; gráfica; neón; luces",
+      "Escenográfica 10x3": "Telón 10x3; panel 3D; mesa principal + 12 accesorias; soportes; alfombra; inmersivos; arco; exhibición; gráfica; neón; luces; piso sublimado"
+    };
 
     const stages = [
       {
@@ -2233,11 +2244,11 @@
       try {
         const data = JSON.parse(localStorage.getItem("happyDecoFinanceV1") || "{}");
         return {
-          proposals: Array.isArray(data.proposals) ? data.proposals : [],
+          proposals: Array.isArray(data.proposals) && data.proposals.length ? data.proposals : defaultFinanceProposals(),
           costItems: Array.isArray(data.costItems) ? data.costItems : []
         };
       } catch {
-        return { proposals: [], costItems: [] };
+        return { proposals: defaultFinanceProposals(), costItems: [] };
       }
     }
 
@@ -2377,6 +2388,19 @@
 
     function materialItemsToText(items) {
       return normalizeMaterialItems(items).map(item => item.quantity > 1 ? `${item.quantity} x ${item.name}` : item.name);
+    }
+
+    function defaultFinanceProposals() {
+      return Object.entries(DEFAULT_PROPOSAL_INCLUSIONS).map(([name, inclusions]) => ({
+        name,
+        items: inclusions.split(";").map((item, index) => normalizeMaterialItem({
+          itemId: `default-${normalizeText(name)}-${index}`,
+          name: item.trim(),
+          category: "Base de propuesta",
+          quantity: 1,
+          unitCost: 0
+        })).filter(Boolean)
+      }));
     }
 
     function proposalName(event) {
