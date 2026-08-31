@@ -1898,7 +1898,7 @@
           updatedAt: new Date().toISOString()
         };
         event.updatedAt = new Date().toISOString();
-        showSketchProgress("Guardando y sincronizando boceto...");
+        showSketchProgress("Guardando boceto en este dispositivo...");
         state.events = sanitizeEvents(state.events);
         let localSaved = true;
         try {
@@ -1907,21 +1907,31 @@
           localSaved = false;
           console.warn("No pude guardar el boceto localmente", storageError);
         }
-        const result = await cloudUpsertEvent(event);
+        if (!localSaved) {
+          hideSketchProgress();
+          showGlobalSaveDone("No hubo espacio local para guardar", true);
+          setStatus(status, `No hubo espacio en este navegador para guardar el boceto (${formatBytes(prepared.size)}). Exportá un backup o quitá bocetos viejos antes de reintentar.`, true);
+          if (input) input.value = "";
+          return;
+        }
         renderDetail();
-        if (!result.ok) {
-          requestAnimationFrame(() => {
-            const message = localSaved
-              ? `Boceto guardado en este dispositivo (${formatBytes(event.sketch?.size)}). La nube no sincronizó; tocá Guardar cambios cuando Supabase vuelva a responder.`
-              : `El navegador no pudo guardar este boceto (${formatBytes(prepared.size)}). Probá con una imagen más liviana o PDF.`;
-            showGlobalSaveDone(localSaved ? "Boceto guardado local. Nube pendiente." : "No se pudo guardar el boceto", !localSaved);
-            setStatus(detail.querySelector("[data-sketch-status]"), message, true);
-          });
-        } else {
+        requestAnimationFrame(() => {
+          hideSketchProgress();
+          showGlobalSaveDone("Boceto guardado localmente");
+          setStatus(detail.querySelector("[data-sketch-status]"), `Boceto guardado en este dispositivo (${formatBytes(event.sketch?.size)}). Sincronizando nube en segundo plano.`);
+        });
+        cloudUpsertEvent(event).then(result => {
+          if (getSelected()?.id !== event.id) return;
+          if (!result.ok) {
+            requestAnimationFrame(() => {
+              setStatus(detail.querySelector("[data-sketch-status]"), "Boceto guardado localmente. La nube queda pendiente hasta que Supabase vuelva a responder.", true);
+            });
+            return;
+          }
           requestAnimationFrame(() => {
             showSketchDone("Boceto guardado y sincronizado");
           });
-        }
+        });
       } catch (error) {
         console.error("No pude guardar el boceto", error);
         hideSketchProgress();
