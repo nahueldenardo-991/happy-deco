@@ -31,6 +31,7 @@
       margin: 0;
       background: var(--bg);
       color: var(--ink);
+      overflow-x: hidden;
     }
 
     button, input, textarea, select {
@@ -733,7 +734,8 @@
     }
 
     .material-picker input:focus,
-    .material-row input:focus {
+    .material-row input:focus,
+    .material-row textarea:focus {
       outline: none;
       border-color: var(--teal);
       box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
@@ -800,6 +802,18 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       font-size: 16px;
+      background: #fff;
+    }
+
+    .material-row textarea {
+      grid-column: 1 / -1;
+      width: 100%;
+      min-height: 54px;
+      resize: vertical;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
       background: #fff;
     }
 
@@ -924,11 +938,23 @@
       }
 
       main {
-        padding: 14px;
+        width: calc(100vw - 28px);
+        padding: 14px 0;
       }
 
       .event-list, .hero-grid, .two-col, .form-grid {
         grid-template-columns: 1fr;
+      }
+
+      .detail-shell,
+      .hero,
+      .workflow,
+      .form-panel,
+      .two-col,
+      .sketch-card {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
       }
 
       .sketch-actions,
@@ -1021,6 +1047,8 @@
     };
     const PROCESS_TABLE = "happy_deco_process_events";
     const DASHBOARD_TABLE = "happy_deco_dashboard_records";
+    const DASHBOARD_STORAGE_KEY = "happyDecoDashboardRecords";
+    const FINANCE_STORAGE_KEY = "happyDecoFinanceV1";
     const FINANCE_RECORD_ID = "FINANCE-SHARED-STATE-V1";
     const DEFAULT_PROPOSAL_INCLUSIONS = {
       "Express": "Panel con funda; mesa principal; armado de mesa; globos; nombre; personaje impreso",
@@ -1477,7 +1505,6 @@
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
       detail.querySelector("#proposalType")?.addEventListener("change", (event) => updateProposalSelection(event.target.value));
-      detail.querySelector("[data-apply-proposal-base]")?.addEventListener("click", applySelectedProposalBase);
       detail.querySelector("[data-refresh-finance-catalog]")?.addEventListener("click", refreshFinanceCatalog);
       detail.querySelector("[data-toggle-material-picker]")?.addEventListener("click", () => {
         const picker = detail.querySelector("#materialPicker");
@@ -1501,6 +1528,9 @@
       });
       renderMaterialResults("");
       detail.querySelectorAll("[data-material-qty]").forEach(input => {
+        input.addEventListener("input", updateMaterialsDraft);
+      });
+      detail.querySelectorAll("[data-material-detail]").forEach(input => {
         input.addEventListener("input", updateMaterialsDraft);
       });
       detail.querySelectorAll("[data-remove-material]").forEach(button => {
@@ -1635,7 +1665,6 @@
             ${proposals.map(proposal => `<option value="${escapeAttr(proposal.name)}" ${normalizeText(proposal.name) === normalizeText(current) ? "selected" : ""}>${escapeHtml(proposal.name)}</option>`).join("")}
           </select>
           <div class="materials-actions">
-            <button class="ghost" type="button" data-apply-proposal-base>Cargar componentes base</button>
             <button class="ghost" type="button" data-refresh-finance-catalog>Actualizar desde Finanzas</button>
           </div>
           <span class="hint">${financeCatalog.proposals.length ? "Las propuestas vienen de Finanzas." : "Todavía no llegó el catálogo de Finanzas; podés seleccionar la propuesta y actualizar después."}</span>
@@ -1644,7 +1673,6 @@
     }
 
     function renderMaterialsEditor(event) {
-      ensureBaseProposalMaterials(event);
       const items = currentMaterialItems(event);
       const materialCount = items.length;
       const total = items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitCost || 0), 0);
@@ -1661,7 +1689,7 @@
           <div class="materials-editor">
             <div class="proposal-source">
               <strong>Propuesta detectada:</strong> ${escapeHtml(proposalLabel)}.
-              ${proposal ? "Los componentes base de esa propuesta se cargan automáticamente." : "Cuando Finanzas tenga cargada esa propuesta, sus componentes base aparecerán automáticamente."}
+              La propuesta queda como referencia del evento; los materiales reales se cargan manualmente desde Ítems y precios.
             </div>
             <div class="material-picker" id="materialPicker">
               <button class="ghost material-picker-toggle" type="button" data-toggle-material-picker>
@@ -1679,7 +1707,7 @@
               </div>
             </div>
             <div class="materials-list" data-materials-list>
-              ${items.length ? items.map((material, index) => renderMaterialRow(material, index)).join("") : `<div class="hint">Buscá y agregá materiales desde Ítems y precios. Si la propuesta tiene componentes cargados, aparecen automáticamente acá.</div>`}
+              ${items.length ? items.map((material, index) => renderMaterialRow(material, index)).join("") : `<div class="hint">Buscá y agregá solo los materiales realmente usados. Lo cargado acá alimenta Producción y el costo real en Finanzas.</div>`}
             </div>
             <div class="materials-counter" data-materials-counter>${materialCount} ítem${materialCount === 1 ? "" : "s"} detectado${materialCount === 1 ? "" : "s"} · costo real base ${formatMoney(total)}</div>
           </div>
@@ -1707,6 +1735,7 @@
           <input data-material-cost type="number" min="0" step="1" value="${escapeAttr(unitCost)}" readonly aria-label="Costo unitario">
           <div class="material-subtotal">${formatMoney(subtotal)}</div>
           <button class="danger" type="button" data-remove-material="${index}">Quitar</button>
+          <textarea data-material-detail rows="2" placeholder="Detalle para producción o costos: color, medida, proveedor, aclaración...">${escapeHtml(material.detail || "")}</textarea>
         </div>
       `;
     }
@@ -1736,7 +1765,6 @@
       markEditing();
       event.proposalType = value;
       event.updatedAt = new Date().toISOString();
-      mergeProposalBaseIntoEvent(event);
       scheduleSaveEvents();
       render();
     }
@@ -1928,6 +1956,8 @@
       event.materials = materialItemsToText(event.materialItems);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
       scheduleSaveEvents();
       renderDetail();
       requestAnimationFrame(() => {
@@ -1952,6 +1982,8 @@
       event.materials = materialItemsToText(values);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
       scheduleSaveEvents();
       renderDetail();
       setStatus(detail.querySelector("[data-materials-status]"), "Material quitado. Recordá guardar cambios.");
@@ -1966,6 +1998,8 @@
       event.materials = materialItemsToText(materials);
       event.updatedAt = new Date().toISOString();
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
       scheduleSaveEvents();
       updateMaterialsCounter(materials);
       setStatus(detail.querySelector("[data-materials-status]"), "Cambios sin guardar");
@@ -1981,6 +2015,8 @@
       event.updatedAt = new Date().toISOString();
       state.events = sanitizeEvents(state.events);
       localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
       const result = await cloudUpsertEvent(event);
       renderList();
       if (!result.ok) {
@@ -2000,12 +2036,18 @@
           name: row.dataset.itemName || "",
           category: row.dataset.itemCategory || "",
           quantity: Number(row.querySelector("[data-material-qty]")?.value) || 0,
-          unitCost: Number(row.querySelector("[data-material-cost]")?.value) || 0
+          unitCost: Number(row.querySelector("[data-material-cost]")?.value) || 0,
+          detail: row.querySelector("[data-material-detail]")?.value || ""
         }))
         .filter(item => item.name && item.quantity > 0);
     }
 
     function updateMaterialsCounter(materials = readMaterialItemsRows()) {
+      detail.querySelectorAll("[data-material-row]").forEach(row => {
+        const subtotal = (Number(row.querySelector("[data-material-qty]")?.value) || 0) * (Number(row.querySelector("[data-material-cost]")?.value) || 0);
+        const subtotalElement = row.querySelector(".material-subtotal");
+        if (subtotalElement) subtotalElement.textContent = formatMoney(subtotal);
+      });
       const counter = detail.querySelector("[data-materials-counter]");
       if (!counter) return;
       const count = materials.length;
@@ -2211,7 +2253,6 @@
     async function cloudUpsertDashboardMaterials(event) {
       if (!event?.id) return;
       const materialItems = normalizeMaterialItems(event.materialItems);
-      if (!materialItems.length) return;
       try {
         const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(event.id)}&select=data&limit=1`);
         const current = Array.isArray(rows) ? rows[0]?.data : null;
@@ -2230,6 +2271,81 @@
         });
       } catch (error) {
         console.warn("Proceso guardó materiales, pero no pudo reflejarlos en Dashboard para Finanzas", error);
+      }
+    }
+
+    function syncDashboardMaterialsLocally(event) {
+      if (!event?.id) return;
+      const records = readLocalList(DASHBOARD_STORAGE_KEY);
+      const index = records.findIndex(record => record.id === event.id);
+      if (index < 0) return;
+      const materialItems = normalizeMaterialItems(event.materialItems);
+      records[index] = {
+        ...records[index],
+        materials: event.materials || materialItemsToText(materialItems),
+        materialItems,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(DASHBOARD_STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function syncFinanceEventLocally(event) {
+      if (!event?.id) return;
+      let finance;
+      try {
+        finance = JSON.parse(localStorage.getItem(FINANCE_STORAGE_KEY) || "null");
+      } catch {
+        return;
+      }
+      if (!finance || typeof finance !== "object") return;
+      const records = readLocalList(DASHBOARD_STORAGE_KEY);
+      const record = records.find(item => item.id === event.id) || {};
+      const materialItems = normalizeMaterialItems(event.materialItems);
+      const financeEvent = {
+        id: `sales-${event.id}`,
+        source: "sales",
+        sourceId: event.id,
+        cliente: event.client || record.cliente || "Sin cliente",
+        fecha: event.date || record.fechaEvento || "",
+        propuesta: event.proposalType || record.propuesta || event.package || "Sin definir",
+        proposalDetail: record.incluye || event.package || "",
+        precio: Number(record.monto) || moneyToNumber(event.budget) || 0,
+        extras: 0,
+        descuento: 0,
+        commissionRate: 0,
+        km: 20,
+        hours: 0,
+        estimatedCost: Number(record.costo) || 0,
+        actualCost: 0,
+        realCostConfirmed: false,
+        realCostSource: "",
+        materialItems,
+        materials: event.materials || materialItemsToText(materialItems),
+        paid: Number(record.senia) || 0,
+        stage: record.etapa || "",
+        operativeStatus: record.estadoOperativo || event.operativeStatus || "",
+        updatedAt: new Date().toISOString()
+      };
+      const events = Array.isArray(finance.events) ? finance.events : [];
+      const index = events.findIndex(item => item.sourceId === event.id || item.id === financeEvent.id);
+      finance.events = index >= 0
+        ? events.map((item, itemIndex) => itemIndex === index ? { ...item, ...financeEvent } : item)
+        : [...events, financeEvent];
+      localStorage.setItem(FINANCE_STORAGE_KEY, JSON.stringify(finance));
+    }
+
+    function moneyToNumber(value) {
+      const clean = String(value || "").replace(/[^\d,-]/g, "").replace(/\./g, "").replace(",", ".");
+      const number = Number(clean);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function readLocalList(key) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(value) ? value.filter(Boolean) : [];
+      } catch {
+        return [];
       }
     }
 
@@ -2395,7 +2511,8 @@
         name,
         category: String(item.category || item.categoria || "Sin categoría").trim() || "Sin categoría",
         quantity,
-        unitCost
+        unitCost,
+        detail: String(item.detail || item.detalle || item.notes || item.nota || "").trim()
       };
     }
 
@@ -2404,7 +2521,10 @@
     }
 
     function materialItemsToText(items) {
-      return normalizeMaterialItems(items).map(item => item.quantity > 1 ? `${item.quantity} x ${item.name}` : item.name);
+      return normalizeMaterialItems(items).map(item => {
+        const base = item.quantity > 1 ? `${item.quantity} x ${item.name}` : item.name;
+        return item.detail ? `${base} - ${item.detail}` : base;
+      });
     }
 
     function defaultFinanceProposals() {
