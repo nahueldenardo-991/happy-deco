@@ -2220,7 +2220,7 @@
         const readable = readableError(error);
         storeLocalDashboardHandoff({ lead, recordId, dashboardRecord, processEvent, error: readable });
         if (!options.silent) {
-          alert(`Supabase está bloqueando la sincronización en la nube.\n\nDejé este pase guardado en este dispositivo como pendiente de sincronizar. Cuando Supabase vuelva a responder, tocá Nube activa / Actualizar nube para reintentar.\n\nImportante: las socias no lo verán en otros dispositivos hasta que la nube vuelva a estar disponible.\n\nDetalle: ${readable}`);
+          showToast("Guardado local. Queda pendiente de nube hasta resolver Supabase.");
         }
         if (button) {
           button.disabled = false;
