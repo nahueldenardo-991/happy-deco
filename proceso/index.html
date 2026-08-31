@@ -1852,8 +1852,8 @@
         if (!result.ok) {
           requestAnimationFrame(() => {
             const message = localSaved
-              ? "Boceto cargado en este dispositivo. Tocá Guardar cambios para reintentar sincronizar."
-              : "El boceto es pesado y no llegó a sincronizarse. Probá con una imagen más liviana o PDF.";
+              ? `Boceto guardado en este dispositivo (${formatBytes(event.sketch?.size)}). La nube no sincronizó; tocá Guardar cambios cuando Supabase vuelva a responder.`
+              : `El navegador no pudo guardar este boceto (${formatBytes(prepared.size)}). Probá con una imagen más liviana o PDF.`;
             setStatus(detail.querySelector("[data-sketch-status]"), message, true);
           });
         } else {
