@@ -534,6 +534,11 @@
       background: #effcf6;
     }
 
+    .handoff-panel.pending {
+      border-color: rgba(208, 134, 34, .36);
+      background: #fff8e7;
+    }
+
     .handoff-line {
       display: flex;
       flex-wrap: wrap;
@@ -579,6 +584,7 @@
     .sync-ready { background: #fff0cd; color: #8a5512; }
     .sync-sent { background: #dff7ea; color: var(--ok); }
     .sync-blocked { background: #ffe1e1; color: var(--danger); }
+    .sync-pending { background: #fff0cd; color: #8a5512; }
 
     .detail-drawer {
       position: fixed;
@@ -1158,6 +1164,9 @@
     ];
     const DATA_TABLE = "happy_deco_dashboard_records";
     const PROCESS_TABLE = "happy_deco_process_events";
+    const DASHBOARD_STORAGE_KEY = "happyDecoDashboardRecords";
+    const PROCESS_STORAGE_KEY = "happyDecoEvents";
+    const PENDING_DASHBOARD_HANDOFFS_KEY = "happyDecoPendingDashboardHandoffs";
     const STAGES = ["Consulta nueva", "Datos incompletos", "Seguimiento", "Presupuesto enviado", "Señado", "Pagado completo", "Realizado", "Cancelado"];
     const PIPELINE_STAGES = ["Consulta nueva", "Datos incompletos", "Seguimiento", "Presupuesto enviado"];
     const RESPONSABLES = ["Cati", "Xime", "Cati + Xime", "Juli"];
@@ -1241,6 +1250,7 @@
       els.resetBtn.addEventListener("click", resetForm);
       els.newBtn.addEventListener("click", resetForm);
       els.exportBtn.addEventListener("click", exportCsv);
+      els.cloudBtn.addEventListener("click", () => pullCloudLeads({ manual: true }));
       els.searchInput.addEventListener("input", render);
       els.filterResponsable.addEventListener("change", render);
       els.filterAlerta.addEventListener("change", render);
@@ -1329,6 +1339,8 @@
         lugar: lead.lugar || "",
         observaciones: lead.observaciones || "",
         dashboardRecordId: lead.dashboardRecordId || "",
+        dashboardSyncStatus: lead.dashboardSyncStatus || "",
+        dashboardSyncError: lead.dashboardSyncError || "",
         productionSentAt: lead.productionSentAt || "",
         updatedAt: lead.updatedAt || new Date().toISOString()
       })).sort((a, b) => String(a.proximaAccionFecha || "9999").localeCompare(String(b.proximaAccionFecha || "9999")));
@@ -1764,6 +1776,16 @@
 
     function salesGuideState(lead) {
       const missing = dashboardMissingFields(lead);
+      if (isDashboardSyncPending(lead)) {
+        return {
+          key: "pending",
+          title: "Pendiente de nube",
+          action: "dashboard",
+          button: "Reintentar Dashboard",
+          missing,
+          help: "El pase quedó guardado localmente. Reintentá cuando Supabase vuelva a estar disponible."
+        };
+      }
       if (lead.dashboardRecordId) {
         return {
           key: "synced",
@@ -1992,10 +2014,11 @@
 
     function syncStateRows(lead) {
       const hasDashboard = Boolean(lead.dashboardRecordId);
+      const pending = isDashboardSyncPending(lead);
       return [
         { label: "CRM", value: "Activo", className: "sync-sent" },
-        { label: "Dashboard", value: hasDashboard ? "Activo" : "Pendiente", className: hasDashboard ? "sync-sent" : "sync-blocked" },
-        { label: "Proceso", value: hasDashboard ? "Activo" : "Pendiente", className: hasDashboard ? "sync-sent" : "sync-blocked" },
+        { label: "Dashboard", value: pending ? "Pendiente de nube" : hasDashboard ? "Activo" : "Pendiente", className: pending ? "sync-pending" : hasDashboard ? "sync-sent" : "sync-blocked" },
+        { label: "Proceso", value: pending ? "Pendiente de nube" : hasDashboard ? "Activo" : "Pendiente", className: pending ? "sync-pending" : hasDashboard ? "sync-sent" : "sync-blocked" },
         { label: "Producción", value: "Se valida en Producción", className: "status-muted" },
         { label: "Finanzas", value: "Se valida en Finanzas", className: "status-muted" }
       ];
@@ -2046,6 +2069,16 @@
 
     function dashboardHandoffState(lead) {
       const missing = dashboardMissingFields(lead);
+      if (isDashboardSyncPending(lead)) {
+        return {
+          status: "pending",
+          pill: "Pendiente de nube",
+          className: "pending",
+          pillClass: "sync-pending",
+          button: "Reintentar Dashboard",
+          help: "El pase quedó guardado en este dispositivo. Las socias lo verán cuando Supabase vuelva a sincronizar y se reintente."
+        };
+      }
       if (lead.dashboardRecordId) {
         return {
           status: "sent",
@@ -2100,6 +2133,10 @@
       return required.filter(([key]) => !String(lead[key] ?? "").trim()).map(([, label]) => label);
     }
 
+    function isDashboardSyncPending(lead) {
+      return Boolean(lead.dashboardRecordId && lead.dashboardSyncStatus === "pending");
+    }
+
     function renderDashboardHandoff(lead, handoff, compact = false) {
       const disabled = handoff.disabled ? "disabled" : "";
       const title = handoff.disabled ? `title="${escapeHtml(handoff.help)}"` : "";
@@ -2147,13 +2184,15 @@
         button.textContent = "Enviando...";
       }
       const recordId = lead.dashboardRecordId || `event-${lead.id}`;
+      let dashboardRecord = leadToDashboardRecord(lead, recordId);
+      let processEvent = leadToProcessEvent(lead, recordId);
       try {
         const [existingDashboard, existingProcess] = await Promise.all([
           fetchCloudRecord(DATA_TABLE, recordId),
           fetchCloudRecord(PROCESS_TABLE, recordId)
         ]);
-        const dashboardRecord = mergeDashboardRecord(existingDashboard, leadToDashboardRecord(lead, recordId));
-        const processEvent = mergeProcessEvent(existingProcess, leadToProcessEvent(lead, recordId));
+        dashboardRecord = mergeDashboardRecord(existingDashboard, dashboardRecord);
+        processEvent = mergeProcessEvent(existingProcess, processEvent);
         await cloudUpsertRows(DATA_TABLE, [{ id: recordId, data: dashboardRecord, updated_at: dashboardRecord.updatedAt }]);
         await cloudUpsertProcessEvent(recordId, processEvent);
         const [savedDashboard, savedProcess] = await Promise.all([
@@ -2163,8 +2202,11 @@
         if (!savedDashboard?.id) throw new Error("El Dashboard no confirmó el guardado del evento.");
         if (!savedProcess?.id) throw new Error("Proceso no confirmó el guardado del evento.");
         lead.dashboardRecordId = recordId;
+        lead.dashboardSyncStatus = "";
+        lead.dashboardSyncError = "";
         lead.productionSentAt = lead.productionSentAt || new Date().toISOString();
         lead.updatedAt = new Date().toISOString();
+        removePendingDashboardHandoff(recordId);
         const leadSync = await cloudUpsertLeads([lead]);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
         render();
@@ -2175,12 +2217,118 @@
         }
       } catch (error) {
         console.error("No pude pasar al Dashboard", error);
-        if (!options.silent) alert(`No pude pasar al Dashboard.\n\nToca Actualizar y reintenta. Si vuelve a pasar, enviame captura de este detalle:\n${readableError(error)}`);
+        const readable = readableError(error);
+        storeLocalDashboardHandoff({ lead, recordId, dashboardRecord, processEvent, error: readable });
+        if (!options.silent) {
+          alert(`Supabase está bloqueando la sincronización en la nube.\n\nDejé este pase guardado en este dispositivo como pendiente de sincronizar. Cuando Supabase vuelva a responder, tocá Nube activa / Actualizar nube para reintentar.\n\nImportante: las socias no lo verán en otros dispositivos hasta que la nube vuelva a estar disponible.\n\nDetalle: ${readable}`);
+        }
         if (button) {
           button.disabled = false;
-          button.textContent = wasLinked ? "Actualizar Dashboard" : "Pasar al Dashboard";
+          button.textContent = "Reintentar Dashboard";
         }
       }
+    }
+
+    function storeLocalDashboardHandoff({ lead, recordId, dashboardRecord, processEvent, error }) {
+      const now = new Date().toISOString();
+      const localDashboard = readLocalList(DASHBOARD_STORAGE_KEY);
+      const currentDashboard = localDashboard.find(item => item.id === recordId) || {};
+      const savedDashboard = mergeDashboardRecord(currentDashboard, { ...dashboardRecord, id: recordId, updatedAt: now });
+      writeLocalList(DASHBOARD_STORAGE_KEY, [savedDashboard, ...localDashboard.filter(item => item.id !== recordId)]);
+
+      const localProcess = readLocalList(PROCESS_STORAGE_KEY);
+      const currentProcess = localProcess.find(item => item.id === recordId) || {};
+      const savedProcess = mergeProcessEvent(currentProcess, { ...processEvent, id: recordId, updatedAt: now });
+      writeLocalList(PROCESS_STORAGE_KEY, [savedProcess, ...localProcess.filter(item => item.id !== recordId)]);
+
+      lead.dashboardRecordId = recordId;
+      lead.dashboardSyncStatus = "pending";
+      lead.dashboardSyncError = error || "Pendiente de nube";
+      lead.productionSentAt = lead.productionSentAt || now;
+      lead.updatedAt = now;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+      queuePendingDashboardHandoff({ lead, recordId, dashboardRecord: savedDashboard, processEvent: savedProcess, error });
+      render();
+    }
+
+    function readLocalList(key) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(value) ? value.filter(Boolean) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function writeLocalList(key, value) {
+      localStorage.setItem(key, JSON.stringify(Array.isArray(value) ? value : []));
+    }
+
+    function loadPendingDashboardHandoffs() {
+      return readLocalList(PENDING_DASHBOARD_HANDOFFS_KEY);
+    }
+
+    function savePendingDashboardHandoffs(items) {
+      writeLocalList(PENDING_DASHBOARD_HANDOFFS_KEY, items);
+    }
+
+    function queuePendingDashboardHandoff(entry) {
+      const current = loadPendingDashboardHandoffs();
+      const previous = current.find(item => item.recordId === entry.recordId);
+      const queued = {
+        ...entry,
+        queuedAt: previous?.queuedAt || new Date().toISOString(),
+        attempts: previous?.attempts || 0,
+        lastError: entry.error || previous?.lastError || ""
+      };
+      savePendingDashboardHandoffs([queued, ...current.filter(item => item.recordId !== entry.recordId)]);
+    }
+
+    function removePendingDashboardHandoff(recordId) {
+      savePendingDashboardHandoffs(loadPendingDashboardHandoffs().filter(item => item.recordId !== recordId));
+    }
+
+    async function retryPendingDashboardHandoffs(options = {}) {
+      const pending = loadPendingDashboardHandoffs();
+      if (!pending.length || !getCloudConfig()) return { attempted: 0, synced: 0, remaining: pending.length };
+      const remaining = [];
+      let synced = 0;
+      for (const item of pending) {
+        try {
+          const dashboardRecord = { ...item.dashboardRecord, updatedAt: new Date().toISOString() };
+          const processEvent = { ...item.processEvent, updatedAt: new Date().toISOString() };
+          await cloudUpsertRows(DATA_TABLE, [{ id: item.recordId, data: dashboardRecord, updated_at: dashboardRecord.updatedAt }]);
+          await cloudUpsertProcessEvent(item.recordId, processEvent);
+          const lead = leads.find(current => current.id === item.lead?.id) || item.lead;
+          if (lead) {
+            lead.dashboardRecordId = item.recordId;
+            lead.dashboardSyncStatus = "";
+            lead.dashboardSyncError = "";
+            lead.updatedAt = new Date().toISOString();
+            const leadSync = await cloudUpsertLeads([lead]);
+            if (leadSync?.ok === false) throw leadSync.error || new Error("No se pudo sincronizar la ficha CRM.");
+          }
+          synced += 1;
+        } catch (error) {
+          remaining.push({
+            ...item,
+            attempts: (item.attempts || 0) + 1,
+            lastError: readableError(error)
+          });
+        }
+      }
+      savePendingDashboardHandoffs(remaining);
+      if (synced) {
+        leads = sanitizeLeads(leads);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+        render();
+      }
+      if (!options.silent) {
+        showToast(remaining.length
+          ? `${synced} pase(s) sincronizado(s). ${remaining.length} siguen pendientes.`
+          : `${synced} pase(s) pendiente(s) sincronizado(s).`);
+      }
+      return { attempted: pending.length, synced, remaining: remaining.length };
     }
 
     async function cloudUpsertProcessEvent(recordId, processEvent) {
@@ -2346,18 +2494,26 @@
       return text ? JSON.parse(text) : null;
     }
 
-    async function pullCloudLeads() {
+    async function pullCloudLeads(options = {}) {
       if (!getCloudConfig()) return;
       try {
+        els.cloudBtn.textContent = "Actualizando...";
+        const pendingResult = await retryPendingDashboardHandoffs({ silent: true });
         const rows = await cloudRequest(`${DATA_TABLE}?select=id,data&order=updated_at.desc`);
         const crmRows = Array.isArray(rows) ? rows.map(row => row.data).filter(data => data?.module === "crm") : [];
         leads = sanitizeLeads(crmRows);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
         render();
         els.cloudBtn.textContent = "Nube activa";
+        if (options.manual) {
+          showToast(pendingResult?.synced
+            ? `${pendingResult.synced} pase(s) pendiente(s) sincronizado(s).`
+            : "CRM actualizado desde la nube.");
+        }
       } catch (error) {
         els.cloudBtn.textContent = "Error nube";
         console.error("No pude sincronizar CRM", error);
+        if (options.manual) showToast("No se pudo actualizar la nube. Revisá la conexión o Supabase.");
       }
     }
 
@@ -2432,6 +2588,7 @@
     }
 
     function alertState(lead) {
+      if (isDashboardSyncPending(lead)) return { key: "pending", label: "Pendiente de nube", className: "sync-pending" };
       if (lead.dashboardRecordId) return { key: "sent", label: "En Dashboard", className: "status-ok" };
       if (!lead.proximaAccionFecha) return { key: "", label: "Sin fecha", className: "status-muted" };
       const diff = daysUntil(lead.proximaAccionFecha);
