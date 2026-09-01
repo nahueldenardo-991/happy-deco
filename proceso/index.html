@@ -1970,7 +1970,7 @@
           if (getSelected()?.id !== event.id) return;
           if (!result.ok) {
             requestAnimationFrame(() => {
-              setStatus(detail.querySelector("[data-sketch-status]"), "Boceto guardado localmente. La nube queda pendiente hasta que Supabase vuelva a responder.", true);
+              setStatus(detail.querySelector("[data-sketch-status]"), "Boceto guardado en este dispositivo. Pendiente de nube hasta que Supabase vuelva a responder.");
             });
             return;
           }
@@ -2457,7 +2457,7 @@
         render();
         button.textContent = "Nube activa";
       } catch (error) {
-        button.textContent = "Error nube";
+        button.textContent = "Nube pendiente";
         console.error("No pude sincronizar proceso", error);
       }
     }
