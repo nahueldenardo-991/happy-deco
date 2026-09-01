@@ -579,6 +579,30 @@
       flex-wrap: wrap;
     }
 
+    .drive-sketch-tools {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #c8efec;
+      border-radius: 8px;
+      background: #f4fffe;
+    }
+
+    .drive-sketch-tools input {
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+
+    .drive-sketch-tools input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
+    }
+
     .hidden-file {
       position: absolute;
       inset: 0;
@@ -1102,6 +1126,7 @@
     const EVENTS_STORAGE_KEY = "happyDecoEvents";
     const SKETCH_DB_NAME = "happyDecoSketchFiles";
     const SKETCH_STORE_NAME = "sketches";
+    const DRIVE_SKETCH_FOLDER_URL = "https://drive.google.com/drive/folders/1MHDBsbjrDz5II1UdnhLy_cBAGtw_d_GF?usp=sharing";
     const DEFAULT_PROPOSAL_INCLUSIONS = {
       "Express": "Panel con funda; mesa principal; armado de mesa; globos; nombre; personaje impreso",
       "Minimalista": "Panel; mesa principal; guirnalda; globos temáticos; gráfica; nombre; neón",
@@ -1606,6 +1631,7 @@
       detail.querySelector("[data-upload-area]")?.addEventListener("dragover", handleSketchDrag);
       detail.querySelector("[data-upload-area]")?.addEventListener("drop", handleSketchDrop);
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
+      detail.querySelector("[data-remove-drive-sketch]")?.addEventListener("click", removeDriveSketch);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
       detail.querySelector("#proposalType")?.addEventListener("change", (event) => updateProposalSelection(event.target.value));
       detail.querySelector("[data-refresh-finance-catalog]")?.addEventListener("click", refreshFinanceCatalog);
@@ -1711,21 +1737,34 @@
 
     function renderSketchEditor(event) {
       const sketch = event.sketch || null;
-      const preview = sketch
+      const driveUrl = String(event.sketchDriveUrl || event.driveSketchUrl || event.sketchUrl || "").trim();
+      const preview = driveUrl
+        ? renderDriveSketchPreview(driveUrl)
+        : sketch?.dataUrl
         ? renderSketchPreview(sketch)
         : `<div class="sketch-empty">
-            <strong>Tocá para cargar el boceto</strong>
-            <span>JPG, PNG, PDF, DOC o DOCX. En celular podés elegir una imagen de la galería.</span>
+            <strong>Subí el boceto a Drive y pegá el link</strong>
+            <span>Los archivos pesados van en la carpeta de Happy Deco. Acá queda guardado el acceso para Producción.</span>
           </div>`;
       return `
         <div class="sketch-card">
           <div class="section-title">
             <label>Boceto del evento</label>
-            <span class="hint">${sketch ? escapeHtml(`${sketch.name || "Archivo cargado"} · ${formatBytes(sketch.size || 0)}`) : "Se guarda para la ficha de producción."}</span>
+            <span class="hint">${driveUrl ? "Usando link de Google Drive" : sketch ? escapeHtml(`${sketch.name || "Archivo local"} · ${formatBytes(sketch.size || 0)}`) : "Se guarda para la ficha de producción."}</span>
+          </div>
+          <div class="drive-sketch-tools">
+            <div class="sketch-actions">
+              <a class="ghost" href="${escapeAttr(DRIVE_SKETCH_FOLDER_URL)}" target="_blank" rel="noopener">Abrir carpeta de bocetos en Drive</a>
+              ${driveUrl ? `<a class="ghost" href="${escapeAttr(driveUrl)}" target="_blank" rel="noopener">Abrir boceto</a>` : ""}
+              ${driveUrl ? `<button class="danger" type="button" data-remove-drive-sketch>Quitar link</button>` : ""}
+            </div>
+            <label for="sketchDriveUrl">Link del boceto en Drive</label>
+            <input id="sketchDriveUrl" data-field="sketchDriveUrl" type="url" value="${escapeAttr(driveUrl)}" placeholder="Pegá acá el link del archivo subido a Drive">
+            <span class="hint">Recomendado: subí el archivo a la carpeta de Drive y pegá acá el link del archivo, no el de la carpeta.</span>
           </div>
           <div class="sketch-upload-area" data-upload-area>
             <div class="sketch-preview">${preview}</div>
-            <span class="upload-hint-pill">${sketch ? "Cambiar archivo" : "Cargar archivo"}</span>
+            <span class="upload-hint-pill">${sketch ? "Cambiar archivo local" : "Cargar archivo local"}</span>
             <input class="hidden-file" id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
           </div>
           <div class="save-progress" data-sketch-progress>
@@ -1733,11 +1772,11 @@
             <span data-sketch-progress-text>Preparando archivo...</span>
           </div>
           <div class="sketch-actions">
-            ${sketch ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar</a>` : ""}
-            ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar boceto</button>` : ""}
+            ${sketch?.dataUrl ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar archivo local</a>` : ""}
+            ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar archivo local</button>` : ""}
           </div>
           <div class="sketch-status" data-sketch-status></div>
-          <span class="hint">Recomendado: imágenes livianas. El sistema comprime JPG y PNG automáticamente antes de sincronizar.</span>
+          <span class="hint">El link de Drive es el método recomendado para que el boceto no pese dentro de Happy Deco.</span>
         </div>
       `;
     }
@@ -1755,6 +1794,34 @@
           <div class="hint">Archivo Word cargado. Usá Descargar para abrirlo.</div>
         </div>
       `;
+    }
+
+    function renderDriveSketchPreview(url) {
+      const fileId = getGoogleDriveFileId(url);
+      if (fileId) {
+        return `<iframe src="${escapeAttr(`https://drive.google.com/file/d/${fileId}/preview`)}" title="Boceto en Google Drive"></iframe>`;
+      }
+      return `
+        <div class="sketch-empty">
+          <strong>Boceto vinculado desde Drive</strong>
+          <span>No puedo previsualizar este tipo de link, pero Producción puede abrirlo desde el botón.</span>
+        </div>
+      `;
+    }
+
+    function getGoogleDriveFileId(url) {
+      const value = String(url || "").trim();
+      if (!value) return "";
+      const patterns = [
+        /\/file\/d\/([^/]+)/,
+        /[?&]id=([^&]+)/,
+        /\/d\/([^/]+)/
+      ];
+      for (const pattern of patterns) {
+        const match = value.match(pattern);
+        if (match?.[1]) return decodeURIComponent(match[1]);
+      }
+      return "";
     }
 
     function renderProposalSelect(event) {
@@ -2147,6 +2214,15 @@
       renderDetail();
     }
 
+    function removeDriveSketch() {
+      const event = getSelected();
+      if (!event) return;
+      event.sketchDriveUrl = "";
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      renderDetail();
+    }
+
     function addMaterialFromCatalog(itemId) {
       const event = getSelected();
       if (!event) return;
@@ -2517,6 +2593,7 @@
         ...records[index],
         materials: event.materials || materialItemsToText(materialItems),
         materialItems,
+        sketchDriveUrl: event.sketchDriveUrl || "",
         updatedAt: new Date().toISOString()
       };
       localStorage.setItem(DASHBOARD_STORAGE_KEY, JSON.stringify(records));

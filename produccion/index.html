@@ -599,11 +599,34 @@
       const response = await fetch(PRODUCTION_CACHE_PATH, { cache: "no-store" });
       if (!response.ok) throw new Error(`Respaldo ${response.status}`);
       const payload = await response.json();
+      const localRecords = [
+        ...safeJson(localStorage.getItem("happyDecoRecords")),
+        ...safeJson(localStorage.getItem("happyDecoDashboardRecords"))
+      ];
+      const localProcessEvents = safeJson(localStorage.getItem("happyDecoEvents"));
       return {
         generatedAt: payload.generatedAt || "",
-        records: Array.isArray(payload.records) ? payload.records : [],
-        processEvents: Array.isArray(payload.processEvents) ? payload.processEvents : []
+        records: mergeById(Array.isArray(payload.records) ? payload.records : [], localRecords),
+        processEvents: mergeById(Array.isArray(payload.processEvents) ? payload.processEvents : [], localProcessEvents)
       };
+    }
+
+    function mergeById(baseItems, localItems) {
+      const map = new Map();
+      [...baseItems, ...localItems].forEach(item => {
+        if (!item || typeof item !== "object") return;
+        const id = cleanText(item.id);
+        if (!id) return;
+        const previous = map.get(id);
+        if (!previous) {
+          map.set(id, item);
+          return;
+        }
+        const previousTime = Date.parse(previous.updatedAt || previous.updated_at || "") || 0;
+        const itemTime = Date.parse(item.updatedAt || item.updated_at || "") || 0;
+        map.set(id, itemTime >= previousTime ? item : previous);
+      });
+      return [...map.values()];
     }
 
     function formatCacheDate(value) {
@@ -680,7 +703,7 @@
       if (cleanText(event.productionStatus) === "Finalizado") return false;
       const operative = cleanText(event.operativeStatus).toLowerCase();
       const status = cleanText(event.status).toLowerCase();
-      const hasProductionWork = Boolean(event.sketch?.dataUrl) || parseMaterials(event.materials).length > 0;
+      const hasProductionWork = Boolean(event.sketchDriveUrl || event.sketch?.dataUrl) || parseMaterials(event.materials).length > 0;
       return operative === "listo para producir" || ["produccion", "montaje"].includes(status) || hasProductionWork;
     }
 
@@ -706,6 +729,7 @@
         place: event.place || record.lugar || "",
         theme: event.theme || record.tematica || "",
         package: event.package || record.incluye || record.propuesta || "",
+        sketchDriveUrl: event.sketchDriveUrl || record.sketchDriveUrl || "",
         sketch: event.sketch || null,
         materials: event.id
           ? parseMaterials(event.materials)
@@ -754,7 +778,7 @@
           <div class="sheet-grid">
             <div>
               <h3>Boceto</h3>
-              <div class="sketch-box">${renderSketch(item.sketch)}</div>
+              <div class="sketch-box">${renderSketch(item)}</div>
               <div class="observations">
                 <strong>Observaciones</strong><br>
                 ${escapeHtml(item.notes || "Sin observaciones cargadas.")}
@@ -790,11 +814,35 @@
       `;
     }
 
-    function renderSketch(sketch) {
+    function renderSketch(item) {
+      const driveUrl = cleanText(item?.sketchDriveUrl || "");
+      if (driveUrl) {
+        const fileId = getGoogleDriveFileId(driveUrl);
+        if (fileId) {
+          return `<iframe src="${escapeAttr(`https://drive.google.com/file/d/${fileId}/preview`)}" title="Boceto en Google Drive"></iframe>`;
+        }
+        return `<div><strong>Boceto en Google Drive</strong><p class="muted">Abrir desde el link cargado en Proceso.</p><a class="btn" href="${escapeAttr(driveUrl)}" target="_blank" rel="noopener">Abrir boceto</a></div>`;
+      }
+      const sketch = item?.sketch || null;
       if (!sketch?.dataUrl) return `<div>Sin boceto cargado</div>`;
       if (sketch.type?.startsWith("image/")) return `<img src="${escapeAttr(sketch.dataUrl)}" alt="Boceto ${escapeAttr(sketch.name || "")}">`;
       if (sketch.type === "application/pdf") return `<iframe src="${escapeAttr(sketch.dataUrl)}" title="Boceto PDF"></iframe>`;
       return `<div><strong>${escapeHtml(sketch.name || "Archivo de boceto")}</strong><p class="muted">Archivo Word cargado en proceso.</p><a class="btn" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar boceto</a></div>`;
+    }
+
+    function getGoogleDriveFileId(url) {
+      const value = String(url || "").trim();
+      if (!value) return "";
+      const patterns = [
+        /\/file\/d\/([^/]+)/,
+        /[?&]id=([^&]+)/,
+        /\/d\/([^/]+)/
+      ];
+      for (const pattern of patterns) {
+        const match = value.match(pattern);
+        if (match?.[1]) return decodeURIComponent(match[1]);
+      }
+      return "";
     }
 
     function renderEventLifeline(item, compact = false) {
