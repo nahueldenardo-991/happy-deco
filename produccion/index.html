@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Producción | Happy Deco</title>
   <style>
     :root {
@@ -189,6 +192,35 @@
       padding: 9px 11px;
       outline: none;
     }
+
+    .refresh-btn {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 9px 14px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .refresh-btn.syncing {
+      background: #fff7df;
+      color: #8a6820;
+    }
+
+    .cloud-warning {
+      display: none;
+      margin: 0 0 16px;
+      border: 1px solid #ffd7df;
+      border-left: 5px solid var(--rose);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      background: #fff7f9;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .cloud-warning.active { display: block; }
 
     .production-list {
       display: grid;
@@ -458,13 +490,16 @@
         <strong id="counter">Cargando eventos...</strong>
         <p class="subtitle" id="lastUpdate">Leyendo información compartida.</p>
       </div>
+      <button class="refresh-btn" id="refreshBtn" type="button">Actualizar desde nube</button>
       <input class="search" id="search" type="search" placeholder="Buscar por cliente, temática o homenajeado">
     </section>
 
+    <div class="cloud-warning" id="cloudWarning"></div>
     <section class="production-list" id="productionList"></section>
   </main>
 
   <script src="../lifeline.js"></script>
+  <script src="../cloud-bridge.js?v=20260902-2"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -473,12 +508,15 @@
     };
     const DASHBOARD_TABLE = "happy_deco_dashboard_records";
     const PROCESS_TABLE = "happy_deco_process_events";
+    const PRODUCTION_CACHE_PATH = "../data/production-cache.json";
 
     const els = {
       counter: document.querySelector("#counter"),
       lastUpdate: document.querySelector("#lastUpdate"),
       search: document.querySelector("#search"),
       list: document.querySelector("#productionList"),
+      refreshBtn: document.querySelector("#refreshBtn"),
+      cloudWarning: document.querySelector("#cloudWarning"),
       dashboardBtn: document.querySelector("#dashboardBtn")
     };
 
@@ -491,31 +529,116 @@
 
     function init() {
       els.search.addEventListener("input", render);
+      els.refreshBtn.addEventListener("click", () => loadProductionData());
       bindProtectedNavigation();
       if (els.dashboardBtn) els.dashboardBtn.addEventListener("click", openDashboardWithPassword);
       loadProductionData();
     }
 
     async function loadProductionData() {
+      setCloudWarning("");
+      els.refreshBtn.classList.add("syncing");
+      els.refreshBtn.textContent = "Actualizando...";
       try {
         const config = getCloudConfig();
         if (!config) throw new Error("Nube no configurada");
-        const [dashboardRows, processRows] = await Promise.all([
+        const [dashboardResult, processResult] = await Promise.allSettled([
           cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`),
           cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`)
         ]);
-        records = Array.isArray(dashboardRows) ? dashboardRows.map(row => row.data).filter(Boolean) : [];
-        processEvents = Array.isArray(processRows) ? processRows.map(row => row.data).filter(Boolean) : [];
-        localStorage.setItem("happyDecoRecords", JSON.stringify(records));
-        localStorage.setItem("happyDecoEvents", JSON.stringify(processEvents));
-        els.lastUpdate.textContent = `Actualizado ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+        let fallback = null;
+        if (dashboardResult.status === "fulfilled") {
+          records = Array.isArray(dashboardResult.value) ? dashboardResult.value.map(row => row.data).filter(Boolean) : [];
+          localStorage.setItem("happyDecoRecords", JSON.stringify(records));
+        } else {
+          fallback = fallback || await loadProductionCache();
+          records = fallback.records;
+          console.error("No se pudo leer Dashboard para producción", dashboardResult.reason);
+        }
+
+        if (processResult.status === "fulfilled") {
+          processEvents = Array.isArray(processResult.value) ? processResult.value.map(row => row.data).filter(Boolean) : [];
+          localStorage.setItem("happyDecoEvents", JSON.stringify(processEvents));
+        } else {
+          fallback = fallback || await loadProductionCache();
+          processEvents = fallback.processEvents;
+          console.error("No se pudo leer Proceso para producción", processResult.reason);
+        }
+
+        if (fallback) {
+          setCloudWarning("Modo respaldo: este celular no pudo conectar con Firebase. Se muestra la ultima copia publicada de Produccion.");
+        }
+
+        if (fallback && dashboardResult.status === "rejected" && processResult.status === "rejected") {
+          els.lastUpdate.textContent = `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`;
+        } else {
+          els.lastUpdate.textContent = `Actualizado desde nube ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+        }
       } catch (error) {
         console.error("No se pudo leer producción", error);
-        records = safeJson(localStorage.getItem("happyDecoRecords"));
-        processEvents = safeJson(localStorage.getItem("happyDecoEvents"));
-        els.lastUpdate.textContent = "Mostrando datos guardados en este navegador.";
+        try {
+          const fallback = await loadProductionCache();
+          records = fallback.records;
+          processEvents = fallback.processEvents;
+          els.lastUpdate.textContent = `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`;
+          setCloudWarning("Modo respaldo: este celular no pudo conectar con Firebase. Se muestra la ultima copia publicada de Produccion.");
+        } catch (cacheError) {
+          console.error("No se pudo leer respaldo de producción", cacheError);
+          records = [];
+          processEvents = [];
+          els.lastUpdate.textContent = "Sin conexión con la nube ni respaldo.";
+          setCloudWarning("No pude conectar con Firebase ni cargar el respaldo. Revisa internet y volve a intentar.");
+        }
+      } finally {
+        els.refreshBtn.classList.remove("syncing");
+        els.refreshBtn.textContent = "Actualizar desde nube";
       }
       render();
+    }
+
+    async function loadProductionCache() {
+      const response = await fetch(PRODUCTION_CACHE_PATH, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Respaldo ${response.status}`);
+      const payload = await response.json();
+      const localRecords = [
+        ...safeJson(localStorage.getItem("happyDecoRecords")),
+        ...safeJson(localStorage.getItem("happyDecoDashboardRecords"))
+      ];
+      const localProcessEvents = safeJson(localStorage.getItem("happyDecoEvents"));
+      return {
+        generatedAt: payload.generatedAt || "",
+        records: mergeById(Array.isArray(payload.records) ? payload.records : [], localRecords),
+        processEvents: mergeById(Array.isArray(payload.processEvents) ? payload.processEvents : [], localProcessEvents)
+      };
+    }
+
+    function mergeById(baseItems, localItems) {
+      const map = new Map();
+      [...baseItems, ...localItems].forEach(item => {
+        if (!item || typeof item !== "object") return;
+        const id = cleanText(item.id);
+        if (!id) return;
+        const previous = map.get(id);
+        if (!previous) {
+          map.set(id, item);
+          return;
+        }
+        const previousTime = Date.parse(previous.updatedAt || previous.updated_at || "") || 0;
+        const itemTime = Date.parse(item.updatedAt || item.updated_at || "") || 0;
+        map.set(id, itemTime >= previousTime ? item : previous);
+      });
+      return [...map.values()];
+    }
+
+    function formatCacheDate(value) {
+      const date = value ? new Date(value) : null;
+      if (!date || Number.isNaN(date.getTime())) return "disponible";
+      return `del ${date.toLocaleDateString("es-AR")} ${date.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+    }
+
+    function setCloudWarning(message) {
+      els.cloudWarning.textContent = message || "";
+      els.cloudWarning.classList.toggle("active", Boolean(message));
     }
 
     function render() {
@@ -581,7 +704,7 @@
       if (cleanText(event.productionStatus) === "Finalizado") return false;
       const operative = cleanText(event.operativeStatus).toLowerCase();
       const status = cleanText(event.status).toLowerCase();
-      const hasProductionWork = Boolean(event.sketch?.dataUrl) || parseMaterials(event.materials).length > 0;
+      const hasProductionWork = Boolean(event.sketchDriveUrl || event.sketch?.dataUrl) || parseMaterials(event.materials).length > 0;
       return operative === "listo para producir" || ["produccion", "montaje"].includes(status) || hasProductionWork;
     }
 
@@ -607,8 +730,11 @@
         place: event.place || record.lugar || "",
         theme: event.theme || record.tematica || "",
         package: event.package || record.incluye || record.propuesta || "",
+        sketchDriveUrl: event.sketchDriveUrl || record.sketchDriveUrl || "",
         sketch: event.sketch || null,
-        materials: parseMaterials(event.materials).length ? parseMaterials(event.materials) : parseProposalItems(event.package || record.incluye || record.propuesta || ""),
+        materials: event.id
+          ? parseMaterials(event.materials)
+          : parseProposalItems(event.package || record.incluye || record.propuesta || ""),
         materialChecks: event.materialChecks || {},
         productionStatus: event.productionStatus || "Listo para producir",
         notes: mergeNotes([event.productionNotes, event.notes, event.id ? "" : record.observaciones])
@@ -653,7 +779,7 @@
           <div class="sheet-grid">
             <div>
               <h3>Boceto</h3>
-              <div class="sketch-box">${renderSketch(item.sketch)}</div>
+              <div class="sketch-box">${renderSketch(item)}</div>
               <div class="observations">
                 <strong>Observaciones</strong><br>
                 ${escapeHtml(item.notes || "Sin observaciones cargadas.")}
@@ -689,11 +815,35 @@
       `;
     }
 
-    function renderSketch(sketch) {
+    function renderSketch(item) {
+      const driveUrl = cleanText(item?.sketchDriveUrl || "");
+      if (driveUrl) {
+        const fileId = getGoogleDriveFileId(driveUrl);
+        if (fileId) {
+          return `<iframe src="${escapeAttr(`https://drive.google.com/file/d/${fileId}/preview`)}" title="Boceto en Google Drive"></iframe>`;
+        }
+        return `<div><strong>Boceto en Google Drive</strong><p class="muted">Abrir desde el link cargado en Proceso.</p><a class="btn" href="${escapeAttr(driveUrl)}" target="_blank" rel="noopener">Abrir boceto</a></div>`;
+      }
+      const sketch = item?.sketch || null;
       if (!sketch?.dataUrl) return `<div>Sin boceto cargado</div>`;
       if (sketch.type?.startsWith("image/")) return `<img src="${escapeAttr(sketch.dataUrl)}" alt="Boceto ${escapeAttr(sketch.name || "")}">`;
       if (sketch.type === "application/pdf") return `<iframe src="${escapeAttr(sketch.dataUrl)}" title="Boceto PDF"></iframe>`;
       return `<div><strong>${escapeHtml(sketch.name || "Archivo de boceto")}</strong><p class="muted">Archivo Word cargado en proceso.</p><a class="btn" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar boceto</a></div>`;
+    }
+
+    function getGoogleDriveFileId(url) {
+      const value = String(url || "").trim();
+      if (!value) return "";
+      const patterns = [
+        /\/file\/d\/([^/]+)/,
+        /[?&]id=([^&]+)/,
+        /\/d\/([^/]+)/
+      ];
+      for (const pattern of patterns) {
+        const match = value.match(pattern);
+        if (match?.[1]) return decodeURIComponent(match[1]);
+      }
+      return "";
     }
 
     function renderEventLifeline(item, compact = false) {
@@ -714,10 +864,10 @@
     }
 
     function openProtectedUrl(url) {
-      const password = prompt("Acceso administrativo requerido. Ingres? la contrase?a:");
+      const password = prompt("Acceso administrativo requerido. Ingresá la contraseña:");
       if (password === null) return;
       if (password !== ADMIN_PASSWORD) {
-        alert("Contrase?a incorrecta.");
+        alert("Contraseña incorrecta.");
         return;
       }
       sessionStorage.setItem(DASHBOARD_AUTH_SESSION_KEY, "ok");
@@ -864,30 +1014,45 @@
     function getCloudConfig() {
       try {
         const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
-        const active = config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
+        const savedUrl = String(config.url || "");
+        const savedKey = String(config.anonKey || "");
+        const isOfficialProject = savedUrl.includes("niwkiklxyblrvbeusqbd.supabase.co") && savedKey === DEFAULT_CLOUD_CONFIG.anonKey;
+        const active = isOfficialProject ? config : DEFAULT_CLOUD_CONFIG;
+        if (!isOfficialProject && (config.url || config.anonKey)) {
+          localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(DEFAULT_CLOUD_CONFIG));
+        }
         return {
           url: String(active.url || "").replace(/\/$/, ""),
           anonKey: String(active.anonKey || "")
         };
       } catch {
+        localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(DEFAULT_CLOUD_CONFIG));
         return DEFAULT_CLOUD_CONFIG;
       }
     }
 
     async function cloudRequest(path, options = {}) {
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        return window.HappyDecoFirebaseCloud.request(path, options);
+      }
       const config = getCloudConfig();
+      const method = String(options.method || "GET").toUpperCase();
+      const headers = method === "GET"
+        ? { apikey: config.anonKey, ...(options.headers || {}) }
+        : {
+            apikey: config.anonKey,
+            Authorization: `Bearer ${config.anonKey}`,
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+          };
       const response = await fetch(`${config.url}/rest/v1/${path}`, {
         ...options,
-        headers: {
-          apikey: config.anonKey,
-          Authorization: `Bearer ${config.anonKey}`,
-          "Content-Type": "application/json",
-          ...(options.headers || {})
-        }
+        cache: "no-store",
+        headers
       });
       if (!response.ok) throw new Error(await response.text());
-      if (response.status === 204) return null;
-      return response.json();
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
     }
 
     function safeJson(value) {

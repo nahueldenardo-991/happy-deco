@@ -31,6 +31,7 @@
       margin: 0;
       background: var(--bg);
       color: var(--ink);
+      overflow-x: hidden;
     }
 
     button, input, textarea, select {
@@ -578,6 +579,30 @@
       flex-wrap: wrap;
     }
 
+    .drive-sketch-tools {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #c8efec;
+      border-radius: 8px;
+      background: #f4fffe;
+    }
+
+    .drive-sketch-tools input {
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+
+    .drive-sketch-tools input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
+    }
+
     .hidden-file {
       position: absolute;
       inset: 0;
@@ -651,10 +676,228 @@
       100% { transform: translateX(230%); }
     }
 
+    .global-save-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 80;
+      display: none;
+      padding: 9px 18px;
+      border-bottom: 1px solid rgba(41, 139, 133, .2);
+      background: rgba(255, 250, 242, .96);
+      box-shadow: 0 10px 28px rgba(41, 31, 22, .14);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .global-save-indicator.active {
+      display: grid;
+      gap: 6px;
+    }
+
+    .global-save-indicator.done {
+      color: var(--green);
+    }
+
+    .global-save-indicator.error {
+      color: var(--red);
+    }
+
+    .global-save-bar {
+      height: 5px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #efe4d8;
+    }
+
+    .global-save-bar span {
+      display: block;
+      width: 42%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), #8fe4df, var(--gold));
+      animation: savingSlide 1s ease-in-out infinite;
+    }
+
     .materials-editor,
     .materials-list {
       display: grid;
       gap: 12px;
+    }
+
+    .material-picker {
+      display: grid;
+      gap: 8px;
+      position: relative;
+    }
+
+    .material-picker-head {
+      display: grid;
+      gap: 8px;
+    }
+
+    .material-picker-toggle {
+      width: 100%;
+      min-height: 48px;
+      justify-content: space-between;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      box-shadow: none;
+    }
+
+    .material-picker-toggle span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .material-picker-panel {
+      display: none;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 18px 45px rgba(59, 39, 53, .12);
+    }
+
+    .material-picker.open .material-picker-panel {
+      display: grid;
+    }
+
+    .material-category-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .material-category-tabs button {
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      box-shadow: none;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .material-category-tabs button.active {
+      border-color: var(--teal);
+      background: #eefcfb;
+      color: var(--teal);
+    }
+
+    .material-picker input {
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 16px;
+      background: #fff;
+    }
+
+    .material-picker input:focus,
+    .material-row input:focus,
+    .material-row textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
+    }
+
+    .material-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 6px;
+      max-height: 280px;
+      overflow: auto;
+    }
+
+    .material-create-form {
+      display: none;
+      grid-template-columns: minmax(220px, 1.4fr) minmax(150px, .9fr) minmax(110px, .7fr) minmax(110px, .7fr) minmax(110px, .7fr);
+      gap: 8px;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fffafc;
+    }
+
+    .material-create-form.open {
+      display: grid;
+    }
+
+    .material-create-form label {
+      display: grid;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .material-create-form input,
+    .material-create-form select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .material-create-form .wide {
+      grid-column: span 2;
+    }
+
+    .material-create-form .actions-row {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .material-result {
+      width: 100%;
+      min-height: auto;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      text-align: left;
+      box-shadow: none;
+    }
+
+    .material-result strong,
+    .material-result span {
+      display: block;
+    }
+
+    .material-result span {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .material-result mark {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #fff6dc;
+      color: #8a6418;
+      font-size: 12px;
+      font-weight: 900;
     }
 
     .material-row {
@@ -663,6 +906,9 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 100px 120px 100px 88px;
+      gap: 8px;
     }
 
     .material-row input {
@@ -675,14 +921,77 @@
       background: #fff;
     }
 
-    .material-row input:focus {
-      outline: none;
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
+    .material-row textarea {
+      grid-column: 1 / -1;
+      width: 100%;
+      min-height: 54px;
+      resize: vertical;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+
+    .material-row input[readonly] {
+      background: #fffaf5;
+      color: var(--muted);
     }
 
     .material-row .danger {
       min-width: 88px;
+    }
+
+    .material-name {
+      min-height: 46px;
+      display: grid;
+      align-content: center;
+      gap: 2px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      font-weight: 900;
+    }
+
+    .material-name span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .material-subtotal {
+      min-height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #f4fbfa;
+      color: var(--teal);
+      font-weight: 900;
+    }
+
+    .proposal-source {
+      padding: 10px 12px;
+      border: 1px solid rgba(44, 151, 145, .22);
+      border-radius: 8px;
+      background: #f4fbfa;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .proposal-source strong {
+      color: var(--teal);
+    }
+
+    .proposal-select-tools {
+      display: grid;
+      gap: 8px;
+    }
+
+    .proposal-select-tools button {
+      width: 100%;
+      min-height: 42px;
     }
 
     .materials-counter {
@@ -745,15 +1054,28 @@
       }
 
       main {
-        padding: 14px;
+        width: calc(100vw - 28px);
+        padding: 14px 0;
       }
 
       .event-list, .hero-grid, .two-col, .form-grid {
         grid-template-columns: 1fr;
       }
 
+      .detail-shell,
+      .hero,
+      .workflow,
+      .form-panel,
+      .two-col,
+      .sketch-card {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+      }
+
       .sketch-actions,
       .materials-actions,
+      .material-create-form,
       .material-row {
         display: grid;
         grid-template-columns: 1fr;
@@ -780,6 +1102,10 @@
   <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body class="module-process">
+  <div class="global-save-indicator" id="globalSaveIndicator" role="status" aria-live="polite">
+    <span id="globalSaveText">Guardando cambios...</span>
+    <div class="global-save-bar" aria-hidden="true"><span></span></div>
+  </div>
   <div class="app">
     <header>
       <div class="topbar">
@@ -791,7 +1117,7 @@
           </div>
         </div>
         <div class="actions">
-          <button class="ghost" id="cloudBtn" type="button">Configurar nube</button>
+          <button class="ghost" id="cloudBtn" type="button">Nube Firebase</button>
           <button class="ghost" id="exportBtn" type="button">Exportar datos</button>
           <button class="ghost" id="importBtn" type="button">Importar</button>
           <button class="primary" id="newBtn" type="button">Nuevo evento</button>
@@ -834,6 +1160,7 @@
   </div>
 
   <script src="../lifeline.js"></script>
+  <script src="../cloud-bridge.js?v=20260902-2"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -841,6 +1168,28 @@
       anonKey: "sb_publishable_BZOa1hRBnH0KWocgyCZmfw_-lrLIgGd"
     };
     const PROCESS_TABLE = "happy_deco_process_events";
+    const DASHBOARD_TABLE = "happy_deco_dashboard_records";
+    const FIREBASE_API_KEY = "AIzaSyD9jO4G_-O5Fd4pcM5eMtp5lNdxWPkr2Cc";
+    const FIREBASE_PROJECT_ID = "happy-deco-web";
+    const FIREBASE_BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents`;
+    const DASHBOARD_STORAGE_KEY = "happyDecoDashboardRecords";
+    const FINANCE_STORAGE_KEY = "happyDecoFinanceV1";
+    const FINANCE_RECORD_ID = "FINANCE-SHARED-STATE-V1";
+    const EVENTS_STORAGE_KEY = "happyDecoEvents";
+    const SKETCH_DB_NAME = "happyDecoSketchFiles";
+    const SKETCH_STORE_NAME = "sketches";
+    const DRIVE_SKETCH_FOLDER_URL = "https://drive.google.com/drive/folders/1MHDBsbjrDz5II1UdnhLy_cBAGtw_d_GF?usp=sharing";
+    const DEFAULT_PROPOSAL_INCLUSIONS = {
+      "Express": "Panel con funda; mesa principal; armado de mesa; globos; nombre; personaje impreso",
+      "Minimalista": "Panel; mesa principal; guirnalda; globos temáticos; gráfica; nombre; neón",
+      "Clásica": "2 paneles; 3 mesas; globos; gráfica; nombre; alfombra",
+      "Intermedia": "3 paneles; mesa principal + 3 accesorias; alfombra; arco; floreros; gráfica; neón",
+      "Premium": "4 paneles; mesa principal + 5 accesorias; alfombra; arco alto impacto; floreros; gráfica; neón; estante",
+      "Exclusiva": "4 paneles + panel 3D; tarima; mesa principal + 6 accesorias; alfombra; globos; gráfica; neón; luces",
+      "Escenográfica 3x3": "Telón 3x3; panel 3D; mesa principal + 4 accesorias; alfombra; inmersivos; arco; gráfica; neón; luces",
+      "Escenográfica 6x3": "Telón 6x3; panel 3D; mesa principal + 6 accesorias; alfombra; inmersivos; arco; gráfica; neón; luces",
+      "Escenográfica 10x3": "Telón 10x3; panel 3D; mesa principal + 12 accesorias; soportes; alfombra; inmersivos; arco; exhibición; gráfica; neón; luces; piso sublimado"
+    };
 
     const stages = [
       {
@@ -909,16 +1258,21 @@
 
     let editingUntil = 0;
     let pendingSaveTimer = null;
+    let financeCatalog = loadFinanceCatalogLocal();
+    let materialCategoryFilter = "Todas";
+    let dashboardRecordsById = new Map();
 
     state.selectedId = getDeepLinkedEventId() || state.events[0]?.id || null;
 
     const eventList = document.querySelector("#eventList");
     const detail = document.querySelector("#detail");
     const search = document.querySelector("#search");
+    const globalSaveIndicator = document.querySelector("#globalSaveIndicator");
+    const globalSaveText = document.querySelector("#globalSaveText");
 
     document.querySelector("#newBtn").addEventListener("click", createEvent);
     document.querySelector("#exportBtn").addEventListener("click", exportData);
-    document.querySelector("#cloudBtn").addEventListener("click", configureCloud);
+    document.querySelector("#cloudBtn").addEventListener("click", () => pullCloudEvents());
     document.querySelector("#importBtn").addEventListener("click", () => document.querySelector("#importFile").click());
     document.querySelector("#importFile").addEventListener("change", importData);
 
@@ -937,10 +1291,13 @@
 
     render();
     initCloudSync();
+    refreshFinanceCatalog();
+    migrateInlineSketchesToStorage();
+    hydrateSketchesFromStorage();
 
     function loadEvents() {
       try {
-        return sanitizeEvents(JSON.parse(localStorage.getItem("happyDecoEvents") || "[]"));
+        return sanitizeEvents(JSON.parse(localStorage.getItem(EVENTS_STORAGE_KEY) || "[]"));
       } catch {
         return [];
       }
@@ -957,41 +1314,108 @@
           .map(event => ({
             ...event,
             materials: Array.isArray(event.materials) ? event.materials.filter(Boolean) : parseMaterials(event.materials),
-            sketch: event.sketch && event.sketch.dataUrl ? event.sketch : null
+            materialItems: normalizeMaterialItems(event.materialItems),
+            sketch: normalizeSketch(event.sketch)
           }))
         : [];
     }
 
+    function normalizeSketch(sketch) {
+      if (!sketch || typeof sketch !== "object") return null;
+      if (!sketch.dataUrl && !sketch.sketchKey) return null;
+      return {
+        name: sketch.name || "boceto",
+        type: sketch.type || inferFileType(sketch.name || ""),
+        size: Number(sketch.size) || 0,
+        dataUrl: sketch.dataUrl || "",
+        sketchKey: sketch.sketchKey || "",
+        updatedAt: sketch.updatedAt || new Date().toISOString()
+      };
+    }
+
     function saveEvents() {
+      showGlobalSave("Guardando cambios...");
       state.events = sanitizeEvents(state.events);
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
-      cloudUpsertEvents(state.events);
+      saveEventsLocal();
+      cloudUpsertEvents(state.events).then(result => {
+        showGlobalSaveDone(result?.ok === false ? "Guardado local. Nube pendiente." : "Cambios guardados");
+      });
     }
 
     async function saveEventsConfirmed() {
+      showGlobalSave("Guardando cambios...");
       state.events = sanitizeEvents(state.events);
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
-      return cloudUpsertEvents(state.events);
+      saveEventsLocal();
+      const result = await cloudUpsertEvents(state.events);
+      showGlobalSaveDone(result?.ok === false ? "Guardado local. Nube pendiente." : "Cambios guardados");
+      return result;
     }
 
     function scheduleSaveEvents(delay = 900) {
       markEditing();
+      showGlobalSave("Guardando cambios...");
       state.events = sanitizeEvents(state.events);
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
       clearTimeout(pendingSaveTimer);
       pendingSaveTimer = setTimeout(() => {
-        cloudUpsertEvents(state.events);
+        cloudUpsertEvents(state.events).then(result => {
+          showGlobalSaveDone(result?.ok === false ? "Guardado local. Nube pendiente." : "Cambios guardados");
+        });
       }, delay);
     }
 
     function markEditing() {
-      editingUntil = Date.now() + 5000;
+      editingUntil = Date.now() + 30000;
+    }
+
+    function saveEventsLocal() {
+      const payload = JSON.stringify(eventsForLocalStorage(state.events));
+      try {
+        localStorage.setItem(EVENTS_STORAGE_KEY, payload);
+      } catch (error) {
+        localStorage.removeItem(EVENTS_STORAGE_KEY);
+        localStorage.setItem(EVENTS_STORAGE_KEY, payload);
+      }
+    }
+
+    function eventsForLocalStorage(events) {
+      return sanitizeEvents(events).map(event => {
+        const sketch = normalizeSketch(event.sketch);
+        if (!sketch?.sketchKey) return event;
+        return {
+          ...event,
+          sketch: {
+            ...sketch,
+            dataUrl: ""
+          }
+        };
+      });
+    }
+
+    function eventForCloudStorage(event) {
+      const cleanEvent = sanitizeEvents([event])[0];
+      if (!cleanEvent) return null;
+      const sketch = normalizeSketch(cleanEvent.sketch);
+      return {
+        ...cleanEvent,
+        sketch: sketch
+          ? {
+              ...sketch,
+              dataUrl: ""
+            }
+          : null
+      };
+    }
+
+    function hasEmbeddedSketchData(event) {
+      return Boolean(event?.sketch?.dataUrl);
     }
 
     function isEditingNow() {
       const active = document.activeElement;
       const isFormField = active && detail.contains(active) && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName);
-      return isFormField || Date.now() < editingUntil;
+      const isMaterialPickerOpen = Boolean(detail.querySelector("#materialPicker.open"));
+      return isFormField || isMaterialPickerOpen || Date.now() < editingUntil;
     }
 
     function createEvent() {
@@ -1012,6 +1436,7 @@
         commercialNotes: "",
         productionNotes: "",
         materials: [],
+        materialItems: [],
         sketch: null,
         checks: {},
         updatedAt: new Date().toISOString()
@@ -1134,7 +1559,8 @@
     }
 
     function getDeepLinkedEventId() {
-      return new URLSearchParams(window.location.search).get("registro");
+      const params = new URLSearchParams(window.location.search);
+      return params.get("registro") || params.get("evento");
     }
 
     function focusDeepLinkedEvent() {
@@ -1215,6 +1641,7 @@
                 ${field("budget", "Monto/presupuesto", event.budget)}
                 ${field("deposit", "Seña", event.deposit)}
                 ${field("balance", "Saldo", event.balance)}
+                ${renderProposalSelect(event)}
                 <div>
                   <label for="status">Estado manual</label>
                   <select id="status" data-field="status">
@@ -1275,9 +1702,38 @@
       detail.querySelector("[data-upload-area]")?.addEventListener("dragover", handleSketchDrag);
       detail.querySelector("[data-upload-area]")?.addEventListener("drop", handleSketchDrop);
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
-      detail.querySelector("[data-add-material]")?.addEventListener("click", addMaterial);
+      detail.querySelector("[data-remove-drive-sketch]")?.addEventListener("click", removeDriveSketch);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
-      detail.querySelectorAll("[data-material-input]").forEach(input => {
+      detail.querySelector("#proposalType")?.addEventListener("change", (event) => updateProposalSelection(event.target.value));
+      detail.querySelector("[data-refresh-finance-catalog]")?.addEventListener("click", refreshFinanceCatalog);
+      detail.querySelector("[data-toggle-material-picker]")?.addEventListener("click", () => {
+        const picker = detail.querySelector("#materialPicker");
+        picker?.classList.toggle("open");
+        if (picker?.classList.contains("open")) {
+          renderMaterialResults(detail.querySelector("#materialSearch")?.value || "");
+          requestAnimationFrame(() => detail.querySelector("#materialSearch")?.focus());
+        }
+      });
+      detail.querySelector("#materialSearch")?.addEventListener("input", (event) => renderMaterialResults(event.target.value));
+      detail.querySelector("[data-toggle-create-material]")?.addEventListener("click", () => toggleCreateMaterialForm());
+      detail.querySelector("[data-cancel-create-material]")?.addEventListener("click", () => toggleCreateMaterialForm(false));
+      detail.querySelector("[data-create-material-form]")?.addEventListener("submit", createCatalogItemFromProcess);
+      detail.querySelectorAll("[data-material-category]").forEach(button => {
+        button.addEventListener("click", () => {
+          materialCategoryFilter = button.dataset.materialCategory || "Todas";
+          detail.querySelectorAll("[data-material-category]").forEach(tab => tab.classList.toggle("active", tab === button));
+          renderMaterialResults(detail.querySelector("#materialSearch")?.value || "");
+        });
+      });
+      detail.querySelector("#materialResults")?.addEventListener("click", (event) => {
+        const pick = event.target.closest("[data-pick-material]");
+        if (pick) addMaterialFromCatalog(pick.dataset.pickMaterial);
+      });
+      renderMaterialResults("");
+      detail.querySelectorAll("[data-material-qty]").forEach(input => {
+        input.addEventListener("input", updateMaterialsDraft);
+      });
+      detail.querySelectorAll("[data-material-detail]").forEach(input => {
         input.addEventListener("input", updateMaterialsDraft);
       });
       detail.querySelectorAll("[data-remove-material]").forEach(button => {
@@ -1355,21 +1811,34 @@
 
     function renderSketchEditor(event) {
       const sketch = event.sketch || null;
-      const preview = sketch
+      const driveUrl = String(event.sketchDriveUrl || event.driveSketchUrl || event.sketchUrl || "").trim();
+      const preview = driveUrl
+        ? renderDriveSketchPreview(driveUrl)
+        : sketch?.dataUrl
         ? renderSketchPreview(sketch)
         : `<div class="sketch-empty">
-            <strong>Tocá para cargar el boceto</strong>
-            <span>JPG, PNG, PDF, DOC o DOCX. En celular podés elegir una imagen de la galería.</span>
+            <strong>Subí el boceto a Drive y pegá el link</strong>
+            <span>Los archivos pesados van en la carpeta de Happy Deco. Acá queda guardado el acceso para Producción.</span>
           </div>`;
       return `
         <div class="sketch-card">
           <div class="section-title">
             <label>Boceto del evento</label>
-            <span class="hint">${sketch ? escapeHtml(`${sketch.name || "Archivo cargado"} · ${formatBytes(sketch.size || 0)}`) : "Se guarda para la ficha de producción."}</span>
+            <span class="hint">${driveUrl ? "Usando link de Google Drive" : sketch ? escapeHtml(`${sketch.name || "Archivo local"} · ${formatBytes(sketch.size || 0)}`) : "Se guarda para la ficha de producción."}</span>
+          </div>
+          <div class="drive-sketch-tools">
+            <div class="sketch-actions">
+              <a class="ghost" href="${escapeAttr(DRIVE_SKETCH_FOLDER_URL)}" target="_blank" rel="noopener">Abrir carpeta de bocetos en Drive</a>
+              ${driveUrl ? `<a class="ghost" href="${escapeAttr(driveUrl)}" target="_blank" rel="noopener">Abrir boceto</a>` : ""}
+              ${driveUrl ? `<button class="danger" type="button" data-remove-drive-sketch>Quitar link</button>` : ""}
+            </div>
+            <label for="sketchDriveUrl">Link del boceto en Drive</label>
+            <input id="sketchDriveUrl" data-field="sketchDriveUrl" type="url" value="${escapeAttr(driveUrl)}" placeholder="Pegá acá el link del archivo subido a Drive">
+            <span class="hint">Recomendado: subí el archivo a la carpeta de Drive y pegá acá el link del archivo, no el de la carpeta.</span>
           </div>
           <div class="sketch-upload-area" data-upload-area>
             <div class="sketch-preview">${preview}</div>
-            <span class="upload-hint-pill">${sketch ? "Cambiar archivo" : "Cargar archivo"}</span>
+            <span class="upload-hint-pill">${sketch ? "Cambiar archivo local" : "Cargar archivo local"}</span>
             <input class="hidden-file" id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
           </div>
           <div class="save-progress" data-sketch-progress>
@@ -1377,11 +1846,11 @@
             <span data-sketch-progress-text>Preparando archivo...</span>
           </div>
           <div class="sketch-actions">
-            ${sketch ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar</a>` : ""}
-            ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar boceto</button>` : ""}
+            ${sketch?.dataUrl ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar archivo local</a>` : ""}
+            ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar archivo local</button>` : ""}
           </div>
           <div class="sketch-status" data-sketch-status></div>
-          <span class="hint">Recomendado: imágenes livianas. El sistema comprime JPG y PNG automáticamente antes de sincronizar.</span>
+          <span class="hint">El link de Drive es el método recomendado para que el boceto no pese dentro de Happy Deco.</span>
         </div>
       `;
     }
@@ -1401,40 +1870,118 @@
       `;
     }
 
+    function renderDriveSketchPreview(url) {
+      const fileId = getGoogleDriveFileId(url);
+      if (fileId) {
+        return `<iframe src="${escapeAttr(`https://drive.google.com/file/d/${fileId}/preview`)}" title="Boceto en Google Drive"></iframe>`;
+      }
+      return `
+        <div class="sketch-empty">
+          <strong>Boceto vinculado desde Drive</strong>
+          <span>No puedo previsualizar este tipo de link, pero Producción puede abrirlo desde el botón.</span>
+        </div>
+      `;
+    }
+
+    function getGoogleDriveFileId(url) {
+      const value = String(url || "").trim();
+      if (!value) return "";
+      const patterns = [
+        /\/file\/d\/([^/]+)/,
+        /[?&]id=([^&]+)/,
+        /\/d\/([^/]+)/
+      ];
+      for (const pattern of patterns) {
+        const match = value.match(pattern);
+        if (match?.[1]) return decodeURIComponent(match[1]);
+      }
+      return "";
+    }
+
+    function renderProposalSelect(event) {
+      const proposals = proposalOptions(event);
+      const current = proposalForEvent(event)?.name || event.proposalType || extractKnownProposalName(event.package) || "";
+      return `
+        <div class="proposal-select-tools">
+          <label for="proposalType">Propuesta</label>
+          <select id="proposalType">
+            <option value="">Seleccionar propuesta</option>
+            ${proposals.map(proposal => `<option value="${escapeAttr(proposal.name)}" ${normalizeText(proposal.name) === normalizeText(current) ? "selected" : ""}>${escapeHtml(proposal.name)}</option>`).join("")}
+          </select>
+          <div class="materials-actions">
+            <button class="ghost" type="button" data-refresh-finance-catalog>Actualizar desde Finanzas</button>
+          </div>
+          <span class="hint">${financeCatalog.proposals.length ? "Las propuestas vienen de Finanzas." : "Todavía no llegó el catálogo de Finanzas; podés seleccionar la propuesta y actualizar después."}</span>
+        </div>
+      `;
+    }
+
     function renderMaterialsEditor(event) {
-      const materials = Array.isArray(event.materials) ? event.materials : parseMaterials(event.materials);
-      const rows = materials.length ? materials : [""];
-      const materialCount = parseMaterials(materials).length;
+      const items = currentMaterialItems(event);
+      const materialCount = items.length;
+      const total = items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitCost || 0), 0);
+      const proposal = proposalForEvent(event);
+      const proposalLabel = proposal?.name || event.proposalType || extractKnownProposalName(event.package) || proposalName(event) || "Sin propuesta detectada";
       return `
         <div class="sketch-card">
           <div class="section-title">
             <label>Listado de materiales</label>
             <div class="materials-actions">
-              <button class="ghost" type="button" data-add-material>Agregar material</button>
               <button class="primary" type="button" data-save-materials>Guardar materiales</button>
             </div>
           </div>
           <div class="materials-editor">
-            <div class="materials-list" data-materials-list>
-              ${rows.map((material, index) => renderMaterialRow(material, index)).join("")}
+            <div class="proposal-source">
+              <strong>Propuesta detectada:</strong> ${escapeHtml(proposalLabel)}.
+              La propuesta queda como referencia del evento; los materiales reales se cargan manualmente desde Ítems y precios.
             </div>
-            <div class="materials-counter" data-materials-counter>${materialCount} ítem${materialCount === 1 ? "" : "s"} detectado${materialCount === 1 ? "" : "s"}</div>
+            <div class="material-picker" id="materialPicker">
+              <button class="ghost material-picker-toggle" type="button" data-toggle-material-picker>
+                Agregar ítem extra
+                <span>Buscar en Ítems y precios</span>
+              </button>
+            <div class="material-picker-panel">
+              <div class="material-picker-head">
+                <div class="material-category-tabs" aria-label="Filtrar materiales">
+                  ${materialCategoryButtons()}
+                </div>
+                <input id="materialSearch" type="search" placeholder="Buscar por nombre o palabra: panel curvo, globos, impresión..." autocomplete="off">
+                <button class="ghost" type="button" data-toggle-create-material>+ Crear ítem nuevo</button>
+              </div>
+              ${renderMaterialCreateForm()}
+              <div id="materialResults" class="material-results"></div>
+            </div>
+          </div>
+            <div class="materials-list" data-materials-list>
+              ${items.length ? items.map((material, index) => renderMaterialRow(material, index)).join("") : `<div class="hint">Buscá y agregá solo los materiales realmente usados. Lo cargado acá alimenta Producción y el costo real en Finanzas.</div>`}
+            </div>
+            <div class="materials-counter" data-materials-counter>${materialCount} ítem${materialCount === 1 ? "" : "s"} detectado${materialCount === 1 ? "" : "s"} · costo real base ${formatMoney(total)}</div>
           </div>
           <div class="save-progress" data-materials-progress>
             <div class="save-progress-bar"><span></span></div>
             <span>Guardando y sincronizando...</span>
           </div>
           <div class="materials-status" data-materials-status></div>
-          <span class="hint">Cargá un material por casilla y tocá Guardar materiales. Cada material guardado se convierte en un check de la ficha de producción.</span>
+          <span class="hint">Los textos se siguen enviando a Producción como checklist. Los ítems con cantidad y precio alimentan el costo real en Finanzas.</span>
         </div>
       `;
     }
 
     function renderMaterialRow(material, index) {
+      const quantity = Number(material.quantity || 1);
+      const unitCost = Number(material.unitCost || 0);
+      const subtotal = quantity * unitCost;
       return `
-        <div class="material-row" data-material-row>
-          <input data-material-input value="${escapeAttr(material || "")}" placeholder="Ej: Panel curvo con patas" aria-label="Material ${index + 1}">
+        <div class="material-row" data-material-row data-item-id="${escapeAttr(material.itemId || "")}" data-item-name="${escapeAttr(material.name || "")}" data-item-category="${escapeAttr(material.category || "")}">
+          <div class="material-name">
+            ${escapeHtml(material.name || "Material sin nombre")}
+            <span>${escapeHtml(material.category || "Sin categoría")}${unitCost > 0 ? ` · ${formatMoney(unitCost)} c/u` : " · Precio pendiente"}</span>
+          </div>
+          <input data-material-qty type="number" min="0" step="1" value="${escapeAttr(quantity)}" aria-label="Cantidad de ${escapeAttr(material.name || `material ${index + 1}`)}">
+          <input data-material-cost type="number" min="0" step="1" value="${escapeAttr(unitCost)}" readonly aria-label="Costo unitario">
+          <div class="material-subtotal">${formatMoney(subtotal)}</div>
           <button class="danger" type="button" data-remove-material="${index}">Quitar</button>
+          <textarea data-material-detail rows="2" placeholder="Detalle para producción o costos: color, medida, proveedor, aclaración...">${escapeHtml(material.detail || "")}</textarea>
         </div>
       `;
     }
@@ -1456,6 +2003,31 @@
       event.updatedAt = new Date().toISOString();
       saveEvents();
       render();
+    }
+
+    function updateProposalSelection(value) {
+      const event = getSelected();
+      if (!event) return;
+      markEditing();
+      event.proposalType = value;
+      event.updatedAt = new Date().toISOString();
+      scheduleSaveEvents();
+      render();
+    }
+
+    function applySelectedProposalBase() {
+      const event = getSelected();
+      if (!event) return;
+      markEditing();
+      const before = currentMaterialItems(event).length;
+      mergeProposalBaseIntoEvent(event);
+      event.updatedAt = new Date().toISOString();
+      scheduleSaveEvents();
+      render();
+      requestAnimationFrame(() => {
+        const after = currentMaterialItems(getSelected() || {}).length;
+        setStatus(detail.querySelector("[data-materials-status]"), after > before ? "Componentes base cargados desde la propuesta." : "La propuesta ya tenía sus componentes base cargados.");
+      });
     }
 
     function handleSketchUpload(inputEvent) {
@@ -1504,40 +2076,55 @@
       try {
         showSketchProgress(isImage ? "Comprimiendo imagen..." : "Preparando archivo...");
         const prepared = isImage ? await prepareImageSketch(file) : await readFileAsDataUrl(file);
+        const sketchKey = event.sketch?.sketchKey || `sketch-${event.id}-${Date.now()}`;
         event.sketch = {
           name: prepared.name,
           type: prepared.type,
           size: prepared.size,
           dataUrl: prepared.dataUrl,
+          sketchKey,
           updatedAt: new Date().toISOString()
         };
         event.updatedAt = new Date().toISOString();
-        showSketchProgress("Guardando y sincronizando boceto...");
+        showSketchProgress("Guardando boceto en este dispositivo...");
+        await saveSketchFile(sketchKey, event.sketch);
         state.events = sanitizeEvents(state.events);
         let localSaved = true;
         try {
-          localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+          saveEventsLocal();
         } catch (storageError) {
           localSaved = false;
           console.warn("No pude guardar el boceto localmente", storageError);
         }
-        const result = await cloudUpsertEvents(state.events);
+        if (!localSaved) {
+          hideSketchProgress();
+          showGlobalSaveDone("No hubo espacio local para guardar", true);
+          setStatus(status, `No hubo espacio en este navegador para guardar el boceto (${formatBytes(prepared.size)}). Exportá un backup o quitá bocetos viejos antes de reintentar.`, true);
+          if (input) input.value = "";
+          return;
+        }
         renderDetail();
-        if (!result.ok) {
-          requestAnimationFrame(() => {
-            const message = localSaved
-              ? "Boceto cargado en este dispositivo. Tocá Guardar cambios para reintentar sincronizar."
-              : "El boceto es pesado y no llegó a sincronizarse. Probá con una imagen más liviana o PDF.";
-            setStatus(detail.querySelector("[data-sketch-status]"), message, true);
-          });
-        } else {
+        requestAnimationFrame(() => {
+          hideSketchProgress();
+          showGlobalSaveDone("Boceto guardado localmente");
+          setStatus(detail.querySelector("[data-sketch-status]"), `Boceto guardado en este dispositivo (${formatBytes(event.sketch?.size)}). Sincronizando nube en segundo plano.`);
+        });
+        cloudUpsertEvent(event).then(result => {
+          if (getSelected()?.id !== event.id) return;
+          if (!result.ok) {
+            requestAnimationFrame(() => {
+              setStatus(detail.querySelector("[data-sketch-status]"), "Boceto guardado en este dispositivo. Pendiente de nube hasta que Firebase vuelva a responder.");
+            });
+            return;
+          }
           requestAnimationFrame(() => {
             showSketchDone("Boceto guardado y sincronizado");
           });
-        }
+        });
       } catch (error) {
         console.error("No pude guardar el boceto", error);
         hideSketchProgress();
+        showGlobalSaveDone("No se pudo leer el archivo", true);
         setStatus(status, "No pude leer ese archivo. Probá con JPG, PNG, PDF, DOC o DOCX.", true);
       }
       if (input) input.value = "";
@@ -1555,6 +2142,96 @@
         reader.onerror = () => reject(reader.error || new Error("No se pudo leer el archivo."));
         reader.readAsDataURL(file);
       });
+    }
+
+    function openSketchDb() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+          reject(new Error("IndexedDB no disponible"));
+          return;
+        }
+        const request = indexedDB.open(SKETCH_DB_NAME, 1);
+        request.onupgradeneeded = () => {
+          request.result.createObjectStore(SKETCH_STORE_NAME, { keyPath: "key" });
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error("No se pudo abrir IndexedDB"));
+      });
+    }
+
+    async function saveSketchFile(key, sketch) {
+      const db = await openSketchDb();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(SKETCH_STORE_NAME, "readwrite");
+        tx.objectStore(SKETCH_STORE_NAME).put({
+          key,
+          sketch: {
+            name: sketch.name,
+            type: sketch.type,
+            size: sketch.size,
+            dataUrl: sketch.dataUrl,
+            sketchKey: key,
+            updatedAt: sketch.updatedAt
+          }
+        });
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error || new Error("No se pudo guardar el boceto"));
+      });
+      db.close();
+    }
+
+    async function loadSketchFile(key) {
+      if (!key) return null;
+      const db = await openSketchDb();
+      const result = await new Promise((resolve, reject) => {
+        const tx = db.transaction(SKETCH_STORE_NAME, "readonly");
+        const request = tx.objectStore(SKETCH_STORE_NAME).get(key);
+        request.onsuccess = () => resolve(request.result?.sketch || null);
+        request.onerror = () => reject(request.error || new Error("No se pudo leer el boceto"));
+      });
+      db.close();
+      return result;
+    }
+
+    async function hydrateSketchesFromStorage() {
+      const pending = state.events.filter(event => event.sketch?.sketchKey && !event.sketch.dataUrl);
+      if (!pending.length) return;
+      let changed = false;
+      for (const event of pending) {
+        try {
+          const stored = await loadSketchFile(event.sketch.sketchKey);
+          if (stored?.dataUrl) {
+            event.sketch = normalizeSketch({ ...event.sketch, ...stored });
+            changed = true;
+          }
+        } catch (error) {
+          console.warn("No pude recuperar un boceto local", error);
+        }
+      }
+      if (changed) renderDetail();
+    }
+
+    async function migrateInlineSketchesToStorage() {
+      const inline = state.events.filter(event => event.sketch?.dataUrl && !event.sketch.sketchKey);
+      if (!inline.length) return;
+      let changed = false;
+      for (const event of inline) {
+        try {
+          const key = `sketch-${event.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+          event.sketch = normalizeSketch({ ...event.sketch, sketchKey: key });
+          await saveSketchFile(key, event.sketch);
+          changed = true;
+        } catch (error) {
+          console.warn("No pude migrar un boceto local a IndexedDB", error);
+        }
+      }
+      if (changed) {
+        try {
+          saveEventsLocal();
+        } catch (error) {
+          console.warn("No pude alivianar el guardado local de bocetos", error);
+        }
+      }
     }
 
     function prepareImageSketch(file) {
@@ -1613,30 +2290,121 @@
       renderDetail();
     }
 
-    function addMaterial() {
+    function removeDriveSketch() {
       const event = getSelected();
       if (!event) return;
-      event.materials = readMaterialsRows();
-      event.materials.push("");
+      event.sketchDriveUrl = "";
       event.updatedAt = new Date().toISOString();
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEvents();
+      renderDetail();
+    }
+
+    function addMaterialFromCatalog(itemId) {
+      const event = getSelected();
+      if (!event) return;
+      markEditing();
+      const item = financeCatalog.costItems.find(entry => entry.id === itemId);
+      if (!item) return;
+      event.materialItems = readMaterialItemsRows();
+      event.materialItems.push(normalizeMaterialItem({
+        itemId: item.id,
+        name: item.name,
+        category: item.category,
+        quantity: 1,
+        unitCost: item.unitCost
+      }));
+      event.materials = materialItemsToText(event.materialItems);
+      event.updatedAt = new Date().toISOString();
+      saveEventsLocal();
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
+      scheduleSaveEvents();
       renderDetail();
       requestAnimationFrame(() => {
-        const inputs = detail.querySelectorAll("[data-material-input]");
+        detail.querySelector("#materialPicker")?.classList.remove("open");
+        const inputs = detail.querySelectorAll("[data-material-qty]");
         const last = inputs[inputs.length - 1];
-        if (last) last.focus();
+        if (last) {
+          last.focus();
+          last.select();
+        }
       });
-      setStatus(detail.querySelector("[data-materials-status]"), "Material agregado. Recordá guardar cambios.");
+      setStatus(detail.querySelector("[data-materials-status]"), "Material agregado desde Ítems y precios. Recordá guardar cambios.");
+    }
+
+    function toggleCreateMaterialForm(open = null) {
+      const form = detail.querySelector("[data-create-material-form]");
+      if (!form) return;
+      const shouldOpen = open === null ? !form.classList.contains("open") : open;
+      form.classList.toggle("open", shouldOpen);
+      if (shouldOpen) {
+        const searchValue = detail.querySelector("#materialSearch")?.value || "";
+        const nameInput = form.querySelector("[name='name']");
+        if (nameInput && !nameInput.value.trim()) nameInput.value = searchValue;
+        requestAnimationFrame(() => nameInput?.focus());
+      }
+    }
+
+    async function createCatalogItemFromProcess(event) {
+      event.preventDefault();
+      const selected = getSelected();
+      if (!selected) return;
+      const form = event.currentTarget;
+      const data = new FormData(form);
+      const name = String(data.get("name") || "").trim();
+      if (!name) return;
+      markEditing();
+      showMaterialSaveProgress("Creando ítem y sincronizando...");
+      const draft = normalizeCatalogItem({
+        id: `process-item-${Date.now()}-${normalizeText(name).replace(/[^a-z0-9]+/g, "-")}`,
+        name,
+        category: String(data.get("category") || "Otros"),
+        unit: String(data.get("unit") || "unidad"),
+        unitCost: Number(data.get("unitCost")) || 0,
+        stock: Number(data.get("stock")) || 0,
+        features: String(data.get("features") || ""),
+        source: "Proceso"
+      }, "Proceso");
+      if (!draft) return;
+      const existing = financeCatalog.costItems.find(item => normalizeText(item.name) === normalizeText(name));
+      if (existing) {
+        existing.category = draft.category;
+        existing.unit = draft.unit;
+        existing.unitCost = draft.unitCost;
+        existing.stock = draft.stock;
+        existing.features = draft.features;
+        existing.updated = new Date().toISOString().slice(0, 10);
+      } else {
+        draft.updated = new Date().toISOString().slice(0, 10);
+        financeCatalog.costItems = mergeCatalogItems(financeCatalog.costItems, [draft]);
+      }
+      const savedItem = existing || draft;
+      updateFinanceCatalogLocal(savedItem);
+      let synced = true;
+      await syncFinanceCatalogToCloud(savedItem).catch(error => {
+        synced = false;
+        console.warn("No pude sincronizar el nuevo ítem con Finanzas", error);
+        setStatus(detail.querySelector("[data-materials-status]"), "Ítem creado localmente. La nube queda pendiente.", true);
+      });
+      addMaterialFromCatalog(savedItem.id);
+      toggleCreateMaterialForm(false);
+      renderMaterialResults(detail.querySelector("#materialSearch")?.value || "");
+      showMaterialSaveDone(synced ? "Ítem creado, agregado al evento y sincronizado" : "Ítem creado y agregado. Nube pendiente");
     }
 
     function removeMaterial(index) {
       const event = getSelected();
       if (!event) return;
-      const values = readMaterialsRows();
+      markEditing();
+      const values = readMaterialItemsRows();
       values.splice(index, 1);
-      event.materials = values.length ? values : [""];
+      event.materialItems = values;
+      event.materials = materialItemsToText(values);
       event.updatedAt = new Date().toISOString();
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
+      scheduleSaveEvents();
       renderDetail();
       setStatus(detail.querySelector("[data-materials-status]"), "Material quitado. Recordá guardar cambios.");
     }
@@ -1644,10 +2412,15 @@
     function updateMaterialsDraft() {
       const event = getSelected();
       if (!event) return;
-      const materials = readMaterialsRows();
-      event.materials = materials;
+      markEditing();
+      const materials = readMaterialItemsRows();
+      event.materialItems = materials;
+      event.materials = materialItemsToText(materials);
       event.updatedAt = new Date().toISOString();
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
+      scheduleSaveEvents();
       updateMaterialsCounter(materials);
       setStatus(detail.querySelector("[data-materials-status]"), "Cambios sin guardar");
     }
@@ -1655,12 +2428,19 @@
     async function saveMaterialsFromEditor(options = {}) {
       const event = getSelected();
       if (!event) return;
+      markEditing();
       if (!options.silent) showMaterialSaveProgress("Guardando materiales...");
-      event.materials = parseMaterials(readMaterialsRows());
+      event.materialItems = readMaterialItemsRows();
+      event.materials = materialItemsToText(event.materialItems);
       event.updatedAt = new Date().toISOString();
-      const result = await saveEventsConfirmed();
+      state.events = sanitizeEvents(state.events);
+      saveEventsLocal();
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
+      const result = await cloudUpsertEvent(event);
       renderList();
       if (!result.ok) {
+        showGlobalSaveDone("Materiales guardados local. Nube pendiente.");
         setStatus(detail.querySelector("[data-materials-status]"), "No se pudo sincronizar. Revisá conexión y volvé a guardar.", true);
         return result;
       }
@@ -1670,16 +2450,30 @@
       return result;
     }
 
-    function readMaterialsRows() {
-      return [...detail.querySelectorAll("[data-material-input]")]
-        .map(input => input.value.trim());
+    function readMaterialItemsRows() {
+      return [...detail.querySelectorAll("[data-material-row]")]
+        .map(row => normalizeMaterialItem({
+          itemId: row.dataset.itemId || "",
+          name: row.dataset.itemName || "",
+          category: row.dataset.itemCategory || "",
+          quantity: Number(row.querySelector("[data-material-qty]")?.value) || 0,
+          unitCost: Number(row.querySelector("[data-material-cost]")?.value) || 0,
+          detail: row.querySelector("[data-material-detail]")?.value || ""
+        }))
+        .filter(item => item.name && item.quantity > 0);
     }
 
-    function updateMaterialsCounter(materials = readMaterialsRows()) {
+    function updateMaterialsCounter(materials = readMaterialItemsRows()) {
+      detail.querySelectorAll("[data-material-row]").forEach(row => {
+        const subtotal = (Number(row.querySelector("[data-material-qty]")?.value) || 0) * (Number(row.querySelector("[data-material-cost]")?.value) || 0);
+        const subtotalElement = row.querySelector(".material-subtotal");
+        if (subtotalElement) subtotalElement.textContent = formatMoney(subtotal);
+      });
       const counter = detail.querySelector("[data-materials-counter]");
       if (!counter) return;
-      const count = parseMaterials(materials).length;
-      counter.textContent = `${count} ítem${count === 1 ? "" : "s"} detectado${count === 1 ? "" : "s"}`;
+      const count = materials.length;
+      const total = materials.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitCost || 0), 0);
+      counter.textContent = `${count} ítem${count === 1 ? "" : "s"} detectado${count === 1 ? "" : "s"} · costo real base ${formatMoney(total)}`;
     }
 
     function setStatus(element, message, isError = false) {
@@ -1688,7 +2482,28 @@
       element.classList.toggle("error", isError);
     }
 
+    function showGlobalSave(message) {
+      if (!globalSaveIndicator || !globalSaveText) return;
+      globalSaveText.textContent = message || "Guardando cambios...";
+      globalSaveIndicator.classList.add("active");
+      globalSaveIndicator.classList.remove("done", "error");
+      clearTimeout(window.happyDecoGlobalSaveTimer);
+    }
+
+    function showGlobalSaveDone(message, isError = false) {
+      if (!globalSaveIndicator || !globalSaveText) return;
+      globalSaveText.textContent = message || "Cambios guardados";
+      globalSaveIndicator.classList.add("active");
+      globalSaveIndicator.classList.toggle("done", !isError);
+      globalSaveIndicator.classList.toggle("error", isError);
+      clearTimeout(window.happyDecoGlobalSaveTimer);
+      window.happyDecoGlobalSaveTimer = setTimeout(() => {
+        globalSaveIndicator.classList.remove("active", "done", "error");
+      }, 1800);
+    }
+
     function showSketchProgress(message) {
+      showGlobalSave(message || "Guardando boceto...");
       const progress = detail.querySelector("[data-sketch-progress]");
       const progressText = detail.querySelector("[data-sketch-progress-text]");
       const status = detail.querySelector("[data-sketch-status]");
@@ -1704,10 +2519,12 @@
 
     function showSketchDone(message) {
       hideSketchProgress();
+      showGlobalSaveDone(message || "Boceto guardado");
       setStatus(detail.querySelector("[data-sketch-status]"), message || "Boceto guardado");
     }
 
     function showMaterialSaveProgress(message) {
+      showGlobalSave(message || "Guardando materiales...");
       const progress = detail.querySelector("[data-materials-progress]");
       const status = detail.querySelector("[data-materials-status]");
       if (progress) progress.classList.add("active");
@@ -1717,6 +2534,7 @@
     function showMaterialSaveDone(message) {
       const progress = detail.querySelector("[data-materials-progress]");
       if (progress) progress.classList.remove("active");
+      showGlobalSaveDone(message || "Materiales guardados");
       setStatus(detail.querySelector("[data-materials-status]"), message || "Guardado");
     }
 
@@ -1786,6 +2604,7 @@
     }
 
     function getCloudConfig() {
+      return { firebase: true };
       try {
         const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
         const activeConfig = config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
@@ -1800,21 +2619,89 @@
     }
 
     function configureCloud() {
-      const current = getCloudConfig() || {};
-      const url = prompt("URL del proyecto Supabase:", current.url || "");
-      if (url === null) return;
-      const anonKey = prompt("Anon public key de Supabase:", current.anonKey || "");
-      if (anonKey === null) return;
-      localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify({ url: url.trim(), anonKey: anonKey.trim() }));
-      alert("Nube configurada. Voy a sincronizar los eventos compartidos.");
-      initCloudSync(true);
+      pullCloudEvents();
+    }
+
+    function firebaseUrl(path) {
+      const separator = path.includes("?") ? "&" : "?";
+      return `${path}${separator}key=${encodeURIComponent(FIREBASE_API_KEY)}`;
+    }
+
+    function firebaseParsePath(path) {
+      const [table, queryText = ""] = String(path || "").split("?");
+      const params = new URLSearchParams(queryText);
+      const idFilter = params.get("id") || "";
+      const id = idFilter.startsWith("eq.") ? decodeURIComponent(idFilter.slice(3)) : "";
+      return { table, id };
+    }
+
+    function firebaseRowFromDocument(doc) {
+      if (!doc?.fields) return null;
+      let data = null;
+      try {
+        data = JSON.parse(doc.fields.dataJson?.stringValue || "null");
+      } catch {
+        data = null;
+      }
+      return {
+        id: decodeURIComponent(String(doc.name || "").split("/").pop() || doc.fields.id?.stringValue || ""),
+        data,
+        updated_at: doc.fields.updatedAt?.timestampValue || data?.updatedAt || ""
+      };
+    }
+
+    async function firebaseParseResponse(response) {
+      const text = await response.text();
+      if (response.ok) return text ? JSON.parse(text) : null;
+      throw new Error(`${response.status} ${text || response.statusText || "Error de Firebase"}`);
+    }
+
+    async function firebaseCloudRequest(path, options = {}) {
+      const { table, id } = firebaseParsePath(path);
+      if (!table) return null;
+      const method = String(options.method || "GET").toUpperCase();
+      if (method === "GET") {
+        if (id) {
+          const response = await fetch(firebaseUrl(`${FIREBASE_BASE_URL}/${encodeURIComponent(table)}/${encodeURIComponent(id)}`), { cache: "no-store" });
+          if (response.status === 404) return [];
+          return [firebaseRowFromDocument(await firebaseParseResponse(response))].filter(Boolean);
+        }
+        const result = await firebaseParseResponse(await fetch(firebaseUrl(`${FIREBASE_BASE_URL}/${encodeURIComponent(table)}?pageSize=1000`), { cache: "no-store" }));
+        return (result.documents || []).map(firebaseRowFromDocument).filter(Boolean).sort((a, b) => String(b.updated_at || "").localeCompare(String(a.updated_at || "")));
+      }
+      if (method === "DELETE") {
+        if (!id) return null;
+        const response = await fetch(firebaseUrl(`${FIREBASE_BASE_URL}/${encodeURIComponent(table)}/${encodeURIComponent(id)}`), { method: "DELETE", cache: "no-store" });
+        if (response.status === 404) return null;
+        return firebaseParseResponse(response);
+      }
+      const body = options.body ? JSON.parse(options.body) : [];
+      const rows = Array.isArray(body) ? body : [body];
+      const saved = [];
+      for (const row of rows) {
+        if (!row?.id) continue;
+        const updatedAt = row.updated_at || row.data?.updatedAt || new Date().toISOString();
+        await firebaseParseResponse(await fetch(firebaseUrl(`${FIREBASE_BASE_URL}/${encodeURIComponent(table)}/${encodeURIComponent(row.id)}`), {
+          method: "PATCH",
+          cache: "no-store",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fields: { id: { stringValue: String(row.id) }, dataJson: { stringValue: JSON.stringify(row.data || {}) }, updatedAt: { timestampValue: updatedAt } } })
+        }));
+        saved.push({ id: row.id, data: row.data || {}, updated_at: updatedAt });
+      }
+      return saved;
     }
 
     async function cloudRequest(path, options = {}) {
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        return window.HappyDecoFirebaseCloud.request(path, options);
+      }
       const config = getCloudConfig();
+      if (config?.firebase) return firebaseCloudRequest(path, options);
       if (!config) return null;
       const response = await fetch(`${config.url}/rest/v1/${path}`, {
         ...options,
+        cache: "no-store",
         headers: {
           apikey: config.anonKey,
           Authorization: `Bearer ${config.anonKey}`,
@@ -1823,8 +2710,8 @@
         }
       });
       if (!response.ok) throw new Error(await response.text());
-      if (response.status === 204) return null;
-      return response.json();
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
     }
 
     async function pullCloudEvents() {
@@ -1834,34 +2721,164 @@
       try {
         const rows = await cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`);
         if (!Array.isArray(rows)) return;
+        const cloudEvents = rows.map(row => row.data).filter(Boolean);
+        const cleanedCloudEvents = cloudEvents.map(eventForCloudStorage).filter(Boolean);
         const selectedId = state.selectedId;
-        state.events = sanitizeEvents(rows.map(row => row.data));
+        const localEvents = new Map(state.events.map(event => [event.id, event]));
+        state.events = sanitizeEvents(cleanedCloudEvents).map(cloudEvent => {
+          const localEvent = localEvents.get(cloudEvent.id);
+          if (!localEvent) return cloudEvent;
+          const localTime = Date.parse(localEvent.updatedAt || "") || 0;
+          const cloudTime = Date.parse(cloudEvent.updatedAt || "") || 0;
+          return localTime > cloudTime ? localEvent : cloudEvent;
+        });
         state.selectedId = state.events.some(event => event.id === selectedId)
           ? selectedId
           : state.events[0]?.id || null;
-        localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+        saveEventsLocal();
         render();
-        button.textContent = "Nube activa";
+        button.textContent = "Firebase activa";
+        if (cloudEvents.some(hasEmbeddedSketchData)) {
+          cloudUpsertEvents(cleanedCloudEvents).then(result => {
+            if (result?.ok) console.info("Bocetos embebidos limpiados de la nube.");
+          });
+        }
       } catch (error) {
-        button.textContent = "Error nube";
+        button.textContent = "Nube pendiente";
         console.error("No pude sincronizar proceso", error);
       }
     }
 
-    async function cloudUpsertEvents(items) {
-      const cleanItems = sanitizeEvents(items);
-      if (!getCloudConfig() || !cleanItems.length) return { ok: true, skipped: true };
+    async function cloudUpsertEvent(event) {
+      const cleanEvent = eventForCloudStorage(event);
+      if (!getCloudConfig() || !cleanEvent) return { ok: true, skipped: true };
       try {
-        const rows = cleanItems.map(event => ({
-          id: event.id,
-          data: { ...event, updatedAt: event.updatedAt || new Date().toISOString() },
-          updated_at: event.updatedAt || new Date().toISOString()
-        }));
         await cloudRequest(PROCESS_TABLE, {
           method: "POST",
           headers: { Prefer: "resolution=merge-duplicates" },
-          body: JSON.stringify(rows)
+          body: JSON.stringify([{
+            id: cleanEvent.id,
+            data: { ...cleanEvent, updatedAt: cleanEvent.updatedAt || new Date().toISOString() },
+            updated_at: cleanEvent.updatedAt || new Date().toISOString()
+          }])
         });
+        await cloudUpsertDashboardMaterials(cleanEvent);
+        return { ok: true };
+      } catch (error) {
+        console.error("No pude guardar este evento en nube", error);
+        return { ok: false, error };
+      }
+    }
+
+    async function cloudUpsertDashboardMaterials(event) {
+      if (!event?.id) return;
+      const materialItems = normalizeMaterialItems(event.materialItems);
+      try {
+        const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(event.id)}&select=data&limit=1`);
+        const current = Array.isArray(rows) ? rows[0]?.data : null;
+        if (!current || current.module === "finance" || current.module === "crm") return;
+        const updatedAt = new Date().toISOString();
+        const data = {
+          ...current,
+          materials: event.materials || materialItemsToText(materialItems),
+          materialItems,
+          sketchDriveUrl: event.sketchDriveUrl || "",
+          updatedAt
+        };
+        await cloudRequest(DASHBOARD_TABLE, {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify([{ id: event.id, data, updated_at: updatedAt }])
+        });
+      } catch (error) {
+        console.warn("Proceso guardó materiales, pero no pudo reflejarlos en Dashboard para Finanzas", error);
+      }
+    }
+
+    function syncDashboardMaterialsLocally(event) {
+      if (!event?.id) return;
+      const records = readLocalList(DASHBOARD_STORAGE_KEY);
+      const index = records.findIndex(record => record.id === event.id);
+      if (index < 0) return;
+      const materialItems = normalizeMaterialItems(event.materialItems);
+      records[index] = {
+        ...records[index],
+        materials: event.materials || materialItemsToText(materialItems),
+        materialItems,
+        sketchDriveUrl: event.sketchDriveUrl || "",
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(DASHBOARD_STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function syncFinanceEventLocally(event) {
+      if (!event?.id) return;
+      let finance;
+      try {
+        finance = JSON.parse(localStorage.getItem(FINANCE_STORAGE_KEY) || "null");
+      } catch {
+        return;
+      }
+      if (!finance || typeof finance !== "object") return;
+      const records = readLocalList(DASHBOARD_STORAGE_KEY);
+      const record = records.find(item => item.id === event.id) || {};
+      const materialItems = normalizeMaterialItems(event.materialItems);
+      const financeEvent = {
+        id: `sales-${event.id}`,
+        source: "sales",
+        sourceId: event.id,
+        cliente: event.client || record.cliente || "Sin cliente",
+        fecha: event.date || record.fechaEvento || "",
+        propuesta: event.proposalType || record.propuesta || event.package || "Sin definir",
+        proposalDetail: record.incluye || event.package || "",
+        precio: Number(record.monto) || moneyToNumber(event.budget) || 0,
+        extras: 0,
+        descuento: 0,
+        commissionRate: 0,
+        km: 20,
+        hours: 0,
+        estimatedCost: Number(record.costo) || 0,
+        actualCost: 0,
+        realCostConfirmed: false,
+        realCostSource: "",
+        materialItems,
+        materials: event.materials || materialItemsToText(materialItems),
+        paid: Number(record.senia) || 0,
+        stage: record.etapa || "",
+        operativeStatus: record.estadoOperativo || event.operativeStatus || "",
+        updatedAt: new Date().toISOString()
+      };
+      const events = Array.isArray(finance.events) ? finance.events : [];
+      const index = events.findIndex(item => item.sourceId === event.id || item.id === financeEvent.id);
+      finance.events = index >= 0
+        ? events.map((item, itemIndex) => itemIndex === index ? { ...item, ...financeEvent } : item)
+        : [...events, financeEvent];
+      localStorage.setItem(FINANCE_STORAGE_KEY, JSON.stringify(finance));
+    }
+
+    function moneyToNumber(value) {
+      const clean = String(value || "").replace(/[^\d,-]/g, "").replace(/\./g, "").replace(",", ".");
+      const number = Number(clean);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function readLocalList(key) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(value) ? value.filter(Boolean) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    async function cloudUpsertEvents(items) {
+      const cleanItems = items.map(eventForCloudStorage).filter(Boolean);
+      if (!getCloudConfig() || !cleanItems.length) return { ok: true, skipped: true };
+      try {
+        for (const event of cleanItems) {
+          const result = await cloudUpsertEvent(event);
+          if (!result.ok) throw result.error || new Error("No se pudo sincronizar evento");
+        }
         return { ok: true };
       } catch (error) {
         console.error("No pude guardar proceso en nube", error);
@@ -1878,13 +2895,78 @@
       }
     }
 
+    function loadFinanceCatalogLocal() {
+      try {
+        const data = JSON.parse(localStorage.getItem("happyDecoFinanceV1") || "{}");
+        return buildFinanceCatalog(data);
+      } catch {
+        return { proposals: defaultFinanceProposals(), costItems: [] };
+      }
+    }
+
+    async function refreshFinanceCatalog() {
+      financeCatalog = loadFinanceCatalogLocal();
+      if (!getCloudConfig()) {
+        await mergeInventoryFallback();
+        if (!isEditingNow()) renderDetail();
+        return;
+      }
+      try {
+        const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=id,data&order=updated_at.desc&limit=700`);
+        const records = Array.isArray(rows) ? rows.map(row => row.data).filter(Boolean) : [];
+        const shared = records.find(record => record.id === FINANCE_RECORD_ID || record.module === "finance")?.finance || null;
+        dashboardRecordsById = new Map(records
+          .filter(record => record.id && record.module !== "crm" && record.module !== "finance")
+          .map(record => [record.id, record]));
+        if (shared) {
+          financeCatalog = buildFinanceCatalog(shared, financeCatalog);
+        }
+        await mergeInventoryFallback();
+        applyDashboardContextToEvents();
+        if (!isEditingNow()) renderDetail();
+      } catch (error) {
+        console.warn("No pude traer Ítems y precios desde Finanzas", error);
+        await mergeInventoryFallback();
+        if (!isEditingNow()) renderDetail();
+      }
+    }
+
+    async function mergeInventoryFallback() {
+      try {
+        const response = await fetch("../finanzas/inventario.json", { cache: "no-store" });
+        if (!response.ok) return;
+        const inventory = await response.json();
+        financeCatalog = {
+          ...financeCatalog,
+          costItems: mergeCatalogItems(financeCatalog.costItems, Array.isArray(inventory.items) ? inventory.items : [])
+        };
+      } catch (error) {
+        console.warn("No pude cargar el inventario de respaldo", error);
+      }
+    }
+
+    function applyDashboardContextToEvents() {
+      if (!dashboardRecordsById.size) return;
+      state.events = state.events.map(event => {
+        const record = dashboardRecordsById.get(event.id);
+        if (!record) return event;
+        return {
+          ...event,
+          proposalType: record.propuesta || event.proposalType || event.propuesta || "",
+          package: event.package || record.incluye || record.propuesta || "",
+          dashboardIncludes: record.incluye || event.dashboardIncludes || ""
+        };
+      });
+      saveEventsLocal();
+    }
+
     function initCloudSync(force = false) {
       const button = document.querySelector("#cloudBtn");
       if (!getCloudConfig()) {
-        button.textContent = "Configurar nube";
+        button.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube pendiente";
         return;
       }
-      button.textContent = "Nube activa";
+      button.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube activa";
       pullCloudEvents();
       if (force || !window.happyDecoProcessCloudTimer) {
         window.happyDecoProcessCloudTimer = setInterval(pullCloudEvents, 3000);
@@ -1915,8 +2997,399 @@
       return date.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
     }
 
+    function formatMoney(value) {
+      return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(Number(value || 0));
+    }
+
+    function normalizeText(value) {
+      return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/^propuesta\s+/, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function catalogDisplayName(value) {
+      const name = String(value || "").replace(/^Costo de uso\s*·\s*/i, "").trim();
+      return name && name !== "·" ? String(value || "").trim() : "";
+    }
+
+    function catalogCostPerUse(item) {
+      return Number(item?.usefulEvents) > 0 ? Number(item.value || 0) / Number(item.usefulEvents) : 0;
+    }
+
+    function normalizeCatalogItem(item = {}, source = "") {
+      if (!item || typeof item !== "object") return null;
+      const rawName = item.name || item.itemName || "";
+      const name = catalogDisplayName(rawName);
+      if (!name) return null;
+      return {
+        id: String(item.id || item.itemId || `${source || "item"}-${normalizeText(name)}`),
+        name,
+        category: String(item.category || item.categoria || "Sin categoría").trim() || "Sin categoría",
+        unit: String(item.unit || item.unidad || "unidad").trim() || "unidad",
+        unitCost: Number(item.unitCost ?? item.price ?? item.precio ?? item.cost ?? item.costo ?? 0) || 0,
+        stock: Number(item.stock ?? item.cantidad ?? 0) || 0,
+        location: String(item.location || item.ubicacion || "").trim(),
+        features: String(item.features || item.notes || item.detalle || "").trim(),
+        codes: Array.isArray(item.codes) ? item.codes : [],
+        assembly: String(item.assembly || item.armado || "").trim(),
+        updated: String(item.updated || item.updatedAt || "").slice(0, 10),
+        source: source || item.source || ""
+      };
+    }
+
+    function catalogItemFromAsset(asset = {}) {
+      const item = normalizeCatalogItem({
+        id: `asset-${asset.id || normalizeText(asset.name)}`,
+        name: `Costo de uso · ${asset.name || ""}`,
+        category: "Mobiliario",
+        unit: "uso",
+        unitCost: catalogCostPerUse(asset),
+        stock: asset.stock,
+        location: asset.location,
+        features: asset.notes || ""
+      }, "Mobiliario");
+      return item;
+    }
+
+    function catalogItemFromReusable(item = {}) {
+      return normalizeCatalogItem({
+        id: `reusable-${item.id || normalizeText(item.name)}`,
+        name: `Costo de uso · ${item.name || ""}`,
+        category: "Reutilizables",
+        unit: "uso",
+        unitCost: catalogCostPerUse(item),
+        stock: item.stock,
+        location: item.location,
+        features: item.notes || ""
+      }, "Reutilizables");
+    }
+
+    function mergeCatalogItems(...groups) {
+      const byName = new Map();
+      groups.flat().forEach(item => {
+        const clean = normalizeCatalogItem(item, item?.source || "");
+        if (!clean) return;
+        const key = normalizeText(clean.name);
+        const current = byName.get(key);
+        if (!current) {
+          byName.set(key, clean);
+        } else if ((Number(clean.unitCost) > 0 && Number(current.unitCost) <= 0) || (clean.source && !current.source)) {
+          byName.set(key, { ...current, ...clean, stock: clean.stock || current.stock || 0, updated: clean.updated || current.updated || "" });
+        } else if (Number(clean.stock) > 0 && Number(current.stock) <= 0) {
+          byName.set(key, { ...current, stock: clean.stock, location: clean.location || current.location || "", codes: clean.codes?.length ? clean.codes : current.codes || [], assembly: clean.assembly || current.assembly || "" });
+        }
+      });
+      return [...byName.values()].sort((a, b) => String(a.category).localeCompare(String(b.category)) || String(a.name).localeCompare(String(b.name)));
+    }
+
+    function buildFinanceCatalog(data = {}, fallback = {}) {
+      const proposals = Array.isArray(data.proposals) && data.proposals.length
+        ? data.proposals
+        : (Array.isArray(fallback.proposals) && fallback.proposals.length ? fallback.proposals : defaultFinanceProposals());
+      const costItems = mergeCatalogItems(
+        Array.isArray(fallback.costItems) ? fallback.costItems : [],
+        Array.isArray(data.costItems) ? data.costItems : [],
+        Array.isArray(data.assets) ? data.assets.map(catalogItemFromAsset) : [],
+        Array.isArray(data.reusables) ? data.reusables.map(catalogItemFromReusable) : []
+      );
+      return { proposals, costItems };
+    }
+
+    function updateFinanceCatalogLocal(item) {
+      try {
+        const data = JSON.parse(localStorage.getItem("happyDecoFinanceV1") || "{}");
+        data.costItems = mergeCatalogItems(data.costItems || [], [item]);
+        data.stockChecks = Array.isArray(data.stockChecks) ? data.stockChecks : [];
+        if (!data.stockChecks.some(check => check.itemId === item.id)) {
+          const initialStock = Number(item.stock) || 0;
+          data.stockChecks.push({
+            id: `control-${Date.now()}-${normalizeText(item.name).replace(/[^a-z0-9]+/g, "-")}`,
+            itemId: item.id,
+            itemName: item.name,
+            controlDate: new Date().toISOString().slice(0, 10),
+            previousStock: 0,
+            counted: initialStock,
+            difference: initialStock,
+            notes: "Cantidad inicial cargada desde Proceso"
+          });
+        }
+        localStorage.setItem("happyDecoFinanceV1", JSON.stringify(data));
+      } catch (error) {
+        console.warn("No pude actualizar Finanzas local", error);
+      }
+    }
+
+    async function syncFinanceCatalogToCloud(item) {
+      if (!getCloudConfig() || !item) return;
+      const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(FINANCE_RECORD_ID)}&select=data&limit=1`);
+      const current = Array.isArray(rows) ? rows[0]?.data : null;
+      const finance = current?.finance || {};
+      finance.costItems = mergeCatalogItems(finance.costItems || [], [item]);
+      finance.stockChecks = Array.isArray(finance.stockChecks) ? finance.stockChecks : [];
+      if (!finance.stockChecks.some(check => check.itemId === item.id)) {
+        const initialStock = Number(item.stock) || 0;
+        finance.stockChecks.push({
+          id: `control-${Date.now()}-${normalizeText(item.name).replace(/[^a-z0-9]+/g, "-")}`,
+          itemId: item.id,
+          itemName: item.name,
+          controlDate: new Date().toISOString().slice(0, 10),
+          previousStock: 0,
+          counted: initialStock,
+          difference: initialStock,
+          notes: "Cantidad inicial cargada desde Proceso"
+        });
+      }
+      const now = new Date().toISOString();
+      const data = {
+        ...(current || {}),
+        id: FINANCE_RECORD_ID,
+        module: "finance",
+        updatedAt: now,
+        finance
+      };
+      await cloudRequest(`${DASHBOARD_TABLE}?on_conflict=id`, {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify([{ id: FINANCE_RECORD_ID, data, updated_at: now }])
+      });
+    }
+
+    function searchText(value) {
+      return normalizeText(value).replace(/[^\w\s]/g, " ");
+    }
+
+    function normalizeMaterialItem(item = {}) {
+      if (!item || typeof item !== "object") return null;
+      const quantity = Number(item.quantity ?? item.qty ?? item.cantidad ?? 1) || 0;
+      const unitCost = Number(item.unitCost ?? item.price ?? item.precio ?? item.cost ?? item.costo ?? 0) || 0;
+      const name = String(item.name || item.itemName || "").trim();
+      if (!name) return null;
+      return {
+        itemId: String(item.itemId || item.id || ""),
+        name,
+        category: String(item.category || item.categoria || "Sin categoría").trim() || "Sin categoría",
+        quantity,
+        unitCost,
+        detail: String(item.detail || item.detalle || item.notes || item.nota || "").trim()
+      };
+    }
+
+    function normalizeMaterialItems(items) {
+      return Array.isArray(items) ? items.map(normalizeMaterialItem).filter(Boolean) : [];
+    }
+
+    function materialItemsToText(items) {
+      return normalizeMaterialItems(items).map(item => {
+        const base = item.quantity > 1 ? `${item.quantity} x ${item.name}` : item.name;
+        return item.detail ? `${base} - ${item.detail}` : base;
+      });
+    }
+
+    function processItemCategories() {
+      const base = ["Materiales", "Globos", "Gráfica e impresión", "Mobiliario", "Reutilizables", "Mano de obra", "Logística", "Servicios", "Herramientas", "Textiles", "Flores", "Otros"];
+      const existing = (financeCatalog.costItems || []).map(item => item.category || "").filter(Boolean);
+      return [...new Set([...base, ...existing])].sort((a, b) => String(a).localeCompare(String(b)));
+    }
+
+    function renderMaterialCreateForm() {
+      const searchValue = detail.querySelector("#materialSearch")?.value || "";
+      const categories = processItemCategories();
+      const selectedCategory = materialCategoryFilter !== "Todas" && categories.includes(materialCategoryFilter)
+        ? materialCategoryFilter
+        : "Otros";
+      return `
+        <form class="material-create-form" data-create-material-form>
+          <label class="wide">Nombre
+            <input name="name" value="${escapeAttr(searchValue)}" placeholder="Ej.: cinta doble faz, souvenir, panel nuevo" required>
+          </label>
+          <label>Categoría
+            <select name="category">${categories.map(category => `<option ${category === selectedCategory ? "selected" : ""}>${escapeHtml(category)}</option>`).join("")}</select>
+          </label>
+          <label>Unidad
+            <select name="unit">
+              ${["unidad", "paquete", "caja", "metro", "hora", "viaje", "uso", "servicio"].map(unit => `<option>${escapeHtml(unit)}</option>`).join("")}
+            </select>
+          </label>
+          <label>Precio
+            <input name="unitCost" type="number" min="0" step="0.01" value="0" required>
+          </label>
+          <label>Stock
+            <input name="stock" type="number" min="0" step="1" value="0" required>
+          </label>
+          <label class="wide">Detalle
+            <input name="features" placeholder="Color, medida, proveedor o aclaración">
+          </label>
+          <div class="actions-row">
+            <button class="ghost" type="button" data-cancel-create-material>Cancelar</button>
+            <button class="primary" type="submit">Crear y agregar</button>
+          </div>
+        </form>
+      `;
+    }
+
+    function defaultFinanceProposals() {
+      return Object.entries(DEFAULT_PROPOSAL_INCLUSIONS).map(([name, inclusions]) => ({
+        name,
+        items: inclusions.split(";").map((item, index) => normalizeMaterialItem({
+          itemId: `default-${normalizeText(name)}-${index}`,
+          name: item.trim(),
+          category: "Base de propuesta",
+          quantity: 1,
+          unitCost: 0
+        })).filter(Boolean)
+      }));
+    }
+
+    function proposalName(event) {
+      return event.proposalType || event.propuesta || event.proposal || event.package || "";
+    }
+
+    function proposalOptions(event) {
+      const names = new Set((financeCatalog.proposals || []).map(proposal => proposal.name).filter(Boolean));
+      [
+        event.proposalType,
+        event.propuesta,
+        extractKnownProposalName(event.package),
+        "Express",
+        "Minimalista",
+        "Clásica",
+        "Intermedia",
+        "Premium",
+        "Exclusiva",
+        "Escenográfica 3x3",
+        "Escenográfica 6x3",
+        "Escenográfica 10x3",
+        "A medida",
+        "Personalizada"
+      ].filter(Boolean).forEach(name => names.add(name));
+      return [...names].map(name => ({ name }));
+    }
+
+    function extractKnownProposalName(value = "") {
+      const text = normalizeText(value);
+      const rules = [
+        ["escenografica 10x3", "Escenográfica 10x3"],
+        ["escenografica 6x3", "Escenográfica 6x3"],
+        ["escenografica 3x3", "Escenográfica 3x3"],
+        ["exclusiva", "Exclusiva"],
+        ["premium", "Premium"],
+        ["intermedia", "Intermedia"],
+        ["clasica", "Clásica"],
+        ["minimalista", "Minimalista"],
+        ["express", "Express"],
+        ["a medida", "A medida"],
+        ["personalizada", "Personalizada"]
+      ];
+      return rules.find(([key]) => text.includes(key))?.[1] || "";
+    }
+
+    function proposalForEvent(event) {
+      const wanted = normalizeText(proposalName(event));
+      if (!wanted) return null;
+      return financeCatalog.proposals.find(proposal => normalizeText(proposal.name) === wanted)
+        || financeCatalog.proposals.find(proposal => {
+          const name = normalizeText(proposal.name);
+          return name && (wanted.includes(name) || name.includes(wanted));
+        })
+        || null;
+    }
+
+    function baseItemsForEvent(event) {
+      const proposal = proposalForEvent(event);
+      return normalizeMaterialItems(proposal?.items || []);
+    }
+
+    function matchCatalogItem(name) {
+      const wanted = normalizeText(name);
+      if (!wanted) return null;
+      return financeCatalog.costItems.find(item => normalizeText(item.name) === wanted)
+        || financeCatalog.costItems.find(item => {
+          const itemName = normalizeText(item.name);
+          return itemName && (wanted.includes(itemName) || itemName.includes(wanted));
+        })
+        || null;
+    }
+
+    function currentMaterialItems(event) {
+      const structured = normalizeMaterialItems(event.materialItems);
+      if (structured.length) return structured;
+      return parseMaterials(event.materials).map(material => {
+        const text = String(material).replace(/^\d+\s*x\s*/i, "").trim();
+        const quantityMatch = String(material).match(/^(\d+)\s*x\s+/i);
+        const item = matchCatalogItem(text);
+        return normalizeMaterialItem({
+          itemId: item?.id || "",
+          name: item?.name || text,
+          category: item?.category || "Carga previa",
+          quantity: quantityMatch ? Number(quantityMatch[1]) : 1,
+          unitCost: item?.unitCost || 0
+        });
+      }).filter(Boolean);
+    }
+
+    function ensureBaseProposalMaterials(event) {
+      if (normalizeMaterialItems(event.materialItems).length || parseMaterials(event.materials).length) return;
+      mergeProposalBaseIntoEvent(event);
+    }
+
+    function mergeProposalBaseIntoEvent(event) {
+      const baseItems = baseItemsForEvent(event);
+      if (!baseItems.length) return;
+      const existingItems = currentMaterialItems(event);
+      const existingKeys = new Set(existingItems.map(item => item.itemId || normalizeText(item.name)));
+      const missingBase = baseItems.filter(item => !existingKeys.has(item.itemId || normalizeText(item.name)));
+      event.materialItems = [...existingItems, ...missingBase];
+      event.materials = materialItemsToText(event.materialItems);
+      event.updatedAt = new Date().toISOString();
+      saveEventsLocal();
+    }
+
+    function materialCategories() {
+      const categories = [...new Set(financeCatalog.costItems.map(item => item.category || "Sin categoría"))]
+        .filter(Boolean)
+        .sort((a, b) => String(a).localeCompare(String(b)));
+      const preferred = ["Mobiliario", "Reutilizables", "Globos", "Gráfica e impresión", "Materiales", "Mano de obra", "Logística"];
+      return ["Todas", ...preferred.filter(category => categories.includes(category)), ...categories.filter(category => !preferred.includes(category))].slice(0, 12);
+    }
+
+    function materialCategoryButtons() {
+      const categories = materialCategories();
+      if (!categories.includes(materialCategoryFilter)) materialCategoryFilter = "Todas";
+      return categories
+        .map(category => `<button type="button" data-material-category="${escapeAttr(category)}" class="${category === materialCategoryFilter ? "active" : ""}">${escapeHtml(category)}</button>`)
+        .join("");
+    }
+
+    function renderMaterialResults(query = "") {
+      const container = detail.querySelector("#materialResults");
+      if (!container) return;
+      const q = searchText(query);
+      const tokens = q.split(/\s+/).filter(Boolean);
+      if (!financeCatalog.costItems.length) {
+        container.innerHTML = `<div class="hint">Todavía no hay Ítems y precios disponibles. Tocá Actualizar desde nube o revisá Finanzas.</div>`;
+        return;
+      }
+      const results = financeCatalog.costItems
+        .filter(item => materialCategoryFilter === "Todas" || (item.category || "Sin categoría") === materialCategoryFilter)
+        .filter(item => !tokens.length || tokens.every(token => searchText(`${item.name} ${item.category} ${item.unit} ${item.features || ""}`).includes(token)))
+        .sort((a, b) => (Number(b.unitCost) > 0) - (Number(a.unitCost) > 0) || String(a.name).localeCompare(String(b.name)))
+        .slice(0, tokens.length ? 18 : 24);
+      container.innerHTML = results.length
+        ? results.map(item => `<button class="material-result" type="button" data-pick-material="${escapeAttr(item.id)}"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.category || "Sin categoría")} · ${escapeHtml(item.unit || "unidad")}</span><mark>${Number(item.unitCost) > 0 ? formatMoney(item.unitCost) : "Precio pendiente"}</mark></button>`).join("")
+        : `<div class="hint">Sin resultados en ${escapeHtml(materialCategoryFilter)}. Probá otra categoría o una palabra más corta.</div>`;
+    }
+
     function parseMaterials(value) {
-      if (Array.isArray(value)) return value.map(item => String(item || "").trim()).filter(Boolean);
+      if (Array.isArray(value)) {
+        return value
+          .map(item => typeof item === "object" && item ? item.name || item.itemName || "" : String(item || ""))
+          .map(item => item.trim())
+          .filter(Boolean);
+      }
       return String(value || "")
         .split(/\n|,/)
         .map(item => item.trim())
