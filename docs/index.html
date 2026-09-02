@@ -2170,7 +2170,7 @@
       const noDate = filtered.filter(record => isConfirmed(record) && !record.fechaEvento);
       const blocked = filtered.filter(record => record.estadoOperativo === "Trabado");
       const catiLoad = filtered.filter(record => record.responsable === "Cati" && ["Consulta nueva", "Datos incompletos", "Presupuesto enviado", "Seguimiento"].includes(record.etapa));
-      const ximeLoad = filtered.filter(record => record.responsable.includes("Xime") && ["Compras pendientes", "En producción", "Listo para montar"].includes(record.estadoOperativo));
+      const ximeLoad = filtered.filter(record => String(record.responsable || "").includes("Xime") && ["Compras pendientes", "En producción", "Listo para montar"].includes(record.estadoOperativo));
 
       if (noDeposit.length) alerts.push({ title: "Propuestas sin seña", count: noDeposit.length, meta: "Seguimientos que pueden enfriarse.", tone: "rose" });
       if (noDate.length) alerts.push({ title: "Eventos confirmados sin fecha", count: noDate.length, meta: "No deberían pasar a producción incompletos.", tone: "gold" });
