@@ -1356,7 +1356,7 @@
         </div>
       </div>
       <div class="actions">
-        <button class="btn secondary" id="cloudBtn" type="button">Configurar nube</button>
+        <button class="btn secondary" id="cloudBtn" type="button">Nube Firebase</button>
         <button class="btn secondary" id="refreshCloudBtn" type="button">Actualizar datos</button>
         <button class="btn secondary" id="exportBtn" type="button">Exportar CSV</button>
         <button class="btn danger" id="clearBtn" type="button">Limpiar datos</button>
@@ -1844,7 +1844,7 @@
       showMessage("", "");
     });
     els.exportBtn.addEventListener("click", exportCsv);
-    els.cloudBtn.addEventListener("click", configureCloud);
+    els.cloudBtn.addEventListener("click", () => pullCloudRecords({ manual: true }));
     els.refreshCloudBtn.addEventListener("click", () => pullCloudRecords({ manual: true }));
     els.clearBtn.addEventListener("click", clearAll);
     els.resetFiltersBtn.addEventListener("click", resetFilters);
@@ -2827,14 +2827,11 @@
     }
 
     function configureCloud() {
-      const current = getCloudConfig() || {};
-      const url = prompt("URL del proyecto Supabase:", current.url || "");
-      if (url === null) return;
-      const anonKey = prompt("Anon public key de Supabase:", current.anonKey || "");
-      if (anonKey === null) return;
-      localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify({ url: url.trim(), anonKey: anonKey.trim() }));
-      alert("Nube configurada. Voy a sincronizar los datos compartidos.");
-      initCloudSync(true);
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        pullCloudRecords({ manual: true });
+      } else {
+        alert("La nube actual es Firebase. Si no sincroniza, revisa que Firestore este activo.");
+      }
     }
 
     async function cloudRequest(path, options = {}) {
@@ -2873,7 +2870,7 @@
         records = sanitizeRecords(rows.map(row => row.data).filter(data => data?.module !== "crm" && data?.module !== "finance"));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
         render();
-        els.cloudBtn.textContent = "Nube activa";
+        els.cloudBtn.textContent = "Firebase activa";
         if (manual) els.refreshCloudBtn.textContent = "Datos actualizados";
       } catch (error) {
         els.cloudBtn.textContent = "Error nube";
@@ -3026,11 +3023,11 @@
 
     function initCloudSync(force = false) {
       if (!getCloudConfig()) {
-        els.cloudBtn.textContent = "Configurar nube";
+        els.cloudBtn.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube pendiente";
         els.refreshCloudBtn.disabled = true;
         return;
       }
-      els.cloudBtn.textContent = "Nube activa";
+      els.cloudBtn.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube activa";
       els.refreshCloudBtn.disabled = false;
       if (window.happyDecoCloudTimer) {
         clearInterval(window.happyDecoCloudTimer);

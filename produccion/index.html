@@ -566,7 +566,7 @@
         }
 
         if (fallback) {
-          setCloudWarning("Modo respaldo: este celular no pudo conectar con Supabase. Se muestra la última copia publicada de Producción.");
+          setCloudWarning("Modo respaldo: este celular no pudo conectar con Firebase. Se muestra la ultima copia publicada de Produccion.");
         }
 
         if (fallback && dashboardResult.status === "rejected" && processResult.status === "rejected") {
@@ -581,13 +581,13 @@
           records = fallback.records;
           processEvents = fallback.processEvents;
           els.lastUpdate.textContent = `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`;
-          setCloudWarning("Modo respaldo: este celular no pudo conectar con Supabase. Se muestra la última copia publicada de Producción.");
+          setCloudWarning("Modo respaldo: este celular no pudo conectar con Firebase. Se muestra la ultima copia publicada de Produccion.");
         } catch (cacheError) {
           console.error("No se pudo leer respaldo de producción", cacheError);
           records = [];
           processEvents = [];
           els.lastUpdate.textContent = "Sin conexión con la nube ni respaldo.";
-          setCloudWarning("No pude conectar con Supabase ni cargar el respaldo. Revisá internet y volvé a intentar.");
+          setCloudWarning("No pude conectar con Firebase ni cargar el respaldo. Revisa internet y volve a intentar.");
         }
       } finally {
         els.refreshBtn.classList.remove("syncing");

@@ -1069,7 +1069,7 @@
           </div>
         </div>
         <div class="actions">
-          <button class="ghost" id="cloudBtn" type="button">Configurar nube</button>
+          <button class="ghost" id="cloudBtn" type="button">Nube Firebase</button>
           <button class="ghost" id="exportBtn" type="button">Exportar datos</button>
           <button class="ghost" id="importBtn" type="button">Importar</button>
           <button class="primary" id="newBtn" type="button">Nuevo evento</button>
@@ -1221,7 +1221,7 @@
 
     document.querySelector("#newBtn").addEventListener("click", createEvent);
     document.querySelector("#exportBtn").addEventListener("click", exportData);
-    document.querySelector("#cloudBtn").addEventListener("click", configureCloud);
+    document.querySelector("#cloudBtn").addEventListener("click", () => pullCloudEvents());
     document.querySelector("#importBtn").addEventListener("click", () => document.querySelector("#importFile").click());
     document.querySelector("#importFile").addEventListener("change", importData);
 
@@ -2057,7 +2057,7 @@
           if (getSelected()?.id !== event.id) return;
           if (!result.ok) {
             requestAnimationFrame(() => {
-              setStatus(detail.querySelector("[data-sketch-status]"), "Boceto guardado en este dispositivo. Pendiente de nube hasta que Supabase vuelva a responder.");
+              setStatus(detail.querySelector("[data-sketch-status]"), "Boceto guardado en este dispositivo. Pendiente de nube hasta que Firebase vuelva a responder.");
             });
             return;
           }
@@ -2502,14 +2502,11 @@
     }
 
     function configureCloud() {
-      const current = getCloudConfig() || {};
-      const url = prompt("URL del proyecto Supabase:", current.url || "");
-      if (url === null) return;
-      const anonKey = prompt("Anon public key de Supabase:", current.anonKey || "");
-      if (anonKey === null) return;
-      localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify({ url: url.trim(), anonKey: anonKey.trim() }));
-      alert("Nube configurada. Voy a sincronizar los eventos compartidos.");
-      initCloudSync(true);
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        pullCloudEvents();
+      } else {
+        alert("La nube actual es Firebase. Si no sincroniza, revisa que Firestore este activo.");
+      }
     }
 
     async function cloudRequest(path, options = {}) {
@@ -2556,10 +2553,10 @@
           : state.events[0]?.id || null;
         saveEventsLocal();
         render();
-        button.textContent = "Nube activa";
+        button.textContent = "Firebase activa";
         if (cloudEvents.some(hasEmbeddedSketchData)) {
           cloudUpsertEvents(cleanedCloudEvents).then(result => {
-            if (result?.ok) console.info("Bocetos embebidos limpiados de Supabase.");
+            if (result?.ok) console.info("Bocetos embebidos limpiados de la nube.");
           });
         }
       } catch (error) {
@@ -2789,10 +2786,10 @@
     function initCloudSync(force = false) {
       const button = document.querySelector("#cloudBtn");
       if (!getCloudConfig()) {
-        button.textContent = "Configurar nube";
+        button.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube pendiente";
         return;
       }
-      button.textContent = "Nube activa";
+      button.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube activa";
       pullCloudEvents();
       if (force || !window.happyDecoProcessCloudTimer) {
         window.happyDecoProcessCloudTimer = setInterval(pullCloudEvents, 3000);

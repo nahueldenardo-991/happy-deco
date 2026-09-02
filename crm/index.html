@@ -1784,7 +1784,7 @@
           action: "dashboard",
           button: "Reintentar Dashboard",
           missing,
-          help: "El pase quedó guardado localmente. Reintentá cuando Supabase vuelva a estar disponible."
+          help: "El pase quedo guardado localmente. Reintenta cuando Firebase vuelva a estar disponible."
         };
       }
       if (lead.dashboardRecordId) {
@@ -2077,7 +2077,7 @@
           className: "pending",
           pillClass: "sync-pending",
           button: "Reintentar Dashboard",
-          help: "El pase quedó guardado en este dispositivo. Las socias lo verán cuando Supabase vuelva a sincronizar y se reintente."
+          help: "El pase quedo guardado en este dispositivo. Las socias lo veran cuando Firebase vuelva a sincronizar y se reintente."
         };
       }
       if (lead.dashboardRecordId) {
@@ -2221,7 +2221,7 @@
         const readable = readableError(error);
         storeLocalDashboardHandoff({ lead, recordId, dashboardRecord, processEvent, error: readable });
         if (!options.silent) {
-          showToast("Guardado local. Queda pendiente de nube hasta resolver Supabase.");
+          showToast("Guardado local. Queda pendiente de nube hasta resolver Firebase.");
         }
         if (button) {
           button.disabled = false;
@@ -2508,7 +2508,7 @@
         leads = sanitizeLeads(crmRows);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
         render();
-        els.cloudBtn.textContent = "Nube activa";
+        els.cloudBtn.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube activa";
         if (options.manual) {
           showToast(pendingResult?.synced
             ? `${pendingResult.synced} pase(s) pendiente(s) sincronizado(s).`
@@ -2517,7 +2517,7 @@
       } catch (error) {
         els.cloudBtn.textContent = "Error nube";
         console.error("No pude sincronizar CRM", error);
-        if (options.manual) showToast("No se pudo actualizar la nube. Revisá la conexión o Supabase.");
+        if (options.manual) showToast("No se pudo actualizar la nube. Revisa la conexion o Firebase.");
       }
     }
 
@@ -2563,7 +2563,7 @@
     }
 
     function initCloudSync() {
-      els.cloudBtn.textContent = "Nube activa";
+      els.cloudBtn.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube activa";
       pullCloudLeads();
       if (!window.happyDecoCrmCloudTimer) window.happyDecoCrmCloudTimer = setInterval(pullCloudLeads, 3000);
       if (!window.happyDecoCrmFocusHandlers) {
