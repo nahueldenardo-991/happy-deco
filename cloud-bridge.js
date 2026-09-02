@@ -9,6 +9,8 @@
     url: "https://niwkiklxyblrvbeusqbd.supabase.co",
     anonKey: "sb_publishable_BZOa1hRBnH0KWocgyCZmfw_-lrLIgGd"
   };
+  const historicalCooldownKey = "happyDecoSupabaseHistoricalRetryAt";
+  const historicalCooldownMs = 10 * 60 * 1000;
 
   const baseUrl = `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents`;
 
@@ -114,6 +116,8 @@
 
   async function supabaseRead(path) {
     if (!historicalConfig.url || !historicalConfig.anonKey) return [];
+    const retryAt = Number(localStorage.getItem(historicalCooldownKey) || 0);
+    if (retryAt && Date.now() < retryAt) return [];
     try {
       const response = await fetch(`${historicalConfig.url}/rest/v1/${path}`, {
         cache: "no-store",
@@ -124,13 +128,16 @@
         }
       });
       if (!response.ok) {
+        localStorage.setItem(historicalCooldownKey, String(Date.now() + historicalCooldownMs));
         console.warn("Supabase histórico no disponible; se usa Firebase.", response.status, await response.text());
         return [];
       }
+      localStorage.removeItem(historicalCooldownKey);
       const text = await response.text();
       const rows = text ? JSON.parse(text) : [];
       return Array.isArray(rows) ? rows : [];
     } catch (error) {
+      localStorage.setItem(historicalCooldownKey, String(Date.now() + historicalCooldownMs));
       console.warn("Supabase histórico no disponible; se usa Firebase.", error);
       return [];
     }
