@@ -818,6 +818,53 @@
       overflow: auto;
     }
 
+    .material-create-form {
+      display: none;
+      grid-template-columns: minmax(220px, 1.4fr) minmax(150px, .9fr) minmax(110px, .7fr) minmax(110px, .7fr) minmax(110px, .7fr);
+      gap: 8px;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fffafc;
+    }
+
+    .material-create-form.open {
+      display: grid;
+    }
+
+    .material-create-form label {
+      display: grid;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .material-create-form input,
+    .material-create-form select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .material-create-form .wide {
+      grid-column: span 2;
+    }
+
+    .material-create-form .actions-row {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
     .material-result {
       width: 100%;
       min-height: auto;
@@ -1028,6 +1075,7 @@
 
       .sketch-actions,
       .materials-actions,
+      .material-create-form,
       .material-row {
         display: grid;
         grid-template-columns: 1fr;
@@ -1664,6 +1712,9 @@
         }
       });
       detail.querySelector("#materialSearch")?.addEventListener("input", (event) => renderMaterialResults(event.target.value));
+      detail.querySelector("[data-toggle-create-material]")?.addEventListener("click", () => toggleCreateMaterialForm());
+      detail.querySelector("[data-cancel-create-material]")?.addEventListener("click", () => toggleCreateMaterialForm(false));
+      detail.querySelector("[data-create-material-form]")?.addEventListener("submit", createCatalogItemFromProcess);
       detail.querySelectorAll("[data-material-category]").forEach(button => {
         button.addEventListener("click", () => {
           materialCategoryFilter = button.dataset.materialCategory || "Todas";
@@ -1886,16 +1937,18 @@
                 Agregar ítem extra
                 <span>Buscar en Ítems y precios</span>
               </button>
-              <div class="material-picker-panel">
-                <div class="material-picker-head">
-                  <div class="material-category-tabs" aria-label="Filtrar materiales">
-                    ${materialCategoryButtons()}
-                  </div>
-                  <input id="materialSearch" type="search" placeholder="Buscar por nombre o palabra: panel curvo, globos, impresión..." autocomplete="off">
+            <div class="material-picker-panel">
+              <div class="material-picker-head">
+                <div class="material-category-tabs" aria-label="Filtrar materiales">
+                  ${materialCategoryButtons()}
                 </div>
-                <div id="materialResults" class="material-results"></div>
+                <input id="materialSearch" type="search" placeholder="Buscar por nombre o palabra: panel curvo, globos, impresión..." autocomplete="off">
+                <button class="ghost" type="button" data-toggle-create-material>+ Crear ítem nuevo</button>
               </div>
+              ${renderMaterialCreateForm()}
+              <div id="materialResults" class="material-results"></div>
             </div>
+          </div>
             <div class="materials-list" data-materials-list>
               ${items.length ? items.map((material, index) => renderMaterialRow(material, index)).join("") : `<div class="hint">Buscá y agregá solo los materiales realmente usados. Lo cargado acá alimenta Producción y el costo real en Finanzas.</div>`}
             </div>
@@ -2276,6 +2329,66 @@
       setStatus(detail.querySelector("[data-materials-status]"), "Material agregado desde Ítems y precios. Recordá guardar cambios.");
     }
 
+    function toggleCreateMaterialForm(open = null) {
+      const form = detail.querySelector("[data-create-material-form]");
+      if (!form) return;
+      const shouldOpen = open === null ? !form.classList.contains("open") : open;
+      form.classList.toggle("open", shouldOpen);
+      if (shouldOpen) {
+        const searchValue = detail.querySelector("#materialSearch")?.value || "";
+        const nameInput = form.querySelector("[name='name']");
+        if (nameInput && !nameInput.value.trim()) nameInput.value = searchValue;
+        requestAnimationFrame(() => nameInput?.focus());
+      }
+    }
+
+    async function createCatalogItemFromProcess(event) {
+      event.preventDefault();
+      const selected = getSelected();
+      if (!selected) return;
+      const form = event.currentTarget;
+      const data = new FormData(form);
+      const name = String(data.get("name") || "").trim();
+      if (!name) return;
+      markEditing();
+      showMaterialSaveProgress("Creando ítem y sincronizando...");
+      const draft = normalizeCatalogItem({
+        id: `process-item-${Date.now()}-${normalizeText(name).replace(/[^a-z0-9]+/g, "-")}`,
+        name,
+        category: String(data.get("category") || "Otros"),
+        unit: String(data.get("unit") || "unidad"),
+        unitCost: Number(data.get("unitCost")) || 0,
+        stock: Number(data.get("stock")) || 0,
+        features: String(data.get("features") || ""),
+        source: "Proceso"
+      }, "Proceso");
+      if (!draft) return;
+      const existing = financeCatalog.costItems.find(item => normalizeText(item.name) === normalizeText(name));
+      if (existing) {
+        existing.category = draft.category;
+        existing.unit = draft.unit;
+        existing.unitCost = draft.unitCost;
+        existing.stock = draft.stock;
+        existing.features = draft.features;
+        existing.updated = new Date().toISOString().slice(0, 10);
+      } else {
+        draft.updated = new Date().toISOString().slice(0, 10);
+        financeCatalog.costItems = mergeCatalogItems(financeCatalog.costItems, [draft]);
+      }
+      const savedItem = existing || draft;
+      updateFinanceCatalogLocal(savedItem);
+      let synced = true;
+      await syncFinanceCatalogToCloud(savedItem).catch(error => {
+        synced = false;
+        console.warn("No pude sincronizar el nuevo ítem con Finanzas", error);
+        setStatus(detail.querySelector("[data-materials-status]"), "Ítem creado localmente. La nube queda pendiente.", true);
+      });
+      addMaterialFromCatalog(savedItem.id);
+      toggleCreateMaterialForm(false);
+      renderMaterialResults(detail.querySelector("#materialSearch")?.value || "");
+      showMaterialSaveDone(synced ? "Ítem creado, agregado al evento y sincronizado" : "Ítem creado y agregado. Nube pendiente");
+    }
+
     function removeMaterial(index) {
       const event = getSelected();
       if (!event) return;
@@ -2488,6 +2601,9 @@
     }
 
     function getCloudConfig() {
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        return { firebase: true };
+      }
       try {
         const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
         const activeConfig = config.url && config.anonKey ? config : DEFAULT_CLOUD_CONFIG;
@@ -2850,6 +2966,9 @@
         stock: Number(item.stock ?? item.cantidad ?? 0) || 0,
         location: String(item.location || item.ubicacion || "").trim(),
         features: String(item.features || item.notes || item.detalle || "").trim(),
+        codes: Array.isArray(item.codes) ? item.codes : [],
+        assembly: String(item.assembly || item.armado || "").trim(),
+        updated: String(item.updated || item.updatedAt || "").slice(0, 10),
         source: source || item.source || ""
       };
     }
@@ -2888,8 +3007,12 @@
         if (!clean) return;
         const key = normalizeText(clean.name);
         const current = byName.get(key);
-        if (!current || (Number(clean.unitCost) > 0 && Number(current.unitCost) <= 0) || (clean.source && !current.source)) {
+        if (!current) {
           byName.set(key, clean);
+        } else if ((Number(clean.unitCost) > 0 && Number(current.unitCost) <= 0) || (clean.source && !current.source)) {
+          byName.set(key, { ...current, ...clean, stock: clean.stock || current.stock || 0, updated: clean.updated || current.updated || "" });
+        } else if (Number(clean.stock) > 0 && Number(current.stock) <= 0) {
+          byName.set(key, { ...current, stock: clean.stock, location: clean.location || current.location || "", codes: clean.codes?.length ? clean.codes : current.codes || [], assembly: clean.assembly || current.assembly || "" });
         }
       });
       return [...byName.values()].sort((a, b) => String(a.category).localeCompare(String(b.category)) || String(a.name).localeCompare(String(b.name)));
@@ -2906,6 +3029,65 @@
         Array.isArray(data.reusables) ? data.reusables.map(catalogItemFromReusable) : []
       );
       return { proposals, costItems };
+    }
+
+    function updateFinanceCatalogLocal(item) {
+      try {
+        const data = JSON.parse(localStorage.getItem("happyDecoFinanceV1") || "{}");
+        data.costItems = mergeCatalogItems(data.costItems || [], [item]);
+        data.stockChecks = Array.isArray(data.stockChecks) ? data.stockChecks : [];
+        if (!data.stockChecks.some(check => check.itemId === item.id)) {
+          const initialStock = Number(item.stock) || 0;
+          data.stockChecks.push({
+            id: `control-${Date.now()}-${normalizeText(item.name).replace(/[^a-z0-9]+/g, "-")}`,
+            itemId: item.id,
+            itemName: item.name,
+            controlDate: new Date().toISOString().slice(0, 10),
+            previousStock: 0,
+            counted: initialStock,
+            difference: initialStock,
+            notes: "Cantidad inicial cargada desde Proceso"
+          });
+        }
+        localStorage.setItem("happyDecoFinanceV1", JSON.stringify(data));
+      } catch (error) {
+        console.warn("No pude actualizar Finanzas local", error);
+      }
+    }
+
+    async function syncFinanceCatalogToCloud(item) {
+      if (!getCloudConfig() || !item) return;
+      const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(FINANCE_RECORD_ID)}&select=data&limit=1`);
+      const current = Array.isArray(rows) ? rows[0]?.data : null;
+      const finance = current?.finance || {};
+      finance.costItems = mergeCatalogItems(finance.costItems || [], [item]);
+      finance.stockChecks = Array.isArray(finance.stockChecks) ? finance.stockChecks : [];
+      if (!finance.stockChecks.some(check => check.itemId === item.id)) {
+        const initialStock = Number(item.stock) || 0;
+        finance.stockChecks.push({
+          id: `control-${Date.now()}-${normalizeText(item.name).replace(/[^a-z0-9]+/g, "-")}`,
+          itemId: item.id,
+          itemName: item.name,
+          controlDate: new Date().toISOString().slice(0, 10),
+          previousStock: 0,
+          counted: initialStock,
+          difference: initialStock,
+          notes: "Cantidad inicial cargada desde Proceso"
+        });
+      }
+      const now = new Date().toISOString();
+      const data = {
+        ...(current || {}),
+        id: FINANCE_RECORD_ID,
+        module: "finance",
+        updatedAt: now,
+        finance
+      };
+      await cloudRequest(`${DASHBOARD_TABLE}?on_conflict=id`, {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify([{ id: FINANCE_RECORD_ID, data, updated_at: now }])
+      });
     }
 
     function searchText(value) {
@@ -2937,6 +3119,48 @@
         const base = item.quantity > 1 ? `${item.quantity} x ${item.name}` : item.name;
         return item.detail ? `${base} - ${item.detail}` : base;
       });
+    }
+
+    function processItemCategories() {
+      const base = ["Materiales", "Globos", "Gráfica e impresión", "Mobiliario", "Reutilizables", "Mano de obra", "Logística", "Servicios", "Herramientas", "Textiles", "Flores", "Otros"];
+      const existing = (financeCatalog.costItems || []).map(item => item.category || "").filter(Boolean);
+      return [...new Set([...base, ...existing])].sort((a, b) => String(a).localeCompare(String(b)));
+    }
+
+    function renderMaterialCreateForm() {
+      const searchValue = detail.querySelector("#materialSearch")?.value || "";
+      const categories = processItemCategories();
+      const selectedCategory = materialCategoryFilter !== "Todas" && categories.includes(materialCategoryFilter)
+        ? materialCategoryFilter
+        : "Otros";
+      return `
+        <form class="material-create-form" data-create-material-form>
+          <label class="wide">Nombre
+            <input name="name" value="${escapeAttr(searchValue)}" placeholder="Ej.: cinta doble faz, souvenir, panel nuevo" required>
+          </label>
+          <label>Categoría
+            <select name="category">${categories.map(category => `<option ${category === selectedCategory ? "selected" : ""}>${escapeHtml(category)}</option>`).join("")}</select>
+          </label>
+          <label>Unidad
+            <select name="unit">
+              ${["unidad", "paquete", "caja", "metro", "hora", "viaje", "uso", "servicio"].map(unit => `<option>${escapeHtml(unit)}</option>`).join("")}
+            </select>
+          </label>
+          <label>Precio
+            <input name="unitCost" type="number" min="0" step="0.01" value="0" required>
+          </label>
+          <label>Stock
+            <input name="stock" type="number" min="0" step="1" value="0" required>
+          </label>
+          <label class="wide">Detalle
+            <input name="features" placeholder="Color, medida, proveedor o aclaración">
+          </label>
+          <div class="actions-row">
+            <button class="ghost" type="button" data-cancel-create-material>Cancelar</button>
+            <button class="primary" type="submit">Crear y agregar</button>
+          </div>
+        </form>
+      `;
     }
 
     function defaultFinanceProposals() {

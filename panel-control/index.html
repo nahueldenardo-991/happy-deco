@@ -917,6 +917,9 @@
     }
 
     function getCloudConfig() {
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        return { firebase: true };
+      }
       try {
         const saved = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "{}");
         const active = saved.url && saved.anonKey ? saved : DEFAULT_CLOUD_CONFIG;
