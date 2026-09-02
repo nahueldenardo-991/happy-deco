@@ -1355,6 +1355,10 @@
       };
     }
 
+    function hasEmbeddedSketchData(event) {
+      return Boolean(event?.sketch?.dataUrl);
+    }
+
     function isEditingNow() {
       const active = document.activeElement;
       const isFormField = active && detail.contains(active) && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName);
@@ -2532,9 +2536,11 @@
       try {
         const rows = await cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`);
         if (!Array.isArray(rows)) return;
+        const cloudEvents = rows.map(row => row.data).filter(Boolean);
+        const cleanedCloudEvents = cloudEvents.map(eventForCloudStorage).filter(Boolean);
         const selectedId = state.selectedId;
         const localEvents = new Map(state.events.map(event => [event.id, event]));
-        state.events = sanitizeEvents(rows.map(row => row.data)).map(cloudEvent => {
+        state.events = sanitizeEvents(cleanedCloudEvents).map(cloudEvent => {
           const localEvent = localEvents.get(cloudEvent.id);
           if (!localEvent) return cloudEvent;
           const localTime = Date.parse(localEvent.updatedAt || "") || 0;
@@ -2547,6 +2553,11 @@
         saveEventsLocal();
         render();
         button.textContent = "Nube activa";
+        if (cloudEvents.some(hasEmbeddedSketchData)) {
+          cloudUpsertEvents(cleanedCloudEvents).then(result => {
+            if (result?.ok) console.info("Bocetos embebidos limpiados de Supabase.");
+          });
+        }
       } catch (error) {
         button.textContent = "Nube pendiente";
         console.error("No pude sincronizar proceso", error);
