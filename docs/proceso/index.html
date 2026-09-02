@@ -2714,10 +2714,7 @@
     function loadFinanceCatalogLocal() {
       try {
         const data = JSON.parse(localStorage.getItem("happyDecoFinanceV1") || "{}");
-        return {
-          proposals: Array.isArray(data.proposals) && data.proposals.length ? data.proposals : defaultFinanceProposals(),
-          costItems: Array.isArray(data.costItems) ? data.costItems : []
-        };
+        return buildFinanceCatalog(data);
       } catch {
         return { proposals: defaultFinanceProposals(), costItems: [] };
       }
@@ -2738,10 +2735,7 @@
           .filter(record => record.id && record.module !== "crm" && record.module !== "finance")
           .map(record => [record.id, record]));
         if (shared) {
-          financeCatalog = {
-            proposals: Array.isArray(shared.proposals) ? shared.proposals : financeCatalog.proposals,
-            costItems: Array.isArray(shared.costItems) ? shared.costItems : financeCatalog.costItems
-          };
+          financeCatalog = buildFinanceCatalog(shared, financeCatalog);
         }
         await mergeInventoryFallback();
         applyDashboardContextToEvents();
@@ -2754,14 +2748,13 @@
     }
 
     async function mergeInventoryFallback() {
-      if (financeCatalog.costItems.length) return;
       try {
         const response = await fetch("../finanzas/inventario.json", { cache: "no-store" });
         if (!response.ok) return;
         const inventory = await response.json();
         financeCatalog = {
           ...financeCatalog,
-          costItems: Array.isArray(inventory.items) ? inventory.items : []
+          costItems: mergeCatalogItems(financeCatalog.costItems, Array.isArray(inventory.items) ? inventory.items : [])
         };
       } catch (error) {
         console.warn("No pude cargar el inventario de respaldo", error);
@@ -2832,6 +2825,87 @@
         .replace(/^propuesta\s+/, "")
         .replace(/\s+/g, " ")
         .trim();
+    }
+
+    function catalogDisplayName(value) {
+      const name = String(value || "").replace(/^Costo de uso\s*·\s*/i, "").trim();
+      return name && name !== "·" ? String(value || "").trim() : "";
+    }
+
+    function catalogCostPerUse(item) {
+      return Number(item?.usefulEvents) > 0 ? Number(item.value || 0) / Number(item.usefulEvents) : 0;
+    }
+
+    function normalizeCatalogItem(item = {}, source = "") {
+      if (!item || typeof item !== "object") return null;
+      const rawName = item.name || item.itemName || "";
+      const name = catalogDisplayName(rawName);
+      if (!name) return null;
+      return {
+        id: String(item.id || item.itemId || `${source || "item"}-${normalizeText(name)}`),
+        name,
+        category: String(item.category || item.categoria || "Sin categoría").trim() || "Sin categoría",
+        unit: String(item.unit || item.unidad || "unidad").trim() || "unidad",
+        unitCost: Number(item.unitCost ?? item.price ?? item.precio ?? item.cost ?? item.costo ?? 0) || 0,
+        stock: Number(item.stock ?? item.cantidad ?? 0) || 0,
+        location: String(item.location || item.ubicacion || "").trim(),
+        features: String(item.features || item.notes || item.detalle || "").trim(),
+        source: source || item.source || ""
+      };
+    }
+
+    function catalogItemFromAsset(asset = {}) {
+      const item = normalizeCatalogItem({
+        id: `asset-${asset.id || normalizeText(asset.name)}`,
+        name: `Costo de uso · ${asset.name || ""}`,
+        category: "Mobiliario",
+        unit: "uso",
+        unitCost: catalogCostPerUse(asset),
+        stock: asset.stock,
+        location: asset.location,
+        features: asset.notes || ""
+      }, "Mobiliario");
+      return item;
+    }
+
+    function catalogItemFromReusable(item = {}) {
+      return normalizeCatalogItem({
+        id: `reusable-${item.id || normalizeText(item.name)}`,
+        name: `Costo de uso · ${item.name || ""}`,
+        category: "Reutilizables",
+        unit: "uso",
+        unitCost: catalogCostPerUse(item),
+        stock: item.stock,
+        location: item.location,
+        features: item.notes || ""
+      }, "Reutilizables");
+    }
+
+    function mergeCatalogItems(...groups) {
+      const byName = new Map();
+      groups.flat().forEach(item => {
+        const clean = normalizeCatalogItem(item, item?.source || "");
+        if (!clean) return;
+        const key = normalizeText(clean.name);
+        const current = byName.get(key);
+        if (!current || (Number(clean.unitCost) > 0 && Number(current.unitCost) <= 0) || (clean.source && !current.source)) {
+          byName.set(key, clean);
+        }
+      });
+      return [...byName.values()].sort((a, b) => String(a.category).localeCompare(String(b.category)) || String(a.name).localeCompare(String(b.name)));
+    }
+
+    function buildFinanceCatalog(data = {}, fallback = {}) {
+      const proposals = Array.isArray(data.proposals) && data.proposals.length
+        ? data.proposals
+        : (Array.isArray(fallback.proposals) && fallback.proposals.length ? fallback.proposals : defaultFinanceProposals());
+      const costItems = mergeCatalogItems(
+        Array.isArray(fallback.costItems) ? fallback.costItems : [],
+        Array.isArray(data.costItems) ? data.costItems : [],
+        Array.isArray(data.assets) ? data.assets.map(catalogItemFromAsset) : [],
+        Array.isArray(data.reusables) ? data.reusables.map(catalogItemFromReusable) : []
+      );
+      return { proposals, costItems };
     }
 
     function searchText(value) {
