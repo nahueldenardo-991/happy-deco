@@ -1340,6 +1340,21 @@
       });
     }
 
+    function eventForCloudStorage(event) {
+      const cleanEvent = sanitizeEvents([event])[0];
+      if (!cleanEvent) return null;
+      const sketch = normalizeSketch(cleanEvent.sketch);
+      return {
+        ...cleanEvent,
+        sketch: sketch
+          ? {
+              ...sketch,
+              dataUrl: ""
+            }
+          : null
+      };
+    }
+
     function isEditingNow() {
       const active = document.activeElement;
       const isFormField = active && detail.contains(active) && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName);
@@ -2539,7 +2554,7 @@
     }
 
     async function cloudUpsertEvent(event) {
-      const cleanEvent = sanitizeEvents([event])[0];
+      const cleanEvent = eventForCloudStorage(event);
       if (!getCloudConfig() || !cleanEvent) return { ok: true, skipped: true };
       try {
         await cloudRequest(PROCESS_TABLE, {
@@ -2571,6 +2586,7 @@
           ...current,
           materials: event.materials || materialItemsToText(materialItems),
           materialItems,
+          sketchDriveUrl: event.sketchDriveUrl || "",
           updatedAt
         };
         await cloudRequest(DASHBOARD_TABLE, {
@@ -2660,7 +2676,7 @@
     }
 
     async function cloudUpsertEvents(items) {
-      const cleanItems = sanitizeEvents(items);
+      const cleanItems = items.map(eventForCloudStorage).filter(Boolean);
       if (!getCloudConfig() || !cleanItems.length) return { ok: true, skipped: true };
       try {
         for (const event of cleanItems) {
