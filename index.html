@@ -3170,7 +3170,7 @@
     }
 
     function isConfirmed(record) {
-      return ["Señado", "Realizado"].includes(record.etapa);
+      return ["Señado", "Pagado completo", "Realizado"].includes(record.etapa);
     }
 
     function isNext30Days(record) {
