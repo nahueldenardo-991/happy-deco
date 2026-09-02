@@ -1685,6 +1685,7 @@
   </div>
 
   <script src="lifeline.js"></script>
+  <script src="firebase-cloud.js?v=20260902-1"></script>
   <script>
     const STORAGE_KEY = "happyDecoDashboardRecords";
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
@@ -2837,6 +2838,9 @@
     }
 
     async function cloudRequest(path, options = {}) {
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        return window.HappyDecoFirebaseCloud.request(path, options);
+      }
       const config = getCloudConfig();
       if (!config) return null;
       const response = await fetch(`${config.url}/rest/v1/${path}`, {

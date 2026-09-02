@@ -499,6 +499,7 @@
   </main>
 
   <script src="../lifeline.js"></script>
+  <script src="../firebase-cloud.js?v=20260902-1"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -1031,6 +1032,9 @@
     }
 
     async function cloudRequest(path, options = {}) {
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        return window.HappyDecoFirebaseCloud.request(path, options);
+      }
       const config = getCloudConfig();
       const method = String(options.method || "GET").toUpperCase();
       const headers = method === "GET"

@@ -31,6 +31,7 @@
       margin: 0;
       background: var(--bg);
       color: var(--ink);
+      overflow-x: hidden;
     }
 
     button, input, textarea, select {
@@ -578,6 +579,30 @@
       flex-wrap: wrap;
     }
 
+    .drive-sketch-tools {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #c8efec;
+      border-radius: 8px;
+      background: #f4fffe;
+    }
+
+    .drive-sketch-tools input {
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+
+    .drive-sketch-tools input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
+    }
+
     .hidden-file {
       position: absolute;
       inset: 0;
@@ -649,6 +674,51 @@
     @keyframes savingSlide {
       0% { transform: translateX(-110%); }
       100% { transform: translateX(230%); }
+    }
+
+    .global-save-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 80;
+      display: none;
+      padding: 9px 18px;
+      border-bottom: 1px solid rgba(41, 139, 133, .2);
+      background: rgba(255, 250, 242, .96);
+      box-shadow: 0 10px 28px rgba(41, 31, 22, .14);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .global-save-indicator.active {
+      display: grid;
+      gap: 6px;
+    }
+
+    .global-save-indicator.done {
+      color: var(--green);
+    }
+
+    .global-save-indicator.error {
+      color: var(--red);
+    }
+
+    .global-save-bar {
+      height: 5px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #efe4d8;
+    }
+
+    .global-save-bar span {
+      display: block;
+      width: 42%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), #8fe4df, var(--gold));
+      animation: savingSlide 1s ease-in-out infinite;
     }
 
     .materials-editor,
@@ -733,7 +803,8 @@
     }
 
     .material-picker input:focus,
-    .material-row input:focus {
+    .material-row input:focus,
+    .material-row textarea:focus {
       outline: none;
       border-color: var(--teal);
       box-shadow: 0 0 0 3px rgba(44, 151, 145, .12);
@@ -800,6 +871,18 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       font-size: 16px;
+      background: #fff;
+    }
+
+    .material-row textarea {
+      grid-column: 1 / -1;
+      width: 100%;
+      min-height: 54px;
+      resize: vertical;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
       background: #fff;
     }
 
@@ -924,11 +1007,23 @@
       }
 
       main {
-        padding: 14px;
+        width: calc(100vw - 28px);
+        padding: 14px 0;
       }
 
       .event-list, .hero-grid, .two-col, .form-grid {
         grid-template-columns: 1fr;
+      }
+
+      .detail-shell,
+      .hero,
+      .workflow,
+      .form-panel,
+      .two-col,
+      .sketch-card {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
       }
 
       .sketch-actions,
@@ -959,6 +1054,10 @@
   <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body class="module-process">
+  <div class="global-save-indicator" id="globalSaveIndicator" role="status" aria-live="polite">
+    <span id="globalSaveText">Guardando cambios...</span>
+    <div class="global-save-bar" aria-hidden="true"><span></span></div>
+  </div>
   <div class="app">
     <header>
       <div class="topbar">
@@ -1013,6 +1112,7 @@
   </div>
 
   <script src="../lifeline.js"></script>
+  <script src="../firebase-cloud.js?v=20260902-1"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -1021,7 +1121,13 @@
     };
     const PROCESS_TABLE = "happy_deco_process_events";
     const DASHBOARD_TABLE = "happy_deco_dashboard_records";
+    const DASHBOARD_STORAGE_KEY = "happyDecoDashboardRecords";
+    const FINANCE_STORAGE_KEY = "happyDecoFinanceV1";
     const FINANCE_RECORD_ID = "FINANCE-SHARED-STATE-V1";
+    const EVENTS_STORAGE_KEY = "happyDecoEvents";
+    const SKETCH_DB_NAME = "happyDecoSketchFiles";
+    const SKETCH_STORE_NAME = "sketches";
+    const DRIVE_SKETCH_FOLDER_URL = "https://drive.google.com/drive/folders/1MHDBsbjrDz5II1UdnhLy_cBAGtw_d_GF?usp=sharing";
     const DEFAULT_PROPOSAL_INCLUSIONS = {
       "Express": "Panel con funda; mesa principal; armado de mesa; globos; nombre; personaje impreso",
       "Minimalista": "Panel; mesa principal; guirnalda; globos temáticos; gráfica; nombre; neón",
@@ -1110,6 +1216,8 @@
     const eventList = document.querySelector("#eventList");
     const detail = document.querySelector("#detail");
     const search = document.querySelector("#search");
+    const globalSaveIndicator = document.querySelector("#globalSaveIndicator");
+    const globalSaveText = document.querySelector("#globalSaveText");
 
     document.querySelector("#newBtn").addEventListener("click", createEvent);
     document.querySelector("#exportBtn").addEventListener("click", exportData);
@@ -1133,10 +1241,12 @@
     render();
     initCloudSync();
     refreshFinanceCatalog();
+    migrateInlineSketchesToStorage();
+    hydrateSketchesFromStorage();
 
     function loadEvents() {
       try {
-        return sanitizeEvents(JSON.parse(localStorage.getItem("happyDecoEvents") || "[]"));
+        return sanitizeEvents(JSON.parse(localStorage.getItem(EVENTS_STORAGE_KEY) || "[]"));
       } catch {
         return [];
       }
@@ -1154,35 +1264,100 @@
             ...event,
             materials: Array.isArray(event.materials) ? event.materials.filter(Boolean) : parseMaterials(event.materials),
             materialItems: normalizeMaterialItems(event.materialItems),
-            sketch: event.sketch && event.sketch.dataUrl ? event.sketch : null
+            sketch: normalizeSketch(event.sketch)
           }))
         : [];
     }
 
+    function normalizeSketch(sketch) {
+      if (!sketch || typeof sketch !== "object") return null;
+      if (!sketch.dataUrl && !sketch.sketchKey) return null;
+      return {
+        name: sketch.name || "boceto",
+        type: sketch.type || inferFileType(sketch.name || ""),
+        size: Number(sketch.size) || 0,
+        dataUrl: sketch.dataUrl || "",
+        sketchKey: sketch.sketchKey || "",
+        updatedAt: sketch.updatedAt || new Date().toISOString()
+      };
+    }
+
     function saveEvents() {
+      showGlobalSave("Guardando cambios...");
       state.events = sanitizeEvents(state.events);
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
-      cloudUpsertEvents(state.events);
+      saveEventsLocal();
+      cloudUpsertEvents(state.events).then(result => {
+        showGlobalSaveDone(result?.ok === false ? "Guardado local. Nube pendiente." : "Cambios guardados");
+      });
     }
 
     async function saveEventsConfirmed() {
+      showGlobalSave("Guardando cambios...");
       state.events = sanitizeEvents(state.events);
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
-      return cloudUpsertEvents(state.events);
+      saveEventsLocal();
+      const result = await cloudUpsertEvents(state.events);
+      showGlobalSaveDone(result?.ok === false ? "Guardado local. Nube pendiente." : "Cambios guardados");
+      return result;
     }
 
     function scheduleSaveEvents(delay = 900) {
       markEditing();
+      showGlobalSave("Guardando cambios...");
       state.events = sanitizeEvents(state.events);
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
       clearTimeout(pendingSaveTimer);
       pendingSaveTimer = setTimeout(() => {
-        cloudUpsertEvents(state.events);
+        cloudUpsertEvents(state.events).then(result => {
+          showGlobalSaveDone(result?.ok === false ? "Guardado local. Nube pendiente." : "Cambios guardados");
+        });
       }, delay);
     }
 
     function markEditing() {
       editingUntil = Date.now() + 30000;
+    }
+
+    function saveEventsLocal() {
+      const payload = JSON.stringify(eventsForLocalStorage(state.events));
+      try {
+        localStorage.setItem(EVENTS_STORAGE_KEY, payload);
+      } catch (error) {
+        localStorage.removeItem(EVENTS_STORAGE_KEY);
+        localStorage.setItem(EVENTS_STORAGE_KEY, payload);
+      }
+    }
+
+    function eventsForLocalStorage(events) {
+      return sanitizeEvents(events).map(event => {
+        const sketch = normalizeSketch(event.sketch);
+        if (!sketch?.sketchKey) return event;
+        return {
+          ...event,
+          sketch: {
+            ...sketch,
+            dataUrl: ""
+          }
+        };
+      });
+    }
+
+    function eventForCloudStorage(event) {
+      const cleanEvent = sanitizeEvents([event])[0];
+      if (!cleanEvent) return null;
+      const sketch = normalizeSketch(cleanEvent.sketch);
+      return {
+        ...cleanEvent,
+        sketch: sketch
+          ? {
+              ...sketch,
+              dataUrl: ""
+            }
+          : null
+      };
+    }
+
+    function hasEmbeddedSketchData(event) {
+      return Boolean(event?.sketch?.dataUrl);
     }
 
     function isEditingNow() {
@@ -1333,7 +1508,8 @@
     }
 
     function getDeepLinkedEventId() {
-      return new URLSearchParams(window.location.search).get("registro");
+      const params = new URLSearchParams(window.location.search);
+      return params.get("registro") || params.get("evento");
     }
 
     function focusDeepLinkedEvent() {
@@ -1475,9 +1651,9 @@
       detail.querySelector("[data-upload-area]")?.addEventListener("dragover", handleSketchDrag);
       detail.querySelector("[data-upload-area]")?.addEventListener("drop", handleSketchDrop);
       detail.querySelector("[data-remove-sketch]")?.addEventListener("click", removeSketch);
+      detail.querySelector("[data-remove-drive-sketch]")?.addEventListener("click", removeDriveSketch);
       detail.querySelector("[data-save-materials]")?.addEventListener("click", saveMaterialsFromEditor);
       detail.querySelector("#proposalType")?.addEventListener("change", (event) => updateProposalSelection(event.target.value));
-      detail.querySelector("[data-apply-proposal-base]")?.addEventListener("click", applySelectedProposalBase);
       detail.querySelector("[data-refresh-finance-catalog]")?.addEventListener("click", refreshFinanceCatalog);
       detail.querySelector("[data-toggle-material-picker]")?.addEventListener("click", () => {
         const picker = detail.querySelector("#materialPicker");
@@ -1501,6 +1677,9 @@
       });
       renderMaterialResults("");
       detail.querySelectorAll("[data-material-qty]").forEach(input => {
+        input.addEventListener("input", updateMaterialsDraft);
+      });
+      detail.querySelectorAll("[data-material-detail]").forEach(input => {
         input.addEventListener("input", updateMaterialsDraft);
       });
       detail.querySelectorAll("[data-remove-material]").forEach(button => {
@@ -1578,21 +1757,34 @@
 
     function renderSketchEditor(event) {
       const sketch = event.sketch || null;
-      const preview = sketch
+      const driveUrl = String(event.sketchDriveUrl || event.driveSketchUrl || event.sketchUrl || "").trim();
+      const preview = driveUrl
+        ? renderDriveSketchPreview(driveUrl)
+        : sketch?.dataUrl
         ? renderSketchPreview(sketch)
         : `<div class="sketch-empty">
-            <strong>Tocá para cargar el boceto</strong>
-            <span>JPG, PNG, PDF, DOC o DOCX. En celular podés elegir una imagen de la galería.</span>
+            <strong>Subí el boceto a Drive y pegá el link</strong>
+            <span>Los archivos pesados van en la carpeta de Happy Deco. Acá queda guardado el acceso para Producción.</span>
           </div>`;
       return `
         <div class="sketch-card">
           <div class="section-title">
             <label>Boceto del evento</label>
-            <span class="hint">${sketch ? escapeHtml(`${sketch.name || "Archivo cargado"} · ${formatBytes(sketch.size || 0)}`) : "Se guarda para la ficha de producción."}</span>
+            <span class="hint">${driveUrl ? "Usando link de Google Drive" : sketch ? escapeHtml(`${sketch.name || "Archivo local"} · ${formatBytes(sketch.size || 0)}`) : "Se guarda para la ficha de producción."}</span>
+          </div>
+          <div class="drive-sketch-tools">
+            <div class="sketch-actions">
+              <a class="ghost" href="${escapeAttr(DRIVE_SKETCH_FOLDER_URL)}" target="_blank" rel="noopener">Abrir carpeta de bocetos en Drive</a>
+              ${driveUrl ? `<a class="ghost" href="${escapeAttr(driveUrl)}" target="_blank" rel="noopener">Abrir boceto</a>` : ""}
+              ${driveUrl ? `<button class="danger" type="button" data-remove-drive-sketch>Quitar link</button>` : ""}
+            </div>
+            <label for="sketchDriveUrl">Link del boceto en Drive</label>
+            <input id="sketchDriveUrl" data-field="sketchDriveUrl" type="url" value="${escapeAttr(driveUrl)}" placeholder="Pegá acá el link del archivo subido a Drive">
+            <span class="hint">Recomendado: subí el archivo a la carpeta de Drive y pegá acá el link del archivo, no el de la carpeta.</span>
           </div>
           <div class="sketch-upload-area" data-upload-area>
             <div class="sketch-preview">${preview}</div>
-            <span class="upload-hint-pill">${sketch ? "Cambiar archivo" : "Cargar archivo"}</span>
+            <span class="upload-hint-pill">${sketch ? "Cambiar archivo local" : "Cargar archivo local"}</span>
             <input class="hidden-file" id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
           </div>
           <div class="save-progress" data-sketch-progress>
@@ -1600,11 +1792,11 @@
             <span data-sketch-progress-text>Preparando archivo...</span>
           </div>
           <div class="sketch-actions">
-            ${sketch ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar</a>` : ""}
-            ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar boceto</button>` : ""}
+            ${sketch?.dataUrl ? `<a class="ghost" href="${escapeAttr(sketch.dataUrl)}" download="${escapeAttr(sketch.name || "boceto")}">Descargar archivo local</a>` : ""}
+            ${sketch ? `<button class="danger" type="button" data-remove-sketch>Quitar archivo local</button>` : ""}
           </div>
           <div class="sketch-status" data-sketch-status></div>
-          <span class="hint">Recomendado: imágenes livianas. El sistema comprime JPG y PNG automáticamente antes de sincronizar.</span>
+          <span class="hint">El link de Drive es el método recomendado para que el boceto no pese dentro de Happy Deco.</span>
         </div>
       `;
     }
@@ -1624,6 +1816,34 @@
       `;
     }
 
+    function renderDriveSketchPreview(url) {
+      const fileId = getGoogleDriveFileId(url);
+      if (fileId) {
+        return `<iframe src="${escapeAttr(`https://drive.google.com/file/d/${fileId}/preview`)}" title="Boceto en Google Drive"></iframe>`;
+      }
+      return `
+        <div class="sketch-empty">
+          <strong>Boceto vinculado desde Drive</strong>
+          <span>No puedo previsualizar este tipo de link, pero Producción puede abrirlo desde el botón.</span>
+        </div>
+      `;
+    }
+
+    function getGoogleDriveFileId(url) {
+      const value = String(url || "").trim();
+      if (!value) return "";
+      const patterns = [
+        /\/file\/d\/([^/]+)/,
+        /[?&]id=([^&]+)/,
+        /\/d\/([^/]+)/
+      ];
+      for (const pattern of patterns) {
+        const match = value.match(pattern);
+        if (match?.[1]) return decodeURIComponent(match[1]);
+      }
+      return "";
+    }
+
     function renderProposalSelect(event) {
       const proposals = proposalOptions(event);
       const current = proposalForEvent(event)?.name || event.proposalType || extractKnownProposalName(event.package) || "";
@@ -1635,7 +1855,6 @@
             ${proposals.map(proposal => `<option value="${escapeAttr(proposal.name)}" ${normalizeText(proposal.name) === normalizeText(current) ? "selected" : ""}>${escapeHtml(proposal.name)}</option>`).join("")}
           </select>
           <div class="materials-actions">
-            <button class="ghost" type="button" data-apply-proposal-base>Cargar componentes base</button>
             <button class="ghost" type="button" data-refresh-finance-catalog>Actualizar desde Finanzas</button>
           </div>
           <span class="hint">${financeCatalog.proposals.length ? "Las propuestas vienen de Finanzas." : "Todavía no llegó el catálogo de Finanzas; podés seleccionar la propuesta y actualizar después."}</span>
@@ -1644,7 +1863,6 @@
     }
 
     function renderMaterialsEditor(event) {
-      ensureBaseProposalMaterials(event);
       const items = currentMaterialItems(event);
       const materialCount = items.length;
       const total = items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitCost || 0), 0);
@@ -1661,7 +1879,7 @@
           <div class="materials-editor">
             <div class="proposal-source">
               <strong>Propuesta detectada:</strong> ${escapeHtml(proposalLabel)}.
-              ${proposal ? "Los componentes base de esa propuesta se cargan automáticamente." : "Cuando Finanzas tenga cargada esa propuesta, sus componentes base aparecerán automáticamente."}
+              La propuesta queda como referencia del evento; los materiales reales se cargan manualmente desde Ítems y precios.
             </div>
             <div class="material-picker" id="materialPicker">
               <button class="ghost material-picker-toggle" type="button" data-toggle-material-picker>
@@ -1679,7 +1897,7 @@
               </div>
             </div>
             <div class="materials-list" data-materials-list>
-              ${items.length ? items.map((material, index) => renderMaterialRow(material, index)).join("") : `<div class="hint">Buscá y agregá materiales desde Ítems y precios. Si la propuesta tiene componentes cargados, aparecen automáticamente acá.</div>`}
+              ${items.length ? items.map((material, index) => renderMaterialRow(material, index)).join("") : `<div class="hint">Buscá y agregá solo los materiales realmente usados. Lo cargado acá alimenta Producción y el costo real en Finanzas.</div>`}
             </div>
             <div class="materials-counter" data-materials-counter>${materialCount} ítem${materialCount === 1 ? "" : "s"} detectado${materialCount === 1 ? "" : "s"} · costo real base ${formatMoney(total)}</div>
           </div>
@@ -1707,6 +1925,7 @@
           <input data-material-cost type="number" min="0" step="1" value="${escapeAttr(unitCost)}" readonly aria-label="Costo unitario">
           <div class="material-subtotal">${formatMoney(subtotal)}</div>
           <button class="danger" type="button" data-remove-material="${index}">Quitar</button>
+          <textarea data-material-detail rows="2" placeholder="Detalle para producción o costos: color, medida, proveedor, aclaración...">${escapeHtml(material.detail || "")}</textarea>
         </div>
       `;
     }
@@ -1736,7 +1955,6 @@
       markEditing();
       event.proposalType = value;
       event.updatedAt = new Date().toISOString();
-      mergeProposalBaseIntoEvent(event);
       scheduleSaveEvents();
       render();
     }
@@ -1802,40 +2020,55 @@
       try {
         showSketchProgress(isImage ? "Comprimiendo imagen..." : "Preparando archivo...");
         const prepared = isImage ? await prepareImageSketch(file) : await readFileAsDataUrl(file);
+        const sketchKey = event.sketch?.sketchKey || `sketch-${event.id}-${Date.now()}`;
         event.sketch = {
           name: prepared.name,
           type: prepared.type,
           size: prepared.size,
           dataUrl: prepared.dataUrl,
+          sketchKey,
           updatedAt: new Date().toISOString()
         };
         event.updatedAt = new Date().toISOString();
-        showSketchProgress("Guardando y sincronizando boceto...");
+        showSketchProgress("Guardando boceto en este dispositivo...");
+        await saveSketchFile(sketchKey, event.sketch);
         state.events = sanitizeEvents(state.events);
         let localSaved = true;
         try {
-          localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+          saveEventsLocal();
         } catch (storageError) {
           localSaved = false;
           console.warn("No pude guardar el boceto localmente", storageError);
         }
-        const result = await cloudUpsertEvent(event);
+        if (!localSaved) {
+          hideSketchProgress();
+          showGlobalSaveDone("No hubo espacio local para guardar", true);
+          setStatus(status, `No hubo espacio en este navegador para guardar el boceto (${formatBytes(prepared.size)}). Exportá un backup o quitá bocetos viejos antes de reintentar.`, true);
+          if (input) input.value = "";
+          return;
+        }
         renderDetail();
-        if (!result.ok) {
-          requestAnimationFrame(() => {
-            const message = localSaved
-              ? "Boceto cargado en este dispositivo. Tocá Guardar cambios para reintentar sincronizar."
-              : "El boceto es pesado y no llegó a sincronizarse. Probá con una imagen más liviana o PDF.";
-            setStatus(detail.querySelector("[data-sketch-status]"), message, true);
-          });
-        } else {
+        requestAnimationFrame(() => {
+          hideSketchProgress();
+          showGlobalSaveDone("Boceto guardado localmente");
+          setStatus(detail.querySelector("[data-sketch-status]"), `Boceto guardado en este dispositivo (${formatBytes(event.sketch?.size)}). Sincronizando nube en segundo plano.`);
+        });
+        cloudUpsertEvent(event).then(result => {
+          if (getSelected()?.id !== event.id) return;
+          if (!result.ok) {
+            requestAnimationFrame(() => {
+              setStatus(detail.querySelector("[data-sketch-status]"), "Boceto guardado en este dispositivo. Pendiente de nube hasta que Supabase vuelva a responder.");
+            });
+            return;
+          }
           requestAnimationFrame(() => {
             showSketchDone("Boceto guardado y sincronizado");
           });
-        }
+        });
       } catch (error) {
         console.error("No pude guardar el boceto", error);
         hideSketchProgress();
+        showGlobalSaveDone("No se pudo leer el archivo", true);
         setStatus(status, "No pude leer ese archivo. Probá con JPG, PNG, PDF, DOC o DOCX.", true);
       }
       if (input) input.value = "";
@@ -1853,6 +2086,96 @@
         reader.onerror = () => reject(reader.error || new Error("No se pudo leer el archivo."));
         reader.readAsDataURL(file);
       });
+    }
+
+    function openSketchDb() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+          reject(new Error("IndexedDB no disponible"));
+          return;
+        }
+        const request = indexedDB.open(SKETCH_DB_NAME, 1);
+        request.onupgradeneeded = () => {
+          request.result.createObjectStore(SKETCH_STORE_NAME, { keyPath: "key" });
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error("No se pudo abrir IndexedDB"));
+      });
+    }
+
+    async function saveSketchFile(key, sketch) {
+      const db = await openSketchDb();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(SKETCH_STORE_NAME, "readwrite");
+        tx.objectStore(SKETCH_STORE_NAME).put({
+          key,
+          sketch: {
+            name: sketch.name,
+            type: sketch.type,
+            size: sketch.size,
+            dataUrl: sketch.dataUrl,
+            sketchKey: key,
+            updatedAt: sketch.updatedAt
+          }
+        });
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error || new Error("No se pudo guardar el boceto"));
+      });
+      db.close();
+    }
+
+    async function loadSketchFile(key) {
+      if (!key) return null;
+      const db = await openSketchDb();
+      const result = await new Promise((resolve, reject) => {
+        const tx = db.transaction(SKETCH_STORE_NAME, "readonly");
+        const request = tx.objectStore(SKETCH_STORE_NAME).get(key);
+        request.onsuccess = () => resolve(request.result?.sketch || null);
+        request.onerror = () => reject(request.error || new Error("No se pudo leer el boceto"));
+      });
+      db.close();
+      return result;
+    }
+
+    async function hydrateSketchesFromStorage() {
+      const pending = state.events.filter(event => event.sketch?.sketchKey && !event.sketch.dataUrl);
+      if (!pending.length) return;
+      let changed = false;
+      for (const event of pending) {
+        try {
+          const stored = await loadSketchFile(event.sketch.sketchKey);
+          if (stored?.dataUrl) {
+            event.sketch = normalizeSketch({ ...event.sketch, ...stored });
+            changed = true;
+          }
+        } catch (error) {
+          console.warn("No pude recuperar un boceto local", error);
+        }
+      }
+      if (changed) renderDetail();
+    }
+
+    async function migrateInlineSketchesToStorage() {
+      const inline = state.events.filter(event => event.sketch?.dataUrl && !event.sketch.sketchKey);
+      if (!inline.length) return;
+      let changed = false;
+      for (const event of inline) {
+        try {
+          const key = `sketch-${event.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+          event.sketch = normalizeSketch({ ...event.sketch, sketchKey: key });
+          await saveSketchFile(key, event.sketch);
+          changed = true;
+        } catch (error) {
+          console.warn("No pude migrar un boceto local a IndexedDB", error);
+        }
+      }
+      if (changed) {
+        try {
+          saveEventsLocal();
+        } catch (error) {
+          console.warn("No pude alivianar el guardado local de bocetos", error);
+        }
+      }
     }
 
     function prepareImageSketch(file) {
@@ -1911,6 +2234,15 @@
       renderDetail();
     }
 
+    function removeDriveSketch() {
+      const event = getSelected();
+      if (!event) return;
+      event.sketchDriveUrl = "";
+      event.updatedAt = new Date().toISOString();
+      saveEvents();
+      renderDetail();
+    }
+
     function addMaterialFromCatalog(itemId) {
       const event = getSelected();
       if (!event) return;
@@ -1927,7 +2259,9 @@
       }));
       event.materials = materialItemsToText(event.materialItems);
       event.updatedAt = new Date().toISOString();
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
       scheduleSaveEvents();
       renderDetail();
       requestAnimationFrame(() => {
@@ -1951,7 +2285,9 @@
       event.materialItems = values;
       event.materials = materialItemsToText(values);
       event.updatedAt = new Date().toISOString();
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
       scheduleSaveEvents();
       renderDetail();
       setStatus(detail.querySelector("[data-materials-status]"), "Material quitado. Recordá guardar cambios.");
@@ -1965,7 +2301,9 @@
       event.materialItems = materials;
       event.materials = materialItemsToText(materials);
       event.updatedAt = new Date().toISOString();
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
       scheduleSaveEvents();
       updateMaterialsCounter(materials);
       setStatus(detail.querySelector("[data-materials-status]"), "Cambios sin guardar");
@@ -1980,10 +2318,13 @@
       event.materials = materialItemsToText(event.materialItems);
       event.updatedAt = new Date().toISOString();
       state.events = sanitizeEvents(state.events);
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
       const result = await cloudUpsertEvent(event);
       renderList();
       if (!result.ok) {
+        showGlobalSaveDone("Materiales guardados local. Nube pendiente.");
         setStatus(detail.querySelector("[data-materials-status]"), "No se pudo sincronizar. Revisá conexión y volvé a guardar.", true);
         return result;
       }
@@ -2000,12 +2341,18 @@
           name: row.dataset.itemName || "",
           category: row.dataset.itemCategory || "",
           quantity: Number(row.querySelector("[data-material-qty]")?.value) || 0,
-          unitCost: Number(row.querySelector("[data-material-cost]")?.value) || 0
+          unitCost: Number(row.querySelector("[data-material-cost]")?.value) || 0,
+          detail: row.querySelector("[data-material-detail]")?.value || ""
         }))
         .filter(item => item.name && item.quantity > 0);
     }
 
     function updateMaterialsCounter(materials = readMaterialItemsRows()) {
+      detail.querySelectorAll("[data-material-row]").forEach(row => {
+        const subtotal = (Number(row.querySelector("[data-material-qty]")?.value) || 0) * (Number(row.querySelector("[data-material-cost]")?.value) || 0);
+        const subtotalElement = row.querySelector(".material-subtotal");
+        if (subtotalElement) subtotalElement.textContent = formatMoney(subtotal);
+      });
       const counter = detail.querySelector("[data-materials-counter]");
       if (!counter) return;
       const count = materials.length;
@@ -2019,7 +2366,28 @@
       element.classList.toggle("error", isError);
     }
 
+    function showGlobalSave(message) {
+      if (!globalSaveIndicator || !globalSaveText) return;
+      globalSaveText.textContent = message || "Guardando cambios...";
+      globalSaveIndicator.classList.add("active");
+      globalSaveIndicator.classList.remove("done", "error");
+      clearTimeout(window.happyDecoGlobalSaveTimer);
+    }
+
+    function showGlobalSaveDone(message, isError = false) {
+      if (!globalSaveIndicator || !globalSaveText) return;
+      globalSaveText.textContent = message || "Cambios guardados";
+      globalSaveIndicator.classList.add("active");
+      globalSaveIndicator.classList.toggle("done", !isError);
+      globalSaveIndicator.classList.toggle("error", isError);
+      clearTimeout(window.happyDecoGlobalSaveTimer);
+      window.happyDecoGlobalSaveTimer = setTimeout(() => {
+        globalSaveIndicator.classList.remove("active", "done", "error");
+      }, 1800);
+    }
+
     function showSketchProgress(message) {
+      showGlobalSave(message || "Guardando boceto...");
       const progress = detail.querySelector("[data-sketch-progress]");
       const progressText = detail.querySelector("[data-sketch-progress-text]");
       const status = detail.querySelector("[data-sketch-status]");
@@ -2035,10 +2403,12 @@
 
     function showSketchDone(message) {
       hideSketchProgress();
+      showGlobalSaveDone(message || "Boceto guardado");
       setStatus(detail.querySelector("[data-sketch-status]"), message || "Boceto guardado");
     }
 
     function showMaterialSaveProgress(message) {
+      showGlobalSave(message || "Guardando materiales...");
       const progress = detail.querySelector("[data-materials-progress]");
       const status = detail.querySelector("[data-materials-status]");
       if (progress) progress.classList.add("active");
@@ -2048,6 +2418,7 @@
     function showMaterialSaveDone(message) {
       const progress = detail.querySelector("[data-materials-progress]");
       if (progress) progress.classList.remove("active");
+      showGlobalSaveDone(message || "Materiales guardados");
       setStatus(detail.querySelector("[data-materials-status]"), message || "Guardado");
     }
 
@@ -2142,6 +2513,9 @@
     }
 
     async function cloudRequest(path, options = {}) {
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        return window.HappyDecoFirebaseCloud.request(path, options);
+      }
       const config = getCloudConfig();
       if (!config) return null;
       const response = await fetch(`${config.url}/rest/v1/${path}`, {
@@ -2166,9 +2540,11 @@
       try {
         const rows = await cloudRequest(`${PROCESS_TABLE}?select=data&order=updated_at.desc`);
         if (!Array.isArray(rows)) return;
+        const cloudEvents = rows.map(row => row.data).filter(Boolean);
+        const cleanedCloudEvents = cloudEvents.map(eventForCloudStorage).filter(Boolean);
         const selectedId = state.selectedId;
         const localEvents = new Map(state.events.map(event => [event.id, event]));
-        state.events = sanitizeEvents(rows.map(row => row.data)).map(cloudEvent => {
+        state.events = sanitizeEvents(cleanedCloudEvents).map(cloudEvent => {
           const localEvent = localEvents.get(cloudEvent.id);
           if (!localEvent) return cloudEvent;
           const localTime = Date.parse(localEvent.updatedAt || "") || 0;
@@ -2178,17 +2554,22 @@
         state.selectedId = state.events.some(event => event.id === selectedId)
           ? selectedId
           : state.events[0]?.id || null;
-        localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+        saveEventsLocal();
         render();
         button.textContent = "Nube activa";
+        if (cloudEvents.some(hasEmbeddedSketchData)) {
+          cloudUpsertEvents(cleanedCloudEvents).then(result => {
+            if (result?.ok) console.info("Bocetos embebidos limpiados de Supabase.");
+          });
+        }
       } catch (error) {
-        button.textContent = "Error nube";
+        button.textContent = "Nube pendiente";
         console.error("No pude sincronizar proceso", error);
       }
     }
 
     async function cloudUpsertEvent(event) {
-      const cleanEvent = sanitizeEvents([event])[0];
+      const cleanEvent = eventForCloudStorage(event);
       if (!getCloudConfig() || !cleanEvent) return { ok: true, skipped: true };
       try {
         await cloudRequest(PROCESS_TABLE, {
@@ -2211,7 +2592,6 @@
     async function cloudUpsertDashboardMaterials(event) {
       if (!event?.id) return;
       const materialItems = normalizeMaterialItems(event.materialItems);
-      if (!materialItems.length) return;
       try {
         const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(event.id)}&select=data&limit=1`);
         const current = Array.isArray(rows) ? rows[0]?.data : null;
@@ -2221,6 +2601,7 @@
           ...current,
           materials: event.materials || materialItemsToText(materialItems),
           materialItems,
+          sketchDriveUrl: event.sketchDriveUrl || "",
           updatedAt
         };
         await cloudRequest(DASHBOARD_TABLE, {
@@ -2233,8 +2614,84 @@
       }
     }
 
+    function syncDashboardMaterialsLocally(event) {
+      if (!event?.id) return;
+      const records = readLocalList(DASHBOARD_STORAGE_KEY);
+      const index = records.findIndex(record => record.id === event.id);
+      if (index < 0) return;
+      const materialItems = normalizeMaterialItems(event.materialItems);
+      records[index] = {
+        ...records[index],
+        materials: event.materials || materialItemsToText(materialItems),
+        materialItems,
+        sketchDriveUrl: event.sketchDriveUrl || "",
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(DASHBOARD_STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function syncFinanceEventLocally(event) {
+      if (!event?.id) return;
+      let finance;
+      try {
+        finance = JSON.parse(localStorage.getItem(FINANCE_STORAGE_KEY) || "null");
+      } catch {
+        return;
+      }
+      if (!finance || typeof finance !== "object") return;
+      const records = readLocalList(DASHBOARD_STORAGE_KEY);
+      const record = records.find(item => item.id === event.id) || {};
+      const materialItems = normalizeMaterialItems(event.materialItems);
+      const financeEvent = {
+        id: `sales-${event.id}`,
+        source: "sales",
+        sourceId: event.id,
+        cliente: event.client || record.cliente || "Sin cliente",
+        fecha: event.date || record.fechaEvento || "",
+        propuesta: event.proposalType || record.propuesta || event.package || "Sin definir",
+        proposalDetail: record.incluye || event.package || "",
+        precio: Number(record.monto) || moneyToNumber(event.budget) || 0,
+        extras: 0,
+        descuento: 0,
+        commissionRate: 0,
+        km: 20,
+        hours: 0,
+        estimatedCost: Number(record.costo) || 0,
+        actualCost: 0,
+        realCostConfirmed: false,
+        realCostSource: "",
+        materialItems,
+        materials: event.materials || materialItemsToText(materialItems),
+        paid: Number(record.senia) || 0,
+        stage: record.etapa || "",
+        operativeStatus: record.estadoOperativo || event.operativeStatus || "",
+        updatedAt: new Date().toISOString()
+      };
+      const events = Array.isArray(finance.events) ? finance.events : [];
+      const index = events.findIndex(item => item.sourceId === event.id || item.id === financeEvent.id);
+      finance.events = index >= 0
+        ? events.map((item, itemIndex) => itemIndex === index ? { ...item, ...financeEvent } : item)
+        : [...events, financeEvent];
+      localStorage.setItem(FINANCE_STORAGE_KEY, JSON.stringify(finance));
+    }
+
+    function moneyToNumber(value) {
+      const clean = String(value || "").replace(/[^\d,-]/g, "").replace(/\./g, "").replace(",", ".");
+      const number = Number(clean);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function readLocalList(key) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(value) ? value.filter(Boolean) : [];
+      } catch {
+        return [];
+      }
+    }
+
     async function cloudUpsertEvents(items) {
-      const cleanItems = sanitizeEvents(items);
+      const cleanItems = items.map(eventForCloudStorage).filter(Boolean);
       if (!getCloudConfig() || !cleanItems.length) return { ok: true, skipped: true };
       try {
         for (const event of cleanItems) {
@@ -2326,7 +2783,7 @@
           dashboardIncludes: record.incluye || event.dashboardIncludes || ""
         };
       });
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
     }
 
     function initCloudSync(force = false) {
@@ -2395,7 +2852,8 @@
         name,
         category: String(item.category || item.categoria || "Sin categoría").trim() || "Sin categoría",
         quantity,
-        unitCost
+        unitCost,
+        detail: String(item.detail || item.detalle || item.notes || item.nota || "").trim()
       };
     }
 
@@ -2404,7 +2862,10 @@
     }
 
     function materialItemsToText(items) {
-      return normalizeMaterialItems(items).map(item => item.quantity > 1 ? `${item.quantity} x ${item.name}` : item.name);
+      return normalizeMaterialItems(items).map(item => {
+        const base = item.quantity > 1 ? `${item.quantity} x ${item.name}` : item.name;
+        return item.detail ? `${base} - ${item.detail}` : base;
+      });
     }
 
     function defaultFinanceProposals() {
@@ -2521,7 +2982,7 @@
       event.materialItems = [...existingItems, ...missingBase];
       event.materials = materialItemsToText(event.materialItems);
       event.updatedAt = new Date().toISOString();
-      localStorage.setItem("happyDecoEvents", JSON.stringify(state.events));
+      saveEventsLocal();
     }
 
     function materialCategories() {

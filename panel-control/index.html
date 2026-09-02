@@ -841,6 +841,7 @@
   </div>
 
   <script src="../lifeline.js"></script>
+  <script src="../firebase-cloud.js?v=20260902-1"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -928,21 +929,32 @@
       }
     }
 
+    async function cloudRequest(path, options = {}) {
+      if (window.HappyDecoFirebaseCloud?.isConfigured()) {
+        return window.HappyDecoFirebaseCloud.request(path, options);
+      }
+      const config = getCloudConfig();
+      const response = await fetch(`${config.url}/rest/v1/${path}`, {
+        ...options,
+        cache: "no-store",
+        headers: {
+          apikey: config.anonKey,
+          Authorization: `Bearer ${config.anonKey}`,
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      });
+      if (!response.ok) throw new Error(await response.text());
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
+    }
+
     async function refreshRecords() {
       const originalText = els.refreshBtn.textContent;
       els.refreshBtn.disabled = true;
       els.refreshBtn.textContent = "Actualizando...";
       try {
-        const config = getCloudConfig();
-        const response = await fetch(`${config.url}/rest/v1/${DASHBOARD_TABLE}?select=data&order=updated_at.desc`, {
-          headers: {
-            apikey: config.anonKey,
-            Authorization: `Bearer ${config.anonKey}`,
-            "Content-Type": "application/json"
-          }
-        });
-        if (!response.ok) throw new Error(await response.text());
-        const rows = await response.json();
+        const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`);
         records = sanitizeRecords(rows.map(row => row.data).filter(data => data?.module !== "finance"));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
         render(records);
