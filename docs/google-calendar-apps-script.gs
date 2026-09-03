@@ -1,5 +1,6 @@
 const HAPPY_DECO_SECRET = "happy-deco-calendar-2026";
 const DEFAULT_CALENDAR_NAME = "Happy Deco - Eventos";
+const HAPPY_DECO_SKETCH_FOLDER_ID = "1MHDBsbjrDz5II1UdnhLy_cBAGtw_d_GF";
 const DEFAULT_SHARE_WITH = [
   "happydecoar@gmail.com",
   "julietaalvarezpaz12@gmail.com",
@@ -36,6 +37,61 @@ function doGet(e) {
     if (callback) return jsonpResponse_(callback, result);
     return htmlResponse_("No se pudo agendar", escapeHtml_(error.message || String(error)));
   }
+}
+
+function doPost(e) {
+  try {
+    const payload = JSON.parse(e.parameter.payload || "{}");
+    const result = payload.action === "uploadSketch"
+      ? uploadHappyDecoSketch_(payload)
+      : upsertHappyDecoEvent_(payload);
+    return postMessageResponse_(result);
+  } catch (error) {
+    return postMessageResponse_({ ok: false, error: error.message || String(error) });
+  }
+}
+
+function uploadHappyDecoSketch_(payload) {
+  if (!payload || payload.secret !== HAPPY_DECO_SECRET) {
+    throw new Error("Clave interna inválida.");
+  }
+  if (!payload.dataBase64) {
+    throw new Error("Falta el archivo para subir a Drive.");
+  }
+
+  const folder = DriveApp.getFolderById(payload.folderId || HAPPY_DECO_SKETCH_FOLDER_ID);
+  const bytes = Utilities.base64Decode(payload.dataBase64);
+  const contentType = payload.mimeType || "application/octet-stream";
+  const originalName = payload.fileName || "boceto";
+  const safeName = safeDriveFileName_([
+    "Boceto",
+    payload.client,
+    payload.theme,
+    payload.eventDate,
+    originalName
+  ].filter(Boolean).join(" - "));
+  const blob = Utilities.newBlob(bytes, contentType, safeName);
+  const file = folder.createFile(blob);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+  return {
+    ok: true,
+    action: "uploadSketch",
+    fileId: file.getId(),
+    name: file.getName(),
+    mimeType: contentType,
+    size: bytes.length,
+    url: file.getUrl(),
+    previewUrl: `https://drive.google.com/file/d/${file.getId()}/preview`
+  };
+}
+
+function safeDriveFileName_(value) {
+  return String(value || "boceto")
+    .replace(/[\\/:*?"<>|#%{}~&]/g, "-")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 180);
 }
 
 function upsertHappyDecoEvent_(payload) {
@@ -244,6 +300,22 @@ function jsonpResponse_(callback, data) {
   const safeCallback = String(callback || "").replace(/[^a-zA-Z0-9_.$]/g, "");
   const body = `${safeCallback}(${JSON.stringify(data)});`;
   return ContentService.createTextOutput(body).setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+function postMessageResponse_(data) {
+  const html = `
+    <!doctype html>
+    <html>
+      <head><meta charset="utf-8"></head>
+      <body>
+        <script>
+          window.top.postMessage(${JSON.stringify(data)}, "*");
+        </script>
+      </body>
+    </html>
+  `;
+  return HtmlService.createHtmlOutput(html)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 function escapeHtml_(value) {

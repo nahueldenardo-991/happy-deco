@@ -1179,6 +1179,9 @@
     const SKETCH_DB_NAME = "happyDecoSketchFiles";
     const SKETCH_STORE_NAME = "sketches";
     const DRIVE_SKETCH_FOLDER_URL = "https://drive.google.com/drive/folders/1MHDBsbjrDz5II1UdnhLy_cBAGtw_d_GF?usp=sharing";
+    const DRIVE_SKETCH_FOLDER_ID = "1MHDBsbjrDz5II1UdnhLy_cBAGtw_d_GF";
+    const DRIVE_BRIDGE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqqcdstHb6fWfZ9TTCosxjSm3fiWgh7YsqX8zkxey_Kek3TwwkCwUv6egzrJjIC0_2TQ/exec";
+    const DRIVE_BRIDGE_SECRET = "happy-deco-calendar-2026";
     const DEFAULT_PROPOSAL_INCLUSIONS = {
       "Express": "Panel con funda; mesa principal; armado de mesa; globos; nombre; personaje impreso",
       "Minimalista": "Panel; mesa principal; guirnalda; globos temáticos; gráfica; nombre; neón",
@@ -1838,7 +1841,7 @@
           </div>
           <div class="sketch-upload-area" data-upload-area>
             <div class="sketch-preview">${preview}</div>
-            <span class="upload-hint-pill">${sketch ? "Cambiar archivo local" : "Cargar archivo local"}</span>
+            <span class="upload-hint-pill">${driveUrl || sketch ? "Cambiar boceto" : "Subir archivo a Drive"}</span>
             <input class="hidden-file" id="sketchFile" type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
           </div>
           <div class="save-progress" data-sketch-progress>
@@ -2084,19 +2087,39 @@
       try {
         showSketchProgress(isImage ? "Comprimiendo imagen..." : "Preparando archivo...");
         const prepared = isImage ? await prepareImageSketch(file) : await readFileAsDataUrl(file);
+        showSketchProgress("Subiendo boceto a Drive...");
+        const driveResult = await uploadSketchToDrive(prepared, event).catch(error => {
+          console.warn("No pude subir el boceto a Drive", error);
+          return null;
+        });
         const sketchKey = event.sketch?.sketchKey || `sketch-${event.id}-${Date.now()}`;
-        event.sketch = {
-          name: prepared.name,
-          type: prepared.type,
-          size: prepared.size,
-          dataUrl: prepared.dataUrl,
-          sketchKey,
-          updatedAt: new Date().toISOString()
-        };
+        event.sketchDriveUrl = driveResult?.url || event.sketchDriveUrl || "";
+        event.sketch = driveResult?.url
+          ? {
+              name: driveResult.name || prepared.name,
+              type: driveResult.mimeType || prepared.type,
+              size: driveResult.size || prepared.size,
+              dataUrl: "",
+              sketchKey: "",
+              driveFileId: driveResult.fileId || "",
+              updatedAt: new Date().toISOString()
+            }
+          : {
+              name: prepared.name,
+              type: prepared.type,
+              size: prepared.size,
+              dataUrl: prepared.dataUrl,
+              sketchKey,
+              updatedAt: new Date().toISOString()
+            };
         markReadyForProduction(event);
         event.updatedAt = new Date().toISOString();
-        showSketchProgress("Guardando boceto en este dispositivo...");
-        await saveSketchFile(sketchKey, event.sketch);
+        if (driveResult?.url) {
+          showSketchProgress("Guardando link de Drive...");
+        } else {
+          showSketchProgress("Guardando boceto en este dispositivo...");
+          await saveSketchFile(sketchKey, event.sketch);
+        }
         state.events = sanitizeEvents(state.events);
         let localSaved = true;
         try {
@@ -2115,8 +2138,10 @@
         renderDetail();
         requestAnimationFrame(() => {
           hideSketchProgress();
-          showGlobalSaveDone("Boceto guardado localmente");
-          setStatus(detail.querySelector("[data-sketch-status]"), `Boceto guardado en este dispositivo (${formatBytes(event.sketch?.size)}). Sincronizando nube en segundo plano.`);
+          showGlobalSaveDone(driveResult?.url ? "Boceto subido a Drive" : "Boceto guardado localmente");
+          setStatus(detail.querySelector("[data-sketch-status]"), driveResult?.url
+            ? "Boceto subido a Drive y vinculado a la ficha. Sincronizando Firebase."
+            : `Boceto guardado en este dispositivo (${formatBytes(event.sketch?.size)}). No se pudo subir a Drive; sincronizando respaldo.`);
         });
         cloudUpsertEvent(event).then(result => {
           if (getSelected()?.id !== event.id) return;
@@ -2127,7 +2152,7 @@
             return;
           }
           requestAnimationFrame(() => {
-            showSketchDone("Boceto guardado y sincronizado");
+            showSketchDone(driveResult?.url ? "Boceto en Drive y ficha sincronizada" : "Boceto local sincronizado");
           });
         });
       } catch (error) {
@@ -2137,6 +2162,73 @@
         setStatus(status, "No pude leer ese archivo. Probá con JPG, PNG, PDF, DOC o DOCX.", true);
       }
       if (input) input.value = "";
+    }
+
+    function uploadSketchToDrive(sketch, event) {
+      return new Promise((resolve, reject) => {
+        if (!DRIVE_BRIDGE_WEB_APP_URL || !sketch?.dataUrl) {
+          reject(new Error("Puente de Drive no configurado."));
+          return;
+        }
+        const dataBase64 = String(sketch.dataUrl).split(",")[1] || "";
+        if (!dataBase64) {
+          reject(new Error("No se pudo preparar el archivo para Drive."));
+          return;
+        }
+        const frameName = `happyDecoDriveUpload_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const iframe = document.createElement("iframe");
+        const form = document.createElement("form");
+        const input = document.createElement("input");
+        const timer = window.setTimeout(() => {
+          cleanup();
+          reject(new Error("Drive no respondió a tiempo."));
+        }, 90000);
+
+        function cleanup() {
+          window.clearTimeout(timer);
+          window.removeEventListener("message", handleMessage);
+          form.remove();
+          iframe.remove();
+        }
+
+        function handleMessage(message) {
+          const result = message.data || {};
+          if (!result || result.action !== "uploadSketch") return;
+          cleanup();
+          if (result.ok && result.url) {
+            resolve(result);
+          } else {
+            reject(new Error(result.error || "Drive no confirmó la subida."));
+          }
+        }
+
+        window.addEventListener("message", handleMessage);
+        iframe.name = frameName;
+        iframe.style.display = "none";
+        form.method = "POST";
+        form.action = DRIVE_BRIDGE_WEB_APP_URL;
+        form.target = frameName;
+        form.enctype = "application/x-www-form-urlencoded";
+        form.style.display = "none";
+        input.type = "hidden";
+        input.name = "payload";
+        input.value = JSON.stringify({
+          action: "uploadSketch",
+          secret: DRIVE_BRIDGE_SECRET,
+          folderId: DRIVE_SKETCH_FOLDER_ID,
+          sourceId: event.id,
+          client: event.client || "",
+          theme: event.theme || "",
+          eventDate: event.date || "",
+          fileName: sketch.name || "boceto",
+          mimeType: sketch.type || inferFileType(sketch.name || ""),
+          dataBase64
+        });
+        form.appendChild(input);
+        document.body.appendChild(iframe);
+        document.body.appendChild(form);
+        form.submit();
+      });
     }
 
     function readFileAsDataUrl(file) {
