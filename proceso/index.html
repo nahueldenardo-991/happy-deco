@@ -2087,39 +2087,19 @@
       try {
         showSketchProgress(isImage ? "Comprimiendo imagen..." : "Preparando archivo...");
         const prepared = isImage ? await prepareImageSketch(file) : await readFileAsDataUrl(file);
-        showSketchProgress("Subiendo boceto a Drive...");
-        const driveResult = await uploadSketchToDrive(prepared, event).catch(error => {
-          console.warn("No pude subir el boceto a Drive", error);
-          return null;
-        });
         const sketchKey = event.sketch?.sketchKey || `sketch-${event.id}-${Date.now()}`;
-        event.sketchDriveUrl = driveResult?.url || event.sketchDriveUrl || "";
-        event.sketch = driveResult?.url
-          ? {
-              name: driveResult.name || prepared.name,
-              type: driveResult.mimeType || prepared.type,
-              size: driveResult.size || prepared.size,
-              dataUrl: "",
-              sketchKey: "",
-              driveFileId: driveResult.fileId || "",
-              updatedAt: new Date().toISOString()
-            }
-          : {
-              name: prepared.name,
-              type: prepared.type,
-              size: prepared.size,
-              dataUrl: prepared.dataUrl,
-              sketchKey,
-              updatedAt: new Date().toISOString()
-            };
+        event.sketch = {
+          name: prepared.name,
+          type: prepared.type,
+          size: prepared.size,
+          dataUrl: prepared.dataUrl,
+          sketchKey,
+          updatedAt: new Date().toISOString()
+        };
         markReadyForProduction(event);
         event.updatedAt = new Date().toISOString();
-        if (driveResult?.url) {
-          showSketchProgress("Guardando link de Drive...");
-        } else {
-          showSketchProgress("Guardando boceto en este dispositivo...");
-          await saveSketchFile(sketchKey, event.sketch);
-        }
+        showSketchProgress("Guardando respaldo local...");
+        await saveSketchFile(sketchKey, event.sketch);
         state.events = sanitizeEvents(state.events);
         let localSaved = true;
         try {
@@ -2138,10 +2118,8 @@
         renderDetail();
         requestAnimationFrame(() => {
           hideSketchProgress();
-          showGlobalSaveDone(driveResult?.url ? "Boceto subido a Drive" : "Boceto guardado localmente");
-          setStatus(detail.querySelector("[data-sketch-status]"), driveResult?.url
-            ? "Boceto subido a Drive y vinculado a la ficha. Sincronizando Firebase."
-            : `Boceto guardado en este dispositivo (${formatBytes(event.sketch?.size)}). No se pudo subir a Drive; sincronizando respaldo.`);
+          showGlobalSaveDone("Boceto guardado. Subiendo a Drive...");
+          setStatus(detail.querySelector("[data-sketch-status]"), `Boceto guardado rápido en este navegador (${formatBytes(event.sketch?.size)}). Subiendo a Drive en segundo plano.`);
         });
         cloudUpsertEvent(event).then(result => {
           if (getSelected()?.id !== event.id) return;
@@ -2152,9 +2130,17 @@
             return;
           }
           requestAnimationFrame(() => {
-            showSketchDone(driveResult?.url ? "Boceto en Drive y ficha sincronizada" : "Boceto local sincronizado");
+            setStatus(detail.querySelector("[data-sketch-status]"), "Ficha sincronizada. Subida a Drive en curso.");
           });
         });
+        uploadSketchToDrive(prepared, event)
+          .then(driveResult => applyDriveSketchResult(event.id, driveResult, prepared))
+          .catch(error => {
+            console.warn("No pude subir el boceto a Drive", error);
+            if (getSelected()?.id === event.id) {
+              setStatus(detail.querySelector("[data-sketch-status]"), "Boceto guardado localmente. Drive todavía no respondió; podés seguir trabajando.", true);
+            }
+          });
       } catch (error) {
         console.error("No pude guardar el boceto", error);
         hideSketchProgress();
@@ -2162,6 +2148,32 @@
         setStatus(status, "No pude leer ese archivo. Probá con JPG, PNG, PDF, DOC o DOCX.", true);
       }
       if (input) input.value = "";
+    }
+
+    async function applyDriveSketchResult(eventId, driveResult, prepared) {
+      if (!driveResult?.url) return;
+      const event = state.events.find(item => item.id === eventId);
+      if (!event) return;
+      event.sketchDriveUrl = driveResult.url;
+      event.sketch = {
+        name: driveResult.name || prepared.name,
+        type: driveResult.mimeType || prepared.type,
+        size: driveResult.size || prepared.size,
+        dataUrl: "",
+        sketchKey: "",
+        driveFileId: driveResult.fileId || "",
+        updatedAt: new Date().toISOString()
+      };
+      markReadyForProduction(event);
+      event.updatedAt = new Date().toISOString();
+      saveEventsLocal();
+      syncDashboardMaterialsLocally(event);
+      syncFinanceEventLocally(event);
+      const result = await cloudUpsertEvent(event);
+      if (getSelected()?.id === event.id) {
+        renderDetail();
+        showSketchDone(result?.ok === false ? "Boceto subido a Drive. Firebase pendiente." : "Boceto en Drive y ficha sincronizada");
+      }
     }
 
     function uploadSketchToDrive(sketch, event) {
@@ -2182,7 +2194,7 @@
         const timer = window.setTimeout(() => {
           cleanup();
           reject(new Error("Drive no respondió a tiempo."));
-        }, 90000);
+        }, 12000);
 
         function cleanup() {
           window.clearTimeout(timer);
@@ -2337,35 +2349,35 @@
 
     function prepareImageSketch(file) {
       return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onerror = () => reject(reader.error || new Error("No se pudo leer la imagen."));
-        reader.onload = () => {
-          const image = new Image();
-          image.onerror = () => reject(new Error("No se pudo procesar la imagen."));
-          image.onload = () => {
-            const maxSide = 1200;
-            const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
-            const width = Math.max(1, Math.round(image.width * scale));
-            const height = Math.max(1, Math.round(image.height * scale));
-            const canvas = document.createElement("canvas");
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, width, height);
-            ctx.drawImage(image, 0, 0, width, height);
-            canvas.toBlob(blob => {
-              if (!blob) {
-                reject(new Error("No se pudo comprimir la imagen."));
-                return;
-              }
-              const compressed = new File([blob], renameAsJpg(file.name), { type: "image/jpeg" });
-              readFileAsDataUrl(compressed).then(resolve, reject);
-            }, "image/jpeg", .72);
-          };
-          image.src = reader.result;
+        const objectUrl = URL.createObjectURL(file);
+        const image = new Image();
+        image.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error("No se pudo procesar la imagen."));
         };
-        reader.readAsDataURL(file);
+        image.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          const maxSide = 1000;
+          const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+          const width = Math.max(1, Math.round(image.width * scale));
+          const height = Math.max(1, Math.round(image.height * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d", { alpha: false });
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(image, 0, 0, width, height);
+          canvas.toBlob(blob => {
+            if (!blob) {
+              reject(new Error("No se pudo comprimir la imagen."));
+              return;
+            }
+            const compressed = new File([blob], renameAsJpg(file.name), { type: "image/jpeg" });
+            readFileAsDataUrl(compressed).then(resolve, reject);
+          }, "image/jpeg", .68);
+        };
+        image.src = objectUrl;
       });
     }
 
