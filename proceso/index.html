@@ -1990,9 +1990,17 @@
       const event = getSelected();
       if (!event) return;
       event[fieldName] = value;
+      if (["productionNotes", "sketchDriveUrl"].includes(fieldName) && String(value || "").trim()) {
+        markReadyForProduction(event);
+      }
       event.updatedAt = new Date().toISOString();
       scheduleSaveEvents();
       renderList();
+    }
+
+    function markReadyForProduction(event) {
+      if (!event) return;
+      event.productionStatus = "Listo para producir";
     }
 
     function updateCheck(key, checked) {
@@ -2085,6 +2093,7 @@
           sketchKey,
           updatedAt: new Date().toISOString()
         };
+        markReadyForProduction(event);
         event.updatedAt = new Date().toISOString();
         showSketchProgress("Guardando boceto en este dispositivo...");
         await saveSketchFile(sketchKey, event.sketch);
@@ -2314,6 +2323,7 @@
         unitCost: item.unitCost
       }));
       event.materials = materialItemsToText(event.materialItems);
+      markReadyForProduction(event);
       event.updatedAt = new Date().toISOString();
       saveEventsLocal();
       syncDashboardMaterialsLocally(event);
@@ -2400,6 +2410,7 @@
       values.splice(index, 1);
       event.materialItems = values;
       event.materials = materialItemsToText(values);
+      if (values.length) markReadyForProduction(event);
       event.updatedAt = new Date().toISOString();
       saveEventsLocal();
       syncDashboardMaterialsLocally(event);
@@ -2416,6 +2427,7 @@
       const materials = readMaterialItemsRows();
       event.materialItems = materials;
       event.materials = materialItemsToText(materials);
+      if (materials.length) markReadyForProduction(event);
       event.updatedAt = new Date().toISOString();
       saveEventsLocal();
       syncDashboardMaterialsLocally(event);
@@ -2432,6 +2444,7 @@
       if (!options.silent) showMaterialSaveProgress("Guardando materiales...");
       event.materialItems = readMaterialItemsRows();
       event.materials = materialItemsToText(event.materialItems);
+      if (event.materialItems.length) markReadyForProduction(event);
       event.updatedAt = new Date().toISOString();
       state.events = sanitizeEvents(state.events);
       saveEventsLocal();

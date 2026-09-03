@@ -704,11 +704,20 @@
     }
 
     function shouldShowProcessEvent(event) {
-      if (cleanText(event.productionStatus) === "Finalizado") return false;
       const operative = cleanText(event.operativeStatus).toLowerCase();
       const status = cleanText(event.status).toLowerCase();
-      const hasProductionWork = Boolean(event.sketchDriveUrl || event.sketch?.dataUrl) || parseMaterials(event.materials).length > 0;
-      return operative === "listo para producir" || ["produccion", "montaje"].includes(status) || hasProductionWork;
+      const productionStatus = cleanText(event.productionStatus);
+      const readySignal = operative === "listo para producir" || ["produccion", "montaje"].includes(status);
+      const hasProductionWork = hasProcessProductionWork(event);
+      if (productionStatus === "Finalizado" && !readySignal) return false;
+      return readySignal || hasProductionWork;
+    }
+
+    function hasProcessProductionWork(event) {
+      return Boolean(event?.sketchDriveUrl || event?.sketch?.dataUrl)
+        || normalizeMaterialItems(event?.materialItems).length > 0
+        || parseMaterials(event?.materials).length > 0
+        || Boolean(cleanText(event?.productionNotes));
     }
 
     function eventMatchKey(event) {
@@ -736,12 +745,18 @@
         sketchDriveUrl: event.sketchDriveUrl || record.sketchDriveUrl || "",
         sketch: event.sketch || null,
         materials: event.id
-          ? parseMaterials(event.materials)
+          ? productionMaterials(event)
           : parseProposalItems(event.package || record.incluye || record.propuesta || ""),
         materialChecks: event.materialChecks || {},
-        productionStatus: event.productionStatus || "Listo para producir",
+        productionStatus: productionStatusForSheet(record, event),
         notes: mergeNotes([event.productionNotes, event.notes, event.id ? "" : record.observaciones])
       };
+    }
+
+    function productionStatusForSheet(record, event) {
+      const status = cleanText(event.productionStatus);
+      if (isReadyForProduction(record) && status === "Finalizado") return "Listo para producir";
+      return status || "Listo para producir";
     }
 
     function mergeNotes(items) {
@@ -1132,8 +1147,28 @@
     }
 
     function parseMaterials(value) {
-      if (Array.isArray(value)) return value.map(item => String(item || "").trim()).filter(Boolean);
+      if (Array.isArray(value)) return value.map(formatMaterialEntry).filter(Boolean);
       return String(value || "").split(/\n|,/).map(item => item.trim()).filter(Boolean);
+    }
+
+    function normalizeMaterialItems(items) {
+      return Array.isArray(items) ? items.map(formatMaterialEntry).filter(Boolean) : [];
+    }
+
+    function productionMaterials(event) {
+      const structured = normalizeMaterialItems(event?.materialItems);
+      return structured.length ? structured : parseMaterials(event?.materials);
+    }
+
+    function formatMaterialEntry(item) {
+      if (!item) return "";
+      if (typeof item !== "object") return String(item || "").trim();
+      const name = cleanText(item.name || item.itemName || item.label || "");
+      if (!name) return "";
+      const quantity = Number(item.quantity || item.qty || 0);
+      const detail = cleanText(item.detail || item.detalle || item.notes || "");
+      const base = quantity > 1 ? `${quantity} x ${name}` : name;
+      return detail ? `${base} - ${detail}` : base;
     }
 
     function parseProposalItems(value) {
