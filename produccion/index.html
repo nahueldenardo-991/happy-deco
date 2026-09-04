@@ -329,6 +329,10 @@
       min-height: 300px;
     }
 
+    .print-sketch {
+      display: none;
+    }
+
     .info-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -495,6 +499,17 @@
       }
       .sketch-box iframe {
         min-height: 105mm;
+      }
+      .screen-sketch {
+        display: none !important;
+      }
+      .print-sketch {
+        display: block !important;
+      }
+      .print-sketch img {
+        width: 100%;
+        max-height: 108mm;
+        object-fit: contain;
       }
       .info-grid {
         gap: 3mm;
@@ -967,7 +982,14 @@
       if (driveUrl) {
         const fileId = getGoogleDriveFileId(driveUrl);
         if (fileId) {
-          return `<iframe src="${escapeAttr(`https://drive.google.com/file/d/${fileId}/preview`)}" title="Boceto en Google Drive"></iframe>`;
+          const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+          const thumbnailUrl = `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w1600`;
+          return `
+            <iframe class="screen-sketch" src="${escapeAttr(previewUrl)}" title="Boceto en Google Drive"></iframe>
+            <div class="print-sketch">
+              <img src="${escapeAttr(thumbnailUrl)}" alt="Boceto ${escapeAttr(item?.client || "")}">
+            </div>
+          `;
         }
         return `<div><strong>Boceto en Google Drive</strong><p class="muted">Abrir desde el link cargado en Proceso.</p><a class="btn" href="${escapeAttr(driveUrl)}" target="_blank" rel="noopener">Abrir boceto</a></div>`;
       }
