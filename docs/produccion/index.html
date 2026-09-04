@@ -413,11 +413,140 @@
     }
 
     @media print {
-      body { background: #fff; }
-      .topbar, .toolbar, .actions, .sheet-actions, .status-select, .sheet-status label { display: none; }
-      .shell { width: 100%; padding: 0; }
-      .sheet { break-inside: avoid; box-shadow: none; margin-bottom: 16px; }
+      @page { size: A4; margin: 10mm; }
+      * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+      body {
+        background: #fff !important;
+        color: #111;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .topbar,
+      .module-switcher,
+      .production-manual,
+      .event-lifeline,
+      .toolbar,
+      .cloud-warning,
+      .actions,
+      .sheet-actions,
+      .status-select,
+      .sheet-status label {
+        display: none !important;
+      }
+      .shell {
+        width: 100%;
+        padding: 0;
+      }
+      .production-list {
+        display: block;
+      }
+      .sheet {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        border: 0;
+        border-radius: 0;
+        margin: 0;
+        overflow: visible;
+      }
+      .sheet + .sheet {
+        page-break-before: always;
+      }
       body.printing-one .sheet:not(.print-target) { display: none; }
+      body.printing-one .sheet.print-target {
+        display: block;
+      }
+      .sheet-head {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8mm;
+        padding: 0 0 5mm;
+        border-bottom: 2px solid #111;
+        background: #fff !important;
+      }
+      .sheet-head h2 {
+        font-size: 18pt;
+        line-height: 1.1;
+      }
+      .subtitle,
+      .muted {
+        color: #333;
+      }
+      .tag {
+        border: 1px solid #111;
+        background: #fff !important;
+        color: #111 !important;
+      }
+      .sheet-grid {
+        grid-template-columns: 46% 1fr;
+        gap: 6mm;
+        padding: 6mm 0 0;
+      }
+      .sketch-box {
+        min-height: 105mm;
+        border: 1px solid #bbb;
+        background: #fff !important;
+      }
+      .sketch-box img,
+      .sketch-box iframe {
+        max-height: 108mm;
+      }
+      .sketch-box iframe {
+        min-height: 105mm;
+      }
+      .info-grid {
+        gap: 3mm;
+      }
+      .info {
+        min-height: auto;
+        padding: 3mm;
+        border-color: #ccc;
+        background: #fff !important;
+      }
+      .info label {
+        color: #555;
+        font-size: 8pt;
+      }
+      .info strong {
+        font-size: 10.5pt;
+      }
+      .observations {
+        border: 1px solid #bbb;
+        border-left: 4px solid #111;
+        background: #fff !important;
+        margin-top: 4mm;
+        padding: 4mm;
+      }
+      .checklist {
+        gap: 2.5mm;
+        margin-top: 4mm;
+      }
+      .check {
+        border-color: #bbb;
+        background: #fff !important;
+        padding: 2.5mm;
+        break-inside: avoid;
+      }
+      .check.done span {
+        text-decoration: none;
+      }
+      .check input {
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        border: 1px solid #111;
+        border-radius: 2px;
+      }
+      .check input:checked::before {
+        content: "✓";
+        display: block;
+        margin-top: -3px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 900;
+      }
     }
 
     @media (max-width: 880px) {
