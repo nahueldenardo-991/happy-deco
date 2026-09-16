@@ -1323,6 +1323,7 @@
     }
   </style>
   <link rel="stylesheet" href="assets/ux-polish.css">
+  <link rel="stylesheet" href="assets/happy-loader.css?v=20260916-1">
   <link rel="stylesheet" href="lifeline.css">
 </head>
 <body class="module-dashboard auth-locked">
@@ -1686,6 +1687,7 @@
 
   <script src="lifeline.js"></script>
   <script src="cloud-bridge.js?v=20260902-5"></script>
+  <script src="assets/happy-loader.js?v=20260916-1"></script>
   <script>
     const STORAGE_KEY = "happyDecoDashboardRecords";
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
@@ -2028,8 +2030,14 @@
     }
 
     function showMessage(text, type) {
-      els.formMessage.textContent = text;
       els.formMessage.className = `message ${type || ""}`;
+      if (!text) {
+        els.formMessage.textContent = "";
+      } else if (window.HappyLoader && type === "ok") {
+        window.HappyLoader.status(els.formMessage, /guard|actualiz/i.test(text) ? "success" : "general", text);
+      } else {
+        els.formMessage.textContent = text;
+      }
     }
 
     function getFilteredRecords() {
@@ -2939,6 +2947,7 @@
         if (manual) {
           els.refreshCloudBtn.textContent = "Actualizando...";
           els.refreshCloudBtn.disabled = true;
+          showMessage("Actualizando datos desde Firebase...", "ok");
         }
         const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`);
         if (!Array.isArray(rows)) return;
@@ -2947,9 +2956,11 @@
         render();
         els.cloudBtn.textContent = "Firebase activa";
         if (manual) els.refreshCloudBtn.textContent = "Datos actualizados";
+        if (manual) showMessage("Datos actualizados desde Firebase.", "ok");
       } catch (error) {
         els.cloudBtn.textContent = "Error nube";
         if (manual) els.refreshCloudBtn.textContent = "Error al actualizar";
+        if (manual) showMessage("No se pudo actualizar desde Firebase. Se mantienen los datos guardados.", "error");
         console.error("No pude sincronizar dashboard", error);
       } finally {
         if (manual) {

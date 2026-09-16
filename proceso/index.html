@@ -1099,6 +1099,7 @@
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
+  <link rel="stylesheet" href="../assets/happy-loader.css?v=20260916-1">
   <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body class="module-process">
@@ -1161,6 +1162,7 @@
 
   <script src="../lifeline.js"></script>
   <script src="../cloud-bridge.js?v=20260902-5"></script>
+  <script src="../assets/happy-loader.js?v=20260916-1"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -2601,7 +2603,8 @@
 
     function showGlobalSave(message) {
       if (!globalSaveIndicator || !globalSaveText) return;
-      globalSaveText.textContent = message || "Guardando cambios...";
+      window.HappyLoader?.status(globalSaveText, "save", message || "Guardando cambios...");
+      if (!window.HappyLoader) globalSaveText.textContent = message || "Guardando cambios...";
       globalSaveIndicator.classList.add("active");
       globalSaveIndicator.classList.remove("done", "error");
       clearTimeout(window.happyDecoGlobalSaveTimer);
@@ -2609,7 +2612,8 @@
 
     function showGlobalSaveDone(message, isError = false) {
       if (!globalSaveIndicator || !globalSaveText) return;
-      globalSaveText.textContent = message || "Cambios guardados";
+      window.HappyLoader?.status(globalSaveText, isError ? "error" : "success", message || "Cambios guardados");
+      if (!window.HappyLoader) globalSaveText.textContent = message || "Cambios guardados";
       globalSaveIndicator.classList.add("active");
       globalSaveIndicator.classList.toggle("done", !isError);
       globalSaveIndicator.classList.toggle("error", isError);
@@ -2626,7 +2630,8 @@
       const status = detail.querySelector("[data-sketch-status]");
       if (progress) progress.classList.add("active");
       if (progressText) progressText.textContent = message || "Guardando boceto...";
-      setStatus(status, message || "Guardando boceto...");
+      if (window.HappyLoader && status) window.HappyLoader.status(status, "save", message || "Guardando boceto...");
+      else setStatus(status, message || "Guardando boceto...");
     }
 
     function hideSketchProgress() {
@@ -2645,7 +2650,8 @@
       const progress = detail.querySelector("[data-materials-progress]");
       const status = detail.querySelector("[data-materials-status]");
       if (progress) progress.classList.add("active");
-      setStatus(status, message || "Guardando...");
+      if (window.HappyLoader && status) window.HappyLoader.status(status, "build", message || "Guardando...");
+      else setStatus(status, message || "Guardando...");
     }
 
     function showMaterialSaveDone(message) {

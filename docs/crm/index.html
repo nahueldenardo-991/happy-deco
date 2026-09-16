@@ -868,6 +868,7 @@
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
+  <link rel="stylesheet" href="../assets/happy-loader.css?v=20260916-1">
   <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body class="module-crm">
@@ -1146,6 +1147,7 @@
 
   <script src="../lifeline.js"></script>
   <script src="../cloud-bridge.js?v=20260902-5"></script>
+  <script src="../assets/happy-loader.js?v=20260916-1"></script>
   <script>
     const STORAGE_KEY = "happyDecoCrmLeads";
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
@@ -2817,7 +2819,11 @@
     }
 
     function showToast(message) {
-      els.toast.textContent = message;
+      if (window.HappyLoader && /actualiz|sincron|guard|pase|nube/i.test(message || "")) {
+        window.HappyLoader.status(els.toast, /error|no se pudo/i.test(message || "") ? "error" : "success", message);
+      } else {
+        els.toast.textContent = message;
+      }
       els.toast.classList.add("show");
       clearTimeout(window.happyDecoCrmToast);
       window.happyDecoCrmToast = setTimeout(() => els.toast.classList.remove("show"), 2800);

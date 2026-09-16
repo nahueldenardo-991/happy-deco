@@ -1,0 +1,91 @@
+.happy-loader-button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.happy-loader-button-mascot {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  object-fit: contain;
+  object-position: center;
+  overflow: visible;
+  filter: drop-shadow(0 5px 10px rgba(92, 58, 75, .14));
+}
+
+.happy-loader-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  line-height: 1.35;
+}
+
+.happy-loader-status-mascot {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  object-fit: contain;
+  object-position: center;
+  overflow: visible;
+  filter: drop-shadow(0 8px 16px rgba(92, 58, 75, .14));
+}
+
+.happy-loader-card {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 140px;
+  padding: 20px;
+  text-align: center;
+  color: var(--muted, #756a72);
+}
+
+.happy-loader-card img {
+  width: min(180px, 44vw);
+  max-height: 150px;
+  object-fit: contain;
+  object-position: center;
+  overflow: visible;
+  filter: drop-shadow(0 12px 24px rgba(92, 58, 75, .12));
+}
+
+.happy-loader-card strong {
+  display: block;
+  color: var(--ink, #2f2630);
+  font-size: 1rem;
+}
+
+.global-save-indicator .happy-loader-status {
+  min-height: 38px;
+}
+
+.global-save-indicator .happy-loader-status-mascot {
+  width: 42px;
+  height: 42px;
+  flex-basis: 42px;
+}
+
+@media (max-width: 640px) {
+  .happy-loader-button-mascot {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+
+  .happy-loader-status-mascot {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+}
+
+@media print {
+  .happy-loader-button-mascot,
+  .happy-loader-status-mascot,
+  .happy-loader-card {
+    display: none !important;
+  }
+}

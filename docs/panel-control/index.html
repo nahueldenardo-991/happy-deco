@@ -652,6 +652,7 @@
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
+  <link rel="stylesheet" href="../assets/happy-loader.css?v=20260916-1">
   <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body class="module-control">
@@ -842,6 +843,7 @@
 
   <script src="../lifeline.js"></script>
   <script src="../cloud-bridge.js?v=20260902-5"></script>
+  <script src="../assets/happy-loader.js?v=20260916-1"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -1028,15 +1030,19 @@
       const originalText = els.refreshBtn.textContent;
       els.refreshBtn.disabled = true;
       els.refreshBtn.textContent = "Actualizando...";
+      window.HappyLoader?.status(els.lastUpdate, "wait", "Actualizando panel desde Firebase...");
       try {
         const rows = await cloudRequest(`${DASHBOARD_TABLE}?select=data&order=updated_at.desc`);
         records = sanitizeRecords(rows.map(row => row.data).filter(data => data?.module !== "finance"));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
         render(records);
-        els.lastUpdate.textContent = `Actualizado: ${new Date().toLocaleString("es-AR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}`;
+        const updatedText = `Actualizado: ${new Date().toLocaleString("es-AR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}`;
+        window.HappyLoader?.status(els.lastUpdate, "success", updatedText);
+        if (!window.HappyLoader) els.lastUpdate.textContent = updatedText;
       } catch (error) {
         console.error("No se pudo actualizar el panel", error);
-        els.lastUpdate.textContent = "No se pudo conectar con la nube. Mostrando datos guardados en este navegador.";
+        window.HappyLoader?.status(els.lastUpdate, "error", "No se pudo conectar con la nube. Mostrando datos guardados en este navegador.");
+        if (!window.HappyLoader) els.lastUpdate.textContent = "No se pudo conectar con la nube. Mostrando datos guardados en este navegador.";
         render(records);
       } finally {
         els.refreshBtn.disabled = false;

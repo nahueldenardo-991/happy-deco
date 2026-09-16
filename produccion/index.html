@@ -574,6 +574,7 @@
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
+  <link rel="stylesheet" href="../assets/happy-loader.css?v=20260916-1">
   <link rel="stylesheet" href="../lifeline.css">
 </head>
 <body class="module-production">
@@ -644,6 +645,7 @@
 
   <script src="../lifeline.js"></script>
   <script src="../cloud-bridge.js?v=20260902-5"></script>
+  <script src="../assets/happy-loader.js?v=20260916-1"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -686,6 +688,7 @@
       setCloudWarning("");
       els.refreshBtn.classList.add("syncing");
       els.refreshBtn.textContent = "Actualizando...";
+      window.HappyLoader?.status(els.lastUpdate, "wait", "Leyendo información compartida.");
       try {
         const config = getCloudConfig();
         if (!config) throw new Error("Nube no configurada");
@@ -717,9 +720,12 @@
         }
 
         if (fallback && dashboardResult.status === "rejected" && processResult.status === "rejected") {
-          els.lastUpdate.textContent = `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`;
+          window.HappyLoader?.textStatus(els.lastUpdate, `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`);
+          if (!window.HappyLoader) els.lastUpdate.textContent = `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`;
         } else {
-          els.lastUpdate.textContent = `Actualizado desde nube ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+          const updatedText = `Actualizado desde nube ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+          window.HappyLoader?.status(els.lastUpdate, "success", updatedText);
+          if (!window.HappyLoader) els.lastUpdate.textContent = updatedText;
         }
       } catch (error) {
         console.error("No se pudo leer producción", error);
@@ -727,13 +733,15 @@
           const fallback = await loadProductionCache();
           records = fallback.records;
           processEvents = fallback.processEvents;
-          els.lastUpdate.textContent = `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`;
+          window.HappyLoader?.textStatus(els.lastUpdate, `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`);
+          if (!window.HappyLoader) els.lastUpdate.textContent = `Modo respaldo ${formatCacheDate(fallback.generatedAt)}`;
           setCloudWarning("Modo respaldo: este celular no pudo conectar con Firebase. Se muestra la ultima copia publicada de Produccion.");
         } catch (cacheError) {
           console.error("No se pudo leer respaldo de producción", cacheError);
           records = [];
           processEvents = [];
-          els.lastUpdate.textContent = "Sin conexión con la nube ni respaldo.";
+          window.HappyLoader?.status(els.lastUpdate, "error", "Sin conexión con la nube ni respaldo.");
+          if (!window.HappyLoader) els.lastUpdate.textContent = "Sin conexión con la nube ni respaldo.";
           setCloudWarning("No pude conectar con Firebase ni cargar el respaldo. Revisa internet y volve a intentar.");
         }
       } finally {
@@ -1173,10 +1181,12 @@
             updated_at: event.updatedAt || new Date().toISOString()
           }])
         });
-        els.lastUpdate.textContent = "Cambios guardados en producción.";
+        window.HappyLoader?.status(els.lastUpdate, "success", "Cambios guardados en producción.");
+        if (!window.HappyLoader) els.lastUpdate.textContent = "Cambios guardados en producción.";
       } catch (error) {
         console.error("No se pudo guardar producción", error);
-        els.lastUpdate.textContent = "Cambio guardado en este navegador. Revisá conexión para sincronizar.";
+        window.HappyLoader?.status(els.lastUpdate, "error", "Cambio guardado en este navegador. Revisá conexión para sincronizar.");
+        if (!window.HappyLoader) els.lastUpdate.textContent = "Cambio guardado en este navegador. Revisá conexión para sincronizar.";
       }
     }
 
