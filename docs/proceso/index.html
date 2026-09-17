@@ -1161,8 +1161,8 @@
   </div>
 
   <script src="../lifeline.js"></script>
-  <script src="../cloud-bridge.js?v=20260902-5"></script>
-  <script src="../assets/happy-loader.js?v=20260916-4"></script>
+  <script src="../cloud-bridge.js?v=20260916-7"></script>
+  <script src="../assets/happy-loader.js?v=20260916-7"></script>
   <script>
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
     const DEFAULT_CLOUD_CONFIG = {
@@ -1342,7 +1342,7 @@
       showGlobalSave("Guardando cambios...");
       state.events = sanitizeEvents(state.events);
       saveEventsLocal();
-      cloudUpsertEvents(state.events).then(result => {
+      cloudUpsertEvent(getSelected()).then(result => {
         showGlobalSaveDone(result?.ok === false ? "Guardado local. Nube pendiente." : "Cambios guardados");
       });
     }
@@ -1351,7 +1351,7 @@
       showGlobalSave("Guardando cambios...");
       state.events = sanitizeEvents(state.events);
       saveEventsLocal();
-      const result = await cloudUpsertEvents(state.events);
+      const result = await cloudUpsertEvent(getSelected());
       showGlobalSaveDone(result?.ok === false ? "Guardado local. Nube pendiente." : "Cambios guardados");
       return result;
     }
@@ -1363,10 +1363,10 @@
       saveEventsLocal();
       clearTimeout(pendingSaveTimer);
       pendingSaveTimer = setTimeout(() => {
-        cloudUpsertEvents(state.events).then(result => {
+        cloudUpsertEvent(getSelected()).then(result => {
           showGlobalSaveDone(result?.ok === false ? "Guardado local. Nube pendiente." : "Cambios guardados");
         });
-      }, delay);
+      }, Math.max(delay, 2200));
     }
 
     function markEditing() {
@@ -2867,7 +2867,8 @@
           });
         }
       } catch (error) {
-        button.textContent = "Nube pendiente";
+        const quotaLimited = /429|cuota|quota|resource_exhausted/i.test(String(error?.message || error));
+        button.textContent = quotaLimited ? "Firebase en pausa" : "Nube pendiente";
         console.error("No pude sincronizar proceso", error);
       }
     }
@@ -2897,8 +2898,9 @@
       if (!event?.id) return;
       const materialItems = normalizeMaterialItems(event.materialItems);
       try {
-        const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(event.id)}&select=data&limit=1`);
-        const current = Array.isArray(rows) ? rows[0]?.data : null;
+        const current = dashboardRecordsById.get(event.id)
+          || readLocalList(DASHBOARD_STORAGE_KEY).find(record => record.id === event.id)
+          || null;
         if (!current || current.module === "finance" || current.module === "crm") return;
         const updatedAt = new Date().toISOString();
         const data = {
@@ -2908,6 +2910,7 @@
           sketchDriveUrl: event.sketchDriveUrl || "",
           updatedAt
         };
+        dashboardRecordsById.set(event.id, data);
         await cloudRequest(DASHBOARD_TABLE, {
           method: "POST",
           headers: { Prefer: "resolution=merge-duplicates" },
@@ -3092,13 +3095,20 @@
       button.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube activa";
       pullCloudEvents();
       if (force || !window.happyDecoProcessCloudTimer) {
-        window.happyDecoProcessCloudTimer = setInterval(pullCloudEvents, 3000);
+        if (window.happyDecoProcessCloudTimer) clearInterval(window.happyDecoProcessCloudTimer);
+        window.happyDecoProcessCloudTimer = setInterval(pullCloudEvents, 5 * 60 * 1000);
       }
       if (!window.happyDecoProcessCloudFocusHandlers) {
         window.happyDecoProcessCloudFocusHandlers = true;
-        window.addEventListener("focus", pullCloudEvents);
+        let lastFocusRefresh = Date.now();
+        const refreshAfterFocus = () => {
+          if (Date.now() - lastFocusRefresh < 60 * 1000 || isEditingNow()) return;
+          lastFocusRefresh = Date.now();
+          pullCloudEvents();
+        };
+        window.addEventListener("focus", refreshAfterFocus);
         document.addEventListener("visibilitychange", () => {
-          if (!document.hidden && !isEditingNow()) pullCloudEvents();
+          if (!document.hidden) refreshAfterFocus();
         });
       }
     }

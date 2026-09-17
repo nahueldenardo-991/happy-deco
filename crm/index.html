@@ -1146,8 +1146,8 @@
   <div class="detail-drawer" id="detailDrawer" aria-hidden="true"></div>
 
   <script src="../lifeline.js"></script>
-  <script src="../cloud-bridge.js?v=20260902-5"></script>
-  <script src="../assets/happy-loader.js?v=20260916-4"></script>
+  <script src="../cloud-bridge.js?v=20260916-7"></script>
+  <script src="../assets/happy-loader.js?v=20260916-7"></script>
   <script>
     const STORAGE_KEY = "happyDecoCrmLeads";
     const CLOUD_CONFIG_KEY = "happyDecoSupabaseConfig";
@@ -2592,9 +2592,12 @@
             : "CRM actualizado desde la nube.");
         }
       } catch (error) {
-        els.cloudBtn.textContent = "Error nube";
+        const quotaLimited = /429|cuota|quota|resource_exhausted/i.test(String(error?.message || error));
+        els.cloudBtn.textContent = quotaLimited ? "Firebase en pausa" : "Error nube";
         console.error("No pude sincronizar CRM", error);
-        if (options.manual) showToast("No se pudo actualizar la nube. Revisa la conexion o Firebase.");
+        if (options.manual) showToast(quotaLimited
+          ? "Firebase alcanzó su cuota temporal. Tus cambios siguen guardados y se sincronizarán automáticamente."
+          : "No se pudo actualizar la nube. Revisá la conexión o Firebase.");
       }
     }
 
@@ -2642,12 +2645,18 @@
     function initCloudSync() {
       els.cloudBtn.textContent = window.HappyDecoFirebaseCloud?.isConfigured() ? "Firebase activa" : "Nube activa";
       pullCloudLeads();
-      if (!window.happyDecoCrmCloudTimer) window.happyDecoCrmCloudTimer = setInterval(pullCloudLeads, 3000);
+      if (!window.happyDecoCrmCloudTimer) window.happyDecoCrmCloudTimer = setInterval(pullCloudLeads, 5 * 60 * 1000);
       if (!window.happyDecoCrmFocusHandlers) {
         window.happyDecoCrmFocusHandlers = true;
-        window.addEventListener("focus", pullCloudLeads);
+        let lastFocusRefresh = Date.now();
+        const refreshAfterFocus = () => {
+          if (Date.now() - lastFocusRefresh < 60 * 1000) return;
+          lastFocusRefresh = Date.now();
+          pullCloudLeads();
+        };
+        window.addEventListener("focus", refreshAfterFocus);
         document.addEventListener("visibilitychange", () => {
-          if (!document.hidden) pullCloudLeads();
+          if (!document.hidden) refreshAfterFocus();
         });
       }
     }

@@ -1214,7 +1214,7 @@
       button.textContent = "Nube activa";
       pullCloudEvents();
       if (force || !window.happyDecoProcessCloudTimer) {
-        window.happyDecoProcessCloudTimer = setInterval(pullCloudEvents, 3000);
+        window.happyDecoProcessCloudTimer = setInterval(pullCloudEvents, 5 * 60 * 1000);
       }
       if (!window.happyDecoProcessCloudFocusHandlers) {
         window.happyDecoProcessCloudFocusHandlers = true;

@@ -112,18 +112,11 @@
   }
 
   function watchButtons() {
+    if (!document.body) {
+      document.addEventListener("DOMContentLoaded", watchButtons, { once: true });
+      return;
+    }
     document.querySelectorAll("button").forEach(button => decorateButton(button));
-    const observer = new MutationObserver(mutations => {
-      const seen = new Set();
-      mutations.forEach(mutation => {
-        const button = mutation.target.closest?.("button") || (mutation.target.matches?.("button") ? mutation.target : null);
-        if (button && !seen.has(button)) {
-          seen.add(button);
-          requestAnimationFrame(() => decorateButton(button));
-        }
-      });
-    });
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
   window.HappyLoader = { src, status, textStatus, card, setButton, decorateButton };
