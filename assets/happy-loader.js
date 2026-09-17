@@ -2,14 +2,14 @@
   const script = document.currentScript;
   const baseUrl = script ? new URL("mascots/", script.src).href : "assets/mascots/";
   const assets = {
-    save: "save-bunny.png",
-    wait: "wait-elephant.png",
-    setup: "setup-bear.png",
-    success: "success-unicorn.png",
-    build: "build-puppy.png",
-    general: "general-bunny.png",
-    update: "setup-bear.png",
-    error: "wait-elephant.png"
+    save: "save-bunny-animated.png",
+    wait: "wait-elephant-animated.png",
+    setup: "setup-bear-animated.png",
+    success: "success-unicorn-animated.png",
+    build: "build-puppy-animated.png",
+    general: "save-bunny-animated.png",
+    update: "setup-bear-animated.png",
+    error: "wait-elephant-animated.png"
   };
 
   function src(type) {
