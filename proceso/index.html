@@ -2484,12 +2484,11 @@
       if (!draft) return;
       const existing = financeCatalog.costItems.find(item => normalizeText(item.name) === normalizeText(name));
       if (existing) {
-        existing.category = draft.category;
-        existing.unit = draft.unit;
-        existing.unitCost = draft.unitCost;
-        existing.stock = draft.stock;
-        existing.features = draft.features;
-        existing.updated = new Date().toISOString().slice(0, 10);
+        // A repeated name means "use the catalog item". Do not erase its real
+        // price or stock with the empty defaults from the quick-create form.
+        existing.category = existing.category || draft.category;
+        existing.unit = existing.unit || draft.unit;
+        existing.features = existing.features || draft.features;
       } else {
         draft.updated = new Date().toISOString().slice(0, 10);
         financeCatalog.costItems = mergeCatalogItems(financeCatalog.costItems, [draft]);

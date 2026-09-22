@@ -396,6 +396,56 @@
       accent-color: var(--teal-dark);
     }
 
+    .manual-item {
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .manual-item summary {
+      padding: 10px 12px;
+      color: var(--teal-dark);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .manual-item-form {
+      display: grid;
+      grid-template-columns: minmax(180px, 2fr) repeat(4, minmax(90px, 1fr)) auto;
+      gap: 8px;
+      align-items: end;
+      padding: 0 10px 10px;
+    }
+
+    .manual-item-form label {
+      display: grid;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .manual-item-form input,
+    .manual-item-form select {
+      width: 100%;
+      min-height: 40px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .manual-item-status {
+      min-height: 18px;
+      padding: 0 10px 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .observations {
       margin-top: 12px;
       padding: 10px;
@@ -437,6 +487,7 @@
       .actions,
       .sheet-actions,
       .status-select,
+      .manual-item,
       .sheet-status label {
         display: none !important;
       }
@@ -570,7 +621,16 @@
       .actions { justify-content: stretch; }
       .actions .btn { flex: 1 1 150px; }
       .sheet-grid, .info-grid { grid-template-columns: 1fr; }
+      .manual-item-form { grid-template-columns: 1fr 1fr; }
+      .manual-item-form label:first-child { grid-column: 1 / -1; }
+      .manual-item-form .btn { grid-column: 1 / -1; }
       .full { grid-column: 1; }
+    }
+
+    @media (max-width: 540px) {
+      .manual-item-form { grid-template-columns: 1fr; }
+      .manual-item-form label:first-child,
+      .manual-item-form .btn { grid-column: 1; }
     }
   </style>
   <link rel="stylesheet" href="../assets/ux-polish.css">
@@ -657,6 +717,7 @@
     const FIREBASE_BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents`;
     const DASHBOARD_TABLE = "happy_deco_dashboard_records";
     const PROCESS_TABLE = "happy_deco_process_events";
+    const FINANCE_RECORD_ID = "FINANCE-SHARED-STATE-V1";
     const PRODUCTION_CACHE_PATH = "../data/production-cache.json";
 
     const els = {
@@ -818,6 +879,9 @@
       els.list.querySelectorAll("[data-print-sheet]").forEach(button => {
         button.addEventListener("click", () => printSingleSheet(button.dataset.printSheet));
       });
+      els.list.querySelectorAll("[data-manual-item-form]").forEach(form => {
+        form.addEventListener("submit", createManualProductionItem);
+      });
     }
 
     function buildProductionSheets() {
@@ -978,6 +1042,7 @@
                   </label>
                 `;
                 }).join("") : `<div class="empty">Todavía no hay materiales cargados en proceso.</div>`}
+                ${renderManualItemForm(item.id)}
               </div>
             </div>
           </div>
@@ -1119,6 +1184,134 @@
       event.updatedAt = new Date().toISOString();
       persistProcessEvent(event);
       render();
+    }
+
+    function renderManualItemForm(eventId) {
+      const categories = ["Materiales", "Globos", "Gráfica e impresión", "Mobiliario", "Reutilizables", "Mano de obra", "Logística", "Servicios", "Herramientas", "Textiles", "Flores", "Otros"];
+      return `
+        <details class="manual-item">
+          <summary>+ Agregar ítem no listado</summary>
+          <form class="manual-item-form" data-manual-item-form data-event-id="${escapeAttr(eventId)}">
+            <label>Nombre<input name="name" placeholder="Ej.: cinta, panel nuevo" required></label>
+            <label>Categoría<select name="category">${categories.map(value => `<option>${escapeHtml(value)}</option>`).join("")}</select></label>
+            <label>Unidad<select name="unit">${["unidad", "paquete", "caja", "metro", "hora", "viaje", "uso", "servicio"].map(value => `<option>${escapeHtml(value)}</option>`).join("")}</select></label>
+            <label>Precio<input name="unitCost" type="number" min="0" step="0.01" value="0" required></label>
+            <label>Stock<input name="stock" type="number" min="0" step="1" value="0" required></label>
+            <button class="btn primary" type="submit">Crear y agregar</button>
+          </form>
+          <div class="manual-item-status" data-manual-item-status></div>
+        </details>`;
+    }
+
+    async function createManualProductionItem(submitEvent) {
+      submitEvent.preventDefault();
+      const form = submitEvent.currentTarget;
+      const eventId = form.dataset.eventId;
+      const event = ensureProcessEvent(eventId);
+      const formData = new FormData(form);
+      const name = cleanText(formData.get("name"));
+      if (!name) return;
+      const status = form.closest(".manual-item")?.querySelector("[data-manual-item-status]");
+      const button = form.querySelector("button[type='submit']");
+      if (button) button.disabled = true;
+      if (status) status.textContent = "Guardando en Producción, Stock e Ítems y precios...";
+
+      const finance = loadFinanceState();
+      const existing = (finance.costItems || []).find(item => normalizeKey(item.name) === normalizeKey(name));
+      const item = existing || {
+        id: `production-item-${Date.now()}-${normalizeKey(name).replace(/[^a-z0-9]+/g, "-")}`,
+        name,
+        category: cleanText(formData.get("category")) || "Otros",
+        unit: cleanText(formData.get("unit")) || "unidad",
+        unitCost: Number(formData.get("unitCost")) || 0,
+        stock: Number(formData.get("stock")) || 0,
+        updated: new Date().toISOString().slice(0, 10),
+        source: "Producción"
+      };
+      if (!existing) finance.costItems.push(item);
+      ensureInitialStockCheck(finance, item, "Cantidad inicial cargada desde Producción");
+      localStorage.setItem("happyDecoFinanceV1", JSON.stringify(finance));
+
+      event.materialItems = Array.isArray(event.materialItems) && event.materialItems.length
+        ? event.materialItems
+        : parseMaterials(event.materials).map(material => ({
+            itemId: "",
+            name: material,
+            category: "Sin categoría",
+            quantity: 1,
+            unitCost: 0,
+            detail: ""
+          }));
+      const alreadyAdded = event.materialItems.some(entry => normalizeKey(entry?.name) === normalizeKey(item.name));
+      if (!alreadyAdded) {
+        event.materialItems.push({ itemId: item.id, name: item.name, category: item.category || "Sin categoría", quantity: 1, unitCost: Number(item.unitCost) || 0, detail: "" });
+      }
+      event.materials = event.materialItems.map(formatMaterialEntry).filter(Boolean);
+      event.updatedAt = new Date().toISOString();
+      await persistProcessEvent(event);
+
+      let cloudPending = false;
+      try {
+        await syncFinanceItemToCloud(item);
+      } catch (error) {
+        cloudPending = true;
+        console.warn("El ítem quedó local y pendiente de nube", error);
+      }
+      render();
+      const renderedForm = els.list.querySelector(`[data-manual-item-form][data-event-id="${cssEscape(eventId)}"]`);
+      const renderedStatus = renderedForm?.closest(".manual-item")?.querySelector("[data-manual-item-status]");
+      if (renderedStatus) renderedStatus.textContent = cloudPending
+        ? "Ítem agregado. La sincronización de nube quedó pendiente y se reintentará."
+        : "Ítem agregado al evento, Stock e Ítems y precios.";
+    }
+
+    function loadFinanceState() {
+      let finance = {};
+      try { finance = JSON.parse(localStorage.getItem("happyDecoFinanceV1") || "{}"); } catch {}
+      finance.costItems = Array.isArray(finance.costItems) ? finance.costItems : [];
+      finance.stockChecks = Array.isArray(finance.stockChecks) ? finance.stockChecks : [];
+      return finance;
+    }
+
+    function ensureInitialStockCheck(finance, item, notes) {
+      if (finance.stockChecks.some(check => check.itemId === item.id)) return;
+      const stock = Number(item.stock) || 0;
+      finance.stockChecks.push({
+        id: `control-${Date.now()}-${normalizeKey(item.name).replace(/[^a-z0-9]+/g, "-")}`,
+        itemId: item.id,
+        itemName: item.name,
+        controlDate: new Date().toISOString().slice(0, 10),
+        previousStock: 0,
+        counted: stock,
+        difference: stock,
+        notes
+      });
+    }
+
+    async function syncFinanceItemToCloud(item) {
+      const rows = await cloudRequest(`${DASHBOARD_TABLE}?id=eq.${encodeURIComponent(FINANCE_RECORD_ID)}&select=data&limit=1`);
+      const current = Array.isArray(rows) ? rows[0]?.data : null;
+      const finance = current?.finance || {};
+      finance.costItems = Array.isArray(finance.costItems) ? finance.costItems : [];
+      finance.stockChecks = Array.isArray(finance.stockChecks) ? finance.stockChecks : [];
+      const existing = finance.costItems.find(entry => normalizeKey(entry.name) === normalizeKey(item.name));
+      if (!existing) finance.costItems.push(item);
+      ensureInitialStockCheck(finance, existing || item, "Cantidad inicial cargada desde Producción");
+      const now = new Date().toISOString();
+      const data = { ...(current || {}), id: FINANCE_RECORD_ID, module: "finance", updatedAt: now, finance };
+      await cloudRequest(`${DASHBOARD_TABLE}?on_conflict=id`, {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify([{ id: FINANCE_RECORD_ID, data, updated_at: now }])
+      });
+    }
+
+    function normalizeKey(value) {
+      return cleanText(value).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+    }
+
+    function cssEscape(value) {
+      return window.CSS?.escape ? window.CSS.escape(String(value || "")) : String(value || "").replace(/["\\]/g, "\\$&");
     }
 
     function materialCheckKey(material) {
