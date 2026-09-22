@@ -60,8 +60,7 @@
     const text = textWithoutMascot(button);
     if (!text) return;
     const loading = /actualizando|cargando|guardando|sincronizando|subiendo|preparando|leyendo|creando/i.test(text);
-    const done = /actualizado|guardado|listo|completo/i.test(text);
-    if (!loading && !done) {
+    if (!loading) {
       button.classList.remove("happy-loader-button");
       button.dataset.happyLoaderType = "";
       button.querySelector(".happy-loader-button-mascot")?.remove();
@@ -94,6 +93,11 @@
 
   function status(target, type, message) {
     if (!target) return;
+    const isBusy = /actualizando|cargando|guardando|sincronizando|subiendo|preparando|leyendo|creando|procesando|esperando/i.test(message || "");
+    if (!isBusy) {
+      textStatus(target, message);
+      return;
+    }
     target.classList.add("happy-loader-status");
     target.innerHTML = `<img class="happy-loader-status-mascot" src="${src(type || typeForText(message))}" alt=""> <span>${escapeHtml(message || "Trabajando...")}</span>`;
   }
